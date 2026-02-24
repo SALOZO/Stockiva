@@ -15,7 +15,7 @@
         <div class="card">
             <div class="card-header">
                 <div class="d-flex align-items-center">
-                    <a href="{{ route('admin.users.show', $user->id) }}" class="btn btn-sm btn-outline-secondary me-3">
+                    <a href="{{ route('admin.user.index') }}" class="btn btn-sm btn-outline-secondary me-3">
                         <i class="bi bi-arrow-left"></i>
                     </a>
                     <h5 class="card-title mb-0">

@@ -131,7 +131,7 @@
                             </div>
                             <div class="detail-value">
                                 <div>{{ $user->created_at->format('d F Y') }}</div>
-                                <small class="text-muted">{{ $user->created_at->diffForHumans() }}</small>
+                                {{-- <small class="text-muted">{{ $user->created_at->diffForHumans() }}</small> --}}
                             </div>
                         </div>
                     </div>
@@ -145,7 +145,7 @@
                             </div>
                             <div class="detail-value">
                                 <div>{{ $user->updated_at->format('d F Y') }}</div>
-                                <small class="text-muted">{{ $user->updated_at->diffForHumans() }}</small>
+                                {{-- <small class="text-muted">{{ $user->updated_at->diffForHumans() }}</small> --}}
                             </div>
                         </div>
                     </div>

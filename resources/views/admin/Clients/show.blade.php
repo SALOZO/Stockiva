@@ -161,7 +161,7 @@
                                 <div class="detail-label">Dibuat Pada</div>
                                 <div class="detail-value">
                                     {{ $client->created_at->format('d F Y H:i') }}
-                                    <small class="text-muted d-block">{{ $client->created_at->diffForHumans() }}</small>
+                                    {{-- <small class="text-muted d-block">{{ $client->created_at->diffForHumans() }}</small> --}}
                                 </div>
                             </div>
                             
@@ -169,7 +169,7 @@
                                 <div class="detail-label">Terakhir Update</div>
                                 <div class="detail-value">
                                     {{ $client->updated_at->format('d F Y H:i') }}
-                                    <small class="text-muted d-block">{{ $client->updated_at->diffForHumans() }}</small>
+                                    {{-- <small class="text-muted d-block">{{ $client->updated_at->diffForHumans() }}</small> --}}
                                 </div>
                             </div>
                         </div>

@@ -92,7 +92,7 @@
                                 </td>
                                 <td class="align-middle">
                                     <div>{{ $item->created_at->format('d/m/Y') }}</div>
-                                    <small class="text-muted">{{ $item->created_at->diffForHumans() }}</small>
+                                    {{-- <small class="text-muted">{{ $item->created_at->diffForHumans() }}</small> --}}
                                 </td>
                                 <td class="align-middle">
                                     <div class="btn-group" role="group">
