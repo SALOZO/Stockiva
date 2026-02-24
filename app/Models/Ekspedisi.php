@@ -18,6 +18,7 @@ class Ekspedisi extends Model
         'alamat',
         'nama_pic',
         'no_telp_pic',
+        'email_pic',
         'created_by'
     ];
 

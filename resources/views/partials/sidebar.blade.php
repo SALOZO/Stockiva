@@ -44,7 +44,7 @@
         </li>
         <li class="nav-item">
             <a class="nav-link {{ request()->routeIs('admin.ekspedisi*') ? 'active' : '' }}" 
-               href="#">
+               href="{{ route('admin.ekspedisi.index') }}">
                 <i class="bi bi-truck"></i>
                 <span>Ekspedisi</span>
                 @if(request()->routeIs('admin.ekspedisi*'))

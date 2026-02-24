@@ -3,6 +3,7 @@
 use App\Http\Controllers\Authcontroller;
 use App\Http\Controllers\BarangController;
 use App\Http\Controllers\ClientsController;
+use App\Http\Controllers\EkspedisiController;
 use App\Http\Controllers\JenisController;
 use App\Http\Controllers\KategoryController;
 use App\Http\Controllers\UserController;
@@ -59,4 +60,39 @@ Route::prefix('admin')->middleware('auth')->group(function () {
         Route::get('/get-jenis/{kategoriId}', [BarangController::class, 'getJenisByKategori'])->name('get.jenis');
     });
 
+    Route::prefix('ekspedisi')->group(function () {
+        Route::get('/', [EkspedisiController::class, 'index'])->name('admin.ekspedisi.index');
+        Route::get('/create', [EkspedisiController::class, 'create'])->name('admin.ekspedisi.create');
+        Route::post('/', [EkspedisiController::class, 'store'])->name('admin.ekspedisi.store');
+        Route::get('/{ekspedisi}', [EkspedisiController::class, 'show'])->name('admin.ekspedisi.show');
+        Route::get('/{ekspedisi}/edit', [EkspedisiController::class, 'edit'])->name('admin.ekspedisi.edit');
+        Route::put('/{ekspedisi}', [EkspedisiController::class, 'update'])->name('admin.ekspedisi.update');
+        Route::delete('/{ekspedisi}', [EkspedisiController::class, 'destroy'])->name('admin.ekspedisi.destroy');
+    });
+
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// ALTERNATIVE ROUTE DEFINITIONS USING RESOURCE CONTROLLERS (BELUM DI UJI COBA, TAPI SEHARUSNYA BERFUNGSI SAMA)
+// Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
+//     Route::resource('users', UserController::class);
+//     Route::resource('clients', ClientsController::class);
+//     Route::resource('kategori', KategoryController::class);
+//     Route::resource('jenis', JenisController::class);
+//     Route::resource('barang', BarangController::class);
+//     Route::resource('ekspedisi', EkspedisiController::class); 
+// });

@@ -25,6 +25,7 @@ return new class extends Migration
             // Data PIC Ekspedisi (1 Ekspedisi 1 PIC)
             $table->string('nama_pic');
             $table->string('no_telp_pic');
+            $table->string('email_pic');
 
             // Relasi ke User (created_by)
             $table->foreignId('created_by')->nullable()->constrained('users');
