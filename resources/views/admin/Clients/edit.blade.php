@@ -1,0 +1,624 @@
+<!-- resources/views/admin/clients/edit.blade.php -->
+@extends('layouts.admin')
+
+@section('title', 'Edit Client - Stockiva')
+@section('page-title', 'Edit Client')
+
+@section('breadcrumb')
+    <li class="breadcrumb-item"><a href="{{ route('admin.clients.index') }}">Clients</a></li>
+    <li class="breadcrumb-item"><a href="{{ route('admin.clients.show', $client->id) }}">{{ $client->nama_client }}</a></li>
+    <li class="breadcrumb-item active">Edit</li>
+@endsection
+
+@section('content')
+<div class="row">
+    <div class="col-12 col-lg-10 mx-auto">
+        <div class="card">
+            <div class="card-header">
+                <div class="d-flex align-items-center">
+                    <a href="{{ route('admin.clients.index') }}" class="btn btn-sm btn-outline-secondary me-3">
+                        <i class="bi bi-arrow-left"></i>
+                    </a>
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-pencil-square me-2"></i>
+                        Form Edit Client
+                    </h5>
+                </div>
+            </div>
+            
+            <div class="card-body">
+                {{-- Informasi Client yang diedit --}}
+                <div class="alert alert-info bg-light border-0 d-flex align-items-center mb-4">
+                    <div class="bg-primary-subtle rounded-circle p-2 me-3">
+                        <i class="bi bi-building fs-5 text-primary"></i>
+                    </div>
+                    <div>
+                        <strong>Sedang mengedit:</strong> 
+                        <span class="fw-bold">{{ $client->nama_client }}</span>
+                    </div>
+                </div>
+
+                <form method="POST" action="{{ route('admin.clients.update', $client->id) }}" id="formEditClient">
+                    @csrf
+                    @method('PUT')
+                    
+                    {{-- Alert jika ada error validasi --}}
+                    @if($errors->any())
+                        <div class="alert alert-danger mb-4">
+                            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                            <strong>Terjadi kesalahan:</strong>
+                            <ul class="mt-2 mb-0">
+                                @foreach($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+                    
+                    {{-- Informasi Client (Perusahaan) --}}
+                    <div class="mb-4">
+                        <h6 class="fw-semibold mb-3">
+                            <i class="bi bi-building me-2"></i>
+                            Informasi Perusahaan
+                        </h6>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-12">
+                                <label for="nama_client" class="form-label">
+                                    Nama Perusahaan / Client <span class="text-danger">*</span>
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light">
+                                        <i class="bi bi-building"></i>
+                                    </span>
+                                    <input type="text" 
+                                           class="form-control @error('nama_client') is-invalid @enderror" 
+                                           id="nama_client" 
+                                           name="nama_client" 
+                                           value="{{ old('nama_client', $client->nama_client) }}" 
+                                           placeholder="Masukkan nama perusahaan"
+                                           required>
+                                </div>
+                                @error('nama_client')
+                                    <div class="text-danger small mt-1">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+                    </div>
+                    
+                    {{-- Alamat Lengkap dengan Dynamic Dropdown dari API Online --}}
+                    <div class="mb-4">
+                        <h6 class="fw-semibold mb-3">
+                            <i class="bi bi-geo-alt me-2"></i>
+                            Alamat Perusahaan
+                        </h6>
+                        
+                        {{-- Hidden fields untuk menyimpan NAMA (yang akan dikirim ke server) --}}
+                        <input type="hidden" name="provinsi" id="provinsi_name" value="{{ old('provinsi', $client->provinsi) }}">
+                        <input type="hidden" name="kabupaten_kota" id="kabupaten_kota_name" value="{{ old('kabupaten_kota', $client->kabupaten_kota) }}">
+                        <input type="hidden" name="kecamatan" id="kecamatan_name" value="{{ old('kecamatan', $client->kecamatan) }}">
+                        <input type="hidden" name="desa" id="desa_name" value="{{ old('desa', $client->desa) }}">
+                        
+                        <div class="row mb-3">
+                            {{-- Provinsi Dropdown --}}
+                            <div class="col-md-6">
+                                <label for="provinsi_select" class="form-label">
+                                    Provinsi <span class="text-danger">*</span>
+                                </label>
+                                <select class="form-select @error('provinsi') is-invalid @enderror" 
+                                        id="provinsi_select" 
+                                        required>
+                                    <option value="">-- Pilih Provinsi --</option>
+                                </select>
+                                @error('provinsi')
+                                    <div class="text-danger small mt-1">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            
+                            {{-- Kabupaten/Kota Dropdown --}}
+                            <div class="col-md-6">
+                                <label for="kabupaten_kota_select" class="form-label">
+                                    Kabupaten/Kota <span class="text-danger">*</span>
+                                </label>
+                                <select class="form-select @error('kabupaten_kota') is-invalid @enderror" 
+                                        id="kabupaten_kota_select" 
+                                        required>
+                                    <option value="">-- Pilih Kabupaten/Kota --</option>
+                                </select>
+                                @error('kabupaten_kota')
+                                    <div class="text-danger small mt-1">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            {{-- Kecamatan Dropdown --}}
+                            <div class="col-md-6">
+                                <label for="kecamatan_select" class="form-label">
+                                    Kecamatan <span class="text-danger">*</span>
+                                </label>
+                                <select class="form-select @error('kecamatan') is-invalid @enderror" 
+                                        id="kecamatan_select" 
+                                        required>
+                                    <option value="">-- Pilih Kecamatan --</option>
+                                </select>
+                                @error('kecamatan')
+                                    <div class="text-danger small mt-1">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            
+                            {{-- Desa/Kelurahan Dropdown --}}
+                            <div class="col-md-6">
+                                <label for="desa_select" class="form-label">
+                                    Desa/Kelurahan <span class="text-danger">*</span>
+                                </label>
+                                <select class="form-select @error('desa') is-invalid @enderror" 
+                                        id="desa_select" 
+                                        required>
+                                    <option value="">-- Pilih Desa/Kelurahan --</option>
+                                </select>
+                                @error('desa')
+                                    <div class="text-danger small mt-1">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+                        
+                        {{-- Alamat Detail --}}
+                        <div class="row mb-3">
+                            <div class="col-md-12">
+                                <label for="alamat" class="form-label">
+                                    Alamat Lengkap (Jalan, Gedung, No. Rumah) <span class="text-danger">*</span>
+                                </label>
+                                <textarea class="form-control @error('alamat') is-invalid @enderror" 
+                                          id="alamat" 
+                                          name="alamat" 
+                                          rows="3" 
+                                          placeholder="Masukkan alamat lengkap"
+                                          required>{{ old('alamat', $client->alamat) }}</textarea>
+                                @error('alamat')
+                                    <div class="text-danger small mt-1">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+                    </div>
+                    
+                    {{-- Informasi PIC --}}
+                    <div class="mb-4">
+                        <h6 class="fw-semibold mb-3">
+                            <i class="bi bi-person-badge me-2"></i>
+                            Informasi PIC (Person In Charge)
+                        </h6>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="nama_pic" class="form-label">
+                                    Nama PIC <span class="text-danger">*</span>
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light">
+                                        <i class="bi bi-person"></i>
+                                    </span>
+                                    <input type="text" 
+                                           class="form-control @error('nama_pic') is-invalid @enderror" 
+                                           id="nama_pic" 
+                                           name="nama_pic" 
+                                           value="{{ old('nama_pic', $client->nama_pic) }}" 
+                                           placeholder="Masukkan nama PIC"
+                                           required>
+                                </div>
+                                @error('nama_pic')
+                                    <div class="text-danger small mt-1">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label for="jabatan_pic" class="form-label">
+                                    Jabatan PIC <span class="text-danger">*</span>
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light">
+                                        <i class="bi bi-briefcase"></i>
+                                    </span>
+                                    <input type="text" 
+                                           class="form-control @error('jabatan_pic') is-invalid @enderror" 
+                                           id="jabatan_pic" 
+                                           name="jabatan_pic" 
+                                           value="{{ old('jabatan_pic', $client->jabatan_pic) }}" 
+                                           placeholder="Contoh: Manager, Direktur"
+                                           required>
+                                </div>
+                                @error('jabatan_pic')
+                                    <div class="text-danger small mt-1">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="email_pic" class="form-label">Email PIC</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light">
+                                        <i class="bi bi-envelope"></i>
+                                    </span>
+                                    <input type="email" 
+                                           class="form-control @error('email_pic') is-invalid @enderror" 
+                                           id="email_pic" 
+                                           name="email_pic" 
+                                           value="{{ old('email_pic', $client->email_pic) }}" 
+                                           placeholder="pic@email.com">
+                                </div>
+                                @error('email_pic')
+                                    <div class="text-danger small mt-1">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label for="no_telp_pic" class="form-label">No. Telepon PIC</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light">
+                                        <i class="bi bi-telephone"></i>
+                                    </span>
+                                    <input type="text" 
+                                           class="form-control @error('no_telp_pic') is-invalid @enderror" 
+                                           id="no_telp_pic" 
+                                           name="no_telp_pic" 
+                                           value="{{ old('no_telp_pic', $client->no_telp_pic) }}" 
+                                           placeholder="08xxxxxxxxxx">
+                                </div>
+                                @error('no_telp_pic')
+                                    <div class="text-danger small mt-1">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+                    </div>
+                    
+                    {{-- Tombol Aksi --}}
+                    <div class="d-flex justify-content-end gap-2">
+                        <a href="{{ route('admin.clients.show', $client->id) }}" class="btn btn-light px-4">
+                            Batal
+                        </a>
+                        <button type="submit" class="btn btn-primary px-5" id="btnSubmit">
+                            <i class="bi bi-save me-2"></i>
+                            Update Client
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+@endsection
+
+@push('styles')
+<style>
+    /* Card styling konsisten */
+    .card {
+        border: none;
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+    }
+    
+    .card-header {
+        background: white;
+        border-bottom: 1px solid #eef2f6;
+        padding: 1.25rem 1.5rem;
+    }
+    
+    .card-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #1e293b;
+        margin: 0;
+    }
+    
+    .card-body {
+        padding: 2rem;
+    }
+    
+    /* Form styling */
+    .form-label {
+        font-weight: 500;
+        font-size: 0.9rem;
+        color: #475569;
+        margin-bottom: 0.5rem;
+    }
+    
+    .input-group-text {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        color: #64748b;
+    }
+    
+    .form-control, .form-select {
+        border: 1px solid #e2e8f0;
+        padding: 0.6rem 1rem;
+        font-size: 0.95rem;
+        transition: all 0.2s;
+    }
+    
+    .form-control:focus, .form-select:focus {
+        border-color: #0b2b4f;
+        box-shadow: 0 0 0 3px rgba(11, 43, 79, 0.1);
+    }
+    
+    .form-control.is-invalid, .form-select.is-invalid {
+        border-color: #dc2626;
+        background-image: none;
+    }
+    
+    .text-danger.small {
+        font-size: 0.8rem;
+        margin-top: 0.25rem;
+    }
+    
+    /* Section header */
+    h6 {
+        color: #1e293b;
+        border-bottom: 1px solid #e2e8f0;
+        padding-bottom: 0.75rem;
+        margin-bottom: 1.25rem;
+    }
+    
+    h6 i {
+        color: #0b2b4f;
+    }
+    
+    /* Alert info */
+    .alert-info {
+        background: #f0f9ff;
+        border-radius: 12px;
+        padding: 1rem 1.5rem;
+    }
+    
+    .bg-primary-subtle {
+        background: rgba(11, 43, 79, 0.08);
+    }
+    
+    /* Button styling */
+    .btn-light {
+        background: #f1f5f9;
+        border: 1px solid #e2e8f0;
+        color: #475569;
+        font-weight: 500;
+        padding: 0.6rem 1.5rem;
+        border-radius: 8px;
+    }
+    
+    .btn-light:hover {
+        background: #e2e8f0;
+        border-color: #cbd5e1;
+    }
+    
+    .btn-primary {
+        background: #0b2b4f;
+        border: none;
+        font-weight: 500;
+        padding: 0.6rem 1.5rem;
+        border-radius: 8px;
+    }
+    
+    .btn-primary:hover {
+        background: #1a3a5f;
+    }
+    
+    /* Loading state */
+    .btn-primary.loading {
+        position: relative;
+        color: transparent;
+    }
+    
+    .btn-primary.loading::after {
+        content: '';
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        top: 50%;
+        left: 50%;
+        margin-left: -10px;
+        margin-top: -10px;
+        border: 2px solid white;
+        border-radius: 50%;
+        border-top-color: transparent;
+        animation: spin 0.8s linear infinite;
+    }
+    
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+        .card-body {
+            padding: 1.5rem;
+        }
+        
+        .btn {
+            width: 100%;
+        }
+        
+        .d-flex.justify-content-end {
+            flex-direction: column;
+        }
+    }
+</style>
+@endpush
+
+@push('scripts')
+<script>
+    $(document).ready(function() {
+        // Data lama client
+        var oldProvinsi = '{{ $client->provinsi }}';
+        var oldKabupaten = '{{ $client->kabupaten_kota }}';
+        var oldKecamatan = '{{ $client->kecamatan }}';
+        var oldDesa = '{{ $client->desa }}';
+        
+        // Load Provinsi dari API Online
+        $.ajax({
+            url: 'https://www.emsifa.com/api-wilayah-indonesia/api/provinces.json',
+            type: 'GET',
+            dataType: 'json',
+            success: function(data) {
+                $('#provinsi_select').html('<option value="">-- Pilih Provinsi --</option>');
+                
+                // Cari ID provinsi berdasarkan nama
+                var selectedProvinceId = '';
+                $.each(data, function(key, value) {
+                    $('#provinsi_select').append('<option value="' + value.id + '">' + value.name + '</option>');
+                    if (value.name === oldProvinsi) {
+                        selectedProvinceId = value.id;
+                    }
+                });
+                
+                // Set selected provinsi
+                if (selectedProvinceId) {
+                    $('#provinsi_select').val(selectedProvinceId).trigger('change');
+                }
+            },
+            error: function() {
+                $('#provinsi_select').html('<option value="">-- Gagal memuat data provinsi --</option>');
+            }
+        });
+        
+        // Load Kabupaten/Kota berdasarkan Provinsi
+        $('#provinsi_select').on('change', function() {
+            var selectedOption = $(this).find('option:selected');
+            var provinceName = selectedOption.text();
+            var provinceId = $(this).val();
+            
+            // Simpan NAMA provinsi ke hidden field
+            $('#provinsi_name').val(provinceName);
+            
+            $('#kabupaten_kota_select').html('<option value="">Loading...</option>');
+            $('#kecamatan_select').html('<option value="">-- Pilih Kecamatan --</option>');
+            $('#desa_select').html('<option value="">-- Pilih Desa/Kelurahan --</option>');
+            
+            if (provinceId) {
+                $.ajax({
+                    url: 'https://www.emsifa.com/api-wilayah-indonesia/api/regencies/' + provinceId + '.json',
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#kabupaten_kota_select').html('<option value="">-- Pilih Kabupaten/Kota --</option>');
+                        
+                        var selectedRegencyId = '';
+                        $.each(data, function(key, value) {
+                            $('#kabupaten_kota_select').append('<option value="' + value.id + '">' + value.name + '</option>');
+                            if (value.name === oldKabupaten) {
+                                selectedRegencyId = value.id;
+                            }
+                        });
+                        
+                        if (selectedRegencyId) {
+                            $('#kabupaten_kota_select').val(selectedRegencyId).trigger('change');
+                        }
+                    },
+                    error: function() {
+                        $('#kabupaten_kota_select').html('<option value="">-- Gagal memuat data --</option>');
+                    }
+                });
+            } else {
+                $('#kabupaten_kota_select').html('<option value="">-- Pilih Kabupaten/Kota --</option>');
+            }
+        });
+        
+        // Load Kecamatan berdasarkan Kabupaten/Kota
+        $('#kabupaten_kota_select').on('change', function() {
+            var selectedOption = $(this).find('option:selected');
+            var regencyName = selectedOption.text();
+            var regencyId = $(this).val();
+            
+            $('#kabupaten_kota_name').val(regencyName);
+            
+            $('#kecamatan_select').html('<option value="">Loading...</option>');
+            $('#desa_select').html('<option value="">-- Pilih Desa/Kelurahan --</option>');
+            
+            if (regencyId) {
+                $.ajax({
+                    url: 'https://www.emsifa.com/api-wilayah-indonesia/api/districts/' + regencyId + '.json',
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#kecamatan_select').html('<option value="">-- Pilih Kecamatan --</option>');
+                        
+                        var selectedDistrictId = '';
+                        $.each(data, function(key, value) {
+                            $('#kecamatan_select').append('<option value="' + value.id + '">' + value.name + '</option>');
+                            if (value.name === oldKecamatan) {
+                                selectedDistrictId = value.id;
+                            }
+                        });
+                        
+                        if (selectedDistrictId) {
+                            $('#kecamatan_select').val(selectedDistrictId).trigger('change');
+                        }
+                    },
+                    error: function() {
+                        $('#kecamatan_select').html('<option value="">-- Gagal memuat data --</option>');
+                    }
+                });
+            } else {
+                $('#kecamatan_select').html('<option value="">-- Pilih Kecamatan --</option>');
+            }
+        });
+        
+        // Load Desa berdasarkan Kecamatan
+        $('#kecamatan_select').on('change', function() {
+            var selectedOption = $(this).find('option:selected');
+            var districtName = selectedOption.text();
+            var districtId = $(this).val();
+            
+            $('#kecamatan_name').val(districtName);
+            
+            $('#desa_select').html('<option value="">Loading...</option>');
+            
+            if (districtId) {
+                $.ajax({
+                    url: 'https://www.emsifa.com/api-wilayah-indonesia/api/villages/' + districtId + '.json',
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#desa_select').html('<option value="">-- Pilih Desa/Kelurahan --</option>');
+                        
+                        $.each(data, function(key, value) {
+                            $('#desa_select').append('<option value="' + value.id + '">' + value.name + '</option>');
+                            if (value.name === oldDesa) {
+                                $('#desa_select').val(value.id);
+                                $('#desa_name').val(value.name);
+                            }
+                        });
+                    },
+                    error: function() {
+                        $('#desa_select').html('<option value="">-- Gagal memuat data --</option>');
+                    }
+                });
+            } else {
+                $('#desa_select').html('<option value="">-- Pilih Desa/Kelurahan --</option>');
+            }
+        });
+        
+        // Saat desa dipilih, simpan nama desa ke hidden field
+        $('#desa_select').on('change', function() {
+            var selectedOption = $(this).find('option:selected');
+            var villageName = selectedOption.text();
+            $('#desa_name').val(villageName);
+        });
+        
+        // Loading state saat submit
+        $('#formEditClient').on('submit', function() {
+            // Validasi apakah semua hidden field sudah terisi
+            if (!$('#provinsi_name').val() || !$('#kabupaten_kota_name').val() || 
+                !$('#kecamatan_name').val() || !$('#desa_name').val()) {
+                alert('Harap lengkapi semua pilihan lokasi!');
+                return false;
+            }
+            
+            $('#btnSubmit').addClass('loading').prop('disabled', true);
+        });
+        
+        // Format nomor telepon (hanya angka)
+        $('#no_telp_pic').on('input', function() {
+            $(this).val($(this).val().replace(/[^0-9]/g, ''));
+        });
+    });
+</script>
+@endpush

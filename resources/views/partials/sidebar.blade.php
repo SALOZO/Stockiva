@@ -24,7 +24,7 @@
         </li>
         <li class="nav-item">
             <a class="nav-link {{ request()->routeIs('admin.clients*') ? 'active' : '' }}" 
-               href="#">
+               href="{{ route('admin.clients.index') }}">
                 <i class="bi bi-building"></i>
                 <span>Clients</span>
                 @if(request()->routeIs('admin.clients*'))
