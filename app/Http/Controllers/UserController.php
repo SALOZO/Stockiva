@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
@@ -71,6 +72,8 @@ class UserController extends Controller
         ]);
 
         $user = User::findOrFail($id);
+        $passwordChanged = $request->filled('password');
+
         $user->update([
             'name' => $request->name,
             'username' => $request->username,
@@ -79,6 +82,15 @@ class UserController extends Controller
             'no_telp' => $request->no_telp,
             'password' => $request->password ? bcrypt($request->password) : $user->password,
         ]);
+
+        if ($passwordChanged) {
+        Auth::logout();
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect()->route('login')->with('success', 'Password berhasil diubah. Silakan login kembali.');
+        }
 
         return redirect()->route('admin.user.index')->with('success', 'User berhasil diperbarui.');
     }

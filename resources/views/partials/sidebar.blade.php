@@ -34,7 +34,7 @@
         </li>
         <li class="nav-item">
             <a class="nav-link {{ request()->routeIs('admin.barang*') ? 'active' : '' }}" 
-               href="#">
+               href="{{ route('admin.barang.index') }}">
                 <i class="bi bi-box"></i>
                 <span>Barang</span>
                 @if(request()->routeIs('admin.barang*'))
@@ -58,7 +58,7 @@
         
         <li class="nav-item">
             <a class="nav-link {{ request()->routeIs('admin.kategori*') ? 'active' : '' }}" 
-               href="#">
+               href="{{ route('admin.kategori.index') }}">
                 <i class="bi bi-tags"></i>
                 <span>Kategori</span>
                 @if(request()->routeIs('admin.kategori*'))
@@ -68,7 +68,7 @@
         </li>
         <li class="nav-item">
             <a class="nav-link {{ request()->routeIs('admin.jenis*') ? 'active' : '' }}" 
-               href="#">
+               href="{{ route('admin.jenis.index') }}">
                 <i class="bi bi-diagram-3"></i>
                 <span>Jenis</span>
                 @if(request()->routeIs('admin.jenis*'))

@@ -1,7 +1,10 @@
 <?php
 
 use App\Http\Controllers\Authcontroller;
+use App\Http\Controllers\BarangController;
 use App\Http\Controllers\ClientsController;
+use App\Http\Controllers\JenisController;
+use App\Http\Controllers\KategoryController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -32,6 +35,28 @@ Route::prefix('admin')->middleware('auth')->group(function () {
         Route::get('/{client}/edit', [ClientsController::class, 'edit'])->name('admin.clients.edit');
         Route::put('/{client}', [ClientsController::class, 'update'])->name('admin.clients.update');
         Route::delete('/{client}', [ClientsController::class, 'destroy'])->name('admin.clients.destroy');
+    });
+
+    Route::prefix('kategori')->group(function () {
+        Route::get('/', [KategoryController::class, 'index'])->name('admin.kategori.index');
+        Route::post('/', [KategoryController::class, 'store'])->name('admin.kategori.store');
+        Route::put('/{kategori}', [KategoryController::class, 'update'])->name('admin.kategori.update');
+        Route::delete('/{kategori}', [KategoryController::class, 'destroy'])->name('admin.kategori.destroy');
+    });
+
+    Route::prefix('jenis')->group(function () {
+        Route::get('/', [JenisController::class, 'index'])->name('admin.jenis.index');
+        Route::post('/', [JenisController::class, 'store'])->name('admin.jenis.store');
+        Route::put('/{jeni}', [JenisController::class, 'update'])->name('admin.jenis.update');
+        Route::delete('/{jeni}', [JenisController::class, 'destroy'])->name('admin.jenis.destroy');
+    });
+
+    Route::prefix('barang')->group(function () {
+        Route::get('/', [BarangController::class, 'index'])->name('admin.barang.index');
+        Route::post('/', [BarangController::class, 'store'])->name('admin.barang.store');
+        Route::put('/{barang}', [BarangController::class, 'update'])->name('admin.barang.update');
+        Route::delete('/{barang}', [BarangController::class, 'destroy'])->name('admin.barang.destroy');
+        Route::get('/get-jenis/{kategoriId}', [BarangController::class, 'getJenisByKategori'])->name('get.jenis');
     });
 
 });
