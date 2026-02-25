@@ -149,7 +149,7 @@
                                 <div class="detail-label">Dibuat Oleh</div>
                                 <div class="detail-value">
                                     @if($client->createdBy)
-                                        {{ $client->createdBy->nama }} 
+                                        {{ $client->createdBy->name }} 
                                         <small class="text-muted">({{ $client->createdBy->jabatan ?? 'Admin' }})</small>
                                     @else
                                         <span class="text-muted">-</span>

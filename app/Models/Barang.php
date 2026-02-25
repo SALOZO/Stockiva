@@ -11,8 +11,10 @@ class Barang extends Model
     protected $table = 'barang';
     protected $fillable = [
         'nama_barang',
+        'harga_satuan',
         'kategori_id',
         'jenis_id',
+        'satuan_id',
         'created_by'
     ];
 
@@ -23,6 +25,10 @@ class Barang extends Model
     public function jenis()
     {
         return $this->belongsTo(Jenis::class, 'jenis_id');
+    }
+    public function satuan()
+    {
+        return $this->belongsTo(Satuan::class, 'satuan_id');
     }
     public function createdBy()
     {

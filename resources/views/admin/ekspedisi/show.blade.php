@@ -151,7 +151,7 @@
                                 <div class="detail-label">Dibuat Oleh</div>
                                 <div class="detail-value">
                                     @if($ekspedisi->createdBy)
-                                        {{ $ekspedisi->createdBy->nama }}
+                                        {{ $ekspedisi->createdBy->name }}
                                         <small class="text-muted d-block">
                                             {{ $ekspedisi->createdBy->jabatan ?? 'Admin' }}
                                         </small>

@@ -15,10 +15,13 @@ return new class extends Migration
             $table->id();
 
             $table->string('nama_barang');
-            
+            $table->integer('harga_satuan')->default(0)->nullable();
+
             // Foreign Keys
             $table->foreignId('kategori_id')->constrained('categories');
             $table->foreignId('jenis_id')->constrained('jenis');
+            $table->foreignId('satuan_id')->constrained('satuans');
+            
             
             // Relasi ke User (created_by) - opsional
             $table->foreignId('created_by')->nullable()->constrained('users');

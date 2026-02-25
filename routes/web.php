@@ -6,6 +6,7 @@ use App\Http\Controllers\ClientsController;
 use App\Http\Controllers\EkspedisiController;
 use App\Http\Controllers\JenisController;
 use App\Http\Controllers\KategoryController;
+use App\Http\Controllers\SatuanController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -68,6 +69,13 @@ Route::prefix('admin')->middleware('auth')->group(function () {
         Route::get('/{ekspedisi}/edit', [EkspedisiController::class, 'edit'])->name('admin.ekspedisi.edit');
         Route::put('/{ekspedisi}', [EkspedisiController::class, 'update'])->name('admin.ekspedisi.update');
         Route::delete('/{ekspedisi}', [EkspedisiController::class, 'destroy'])->name('admin.ekspedisi.destroy');
+    });
+
+    Route::prefix('satuan')->group(function () {
+        Route::get('/', [SatuanController::class, 'index'])->name('admin.satuan.index');
+        Route::post('/', [SatuanController::class, 'store'])->name('admin.satuan.store');
+        Route::put('/{satuan}', [SatuanController::class, 'update'])->name('admin.satuan.update');
+        Route::delete('/{satuan}', [SatuanController::class, 'destroy'])->name('admin.satuan.destroy');
     });
 
 });

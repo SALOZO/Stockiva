@@ -293,7 +293,7 @@
         <div class="form-panel">
             <div class="greeting">
                 <h2>Hello!</h2>
-                <p>Good Morning</p>
+                <p>Beautiful Day !</p>
             </div>
 
             {{-- Pesan error --}}

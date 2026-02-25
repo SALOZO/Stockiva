@@ -50,12 +50,14 @@
                         <thead class="text-center">
                             <tr>
                                 <th width="5%">NO</th>
-                                <th width="25%">NAMA BARANG</th>
-                                <th width="15%">KATEGORI</th>
-                                <th width="15%">JENIS</th>
+                                <th width="15%">NAMA BARANG</th>
+                                <th width="12%">KATEGORI</th>
+                                <th width="12%">JENIS</th>
+                                <th width="10%">SATUAN</th>
+                                <th width="15%">HARGA SATUAN</th>
                                 <th width="15%">DIBUAT OLEH</th>
-                                <th width="15%">TANGGAL</th>
-                                <th width="10%">AKSI</th>
+                                <th width="10%">TANGGAL</th>
+                                <th width="8%">AKSI</th>
                             </tr>
                         </thead>
                         <tbody class="text-center">
@@ -84,15 +86,34 @@
                                     @endif
                                 </td>
                                 <td class="align-middle">
+                                    @if($item->satuan)
+                                        <span class="badge bg-secondary-subtle text-secondary px-3 py-2 rounded-pill">
+                                            {{ $item->satuan->nama_satuan }}
+                                        </span>
+                                    @else
+                                        <span class="text-muted">-</span>
+                                    @endif
+                                </td>
+                                <td class="align-middle">
+                                    @if($item->harga_satuan > 0)
+                                        <span class="fw-semibold text-success">
+                                            Rp {{ number_format($item->harga_satuan, 0, ',', '.') }}
+                                        </span>
+                                    @else
+                                        <span class="text-muted">-</span>
+                                    @endif
+                                </td>
+                                <td class="align-middle">
                                     @if($item->createdBy)
-                                        {{ $item->createdBy->name }} 
+                                        {{ $item->createdBy->name }}
+                                        <br>
+                                        <small>Jabatan: {{ $item->createdBy->jabatan }}</small>
                                     @else
                                         <span class="text-muted">-</span>
                                     @endif
                                 </td>
                                 <td class="align-middle">
                                     <div>{{ $item->created_at->format('d/m/Y') }}</div>
-                                    {{-- <small class="text-muted">{{ $item->created_at->diffForHumans() }}</small> --}}
                                 </td>
                                 <td class="align-middle">
                                     <div class="btn-group" role="group">
@@ -147,12 +168,11 @@
                                                             <select class="form-select edit-kategori" 
                                                                     name="kategori_id"
                                                                     id="edit_kategori_id_{{ $item->id }}" 
-                                                                    data-target="edit-jenis-{{ $item->id }}"
+                                                                    data-target="edit_jenis_id_{{ $item->id }}"
                                                                     required>
                                                                 <option value="">-- Pilih Kategori --</option>
                                                                 @foreach($kategoris as $kategori)
                                                                     <option value="{{ $kategori->id }}" 
-                                                                        data-nama="{{ $kategori->name_kategori }}"
                                                                         {{ $item->kategori_id == $kategori->id ? 'selected' : '' }}>
                                                                         {{ $kategori->name_kategori }}
                                                                     </option>
@@ -179,6 +199,45 @@
                                                                 @endforeach
                                                             </select>
                                                         </div>
+
+                                                        {{-- TAMBAHAN: Field Satuan --}}
+                                                        <div class="mb-3">
+                                                            <label for="edit_satuan_id_{{ $item->id }}" class="form-label">
+                                                                Satuan <span class="text-danger">*</span>
+                                                            </label>
+                                                            <select class="form-select" 
+                                                                    id="edit_satuan_id_{{ $item->id }}" 
+                                                                    name="satuan_id" 
+                                                                    required>
+                                                                <option value="">-- Pilih Satuan --</option>
+                                                                @foreach($satuans as $satuan)
+                                                                    <option value="{{ $satuan->id }}" 
+                                                                        {{ $item->satuan_id == $satuan->id ? 'selected' : '' }}>
+                                                                        {{ $satuan->nama_satuan }}
+                                                                    </option>
+                                                                @endforeach
+                                                            </select>
+                                                        </div>
+
+                                                        {{-- TAMBAHAN: Field Harga --}}
+                                                        <div class="mb-3">
+                                                            <label for="edit_harga_satuan_{{ $item->id }}" class="form-label">
+                                                                Harga Satuan <span class="text-danger">*</span>
+                                                            </label>
+                                                            <div class="input-group">
+                                                                <span class="input-group-text bg-light">Rp</span>
+                                                                <input type="number" 
+                                                                       class="form-control" 
+                                                                       id="edit_harga_satuan_{{ $item->id }}" 
+                                                                       name="harga_satuan" 
+                                                                       value="{{ $item->harga_satuan }}"
+                                                                       placeholder="0"
+                                                                       min="0"
+                                                                       step="1000"
+                                                                       required>
+                                                            </div>
+                                                            <small class="text-muted">Masukkan dalam angka (contoh: 50000)</small>
+                                                        </div>
                                                     </div>
                                                     <div class="modal-footer">
                                                         <button type="button" class="btn btn-light" data-bs-dismiss="modal">Batal</button>
@@ -204,7 +263,7 @@
                                                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                                 </div>
                                                 <div class="modal-body">
-                                                    <p>Apakah Anda yakin ingin menghapus barang "{{ $item->nama_barang }}"?</p>
+                                                    <p>Apakah Anda yakin ingin menghapus barang: {{ $item->nama_barang }}</p>
                                                 </div>
                                                 <div class="modal-footer">
                                                     <button type="button" class="btn btn-light" data-bs-dismiss="modal">Batal</button>
@@ -224,7 +283,7 @@
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="7" class="text-center py-5">
+                                <td colspan="9" class="text-center py-5">
                                     <div class="text-muted">
                                         <i class="bi bi-box display-4 d-block mb-3"></i>
                                         <h5>Belum Ada Data Barang</h5>
@@ -297,7 +356,6 @@
                             <option value="">-- Pilih Kategori --</option>
                             @foreach($kategoris as $kategori)
                                 <option value="{{ $kategori->id }}" 
-                                    data-nama="{{ $kategori->name_kategori }}"
                                     {{ old('kategori_id') == $kategori->id ? 'selected' : '' }}>
                                     {{ $kategori->name_kategori }}
                                 </option>
@@ -315,6 +373,48 @@
                                 required>
                             <option value="">-- Pilih Kategori Terlebih Dahulu --</option>
                         </select>
+                    </div>
+
+                    {{-- TAMBAHAN: Field Satuan --}}
+                    <div class="mb-3">
+                        <label for="satuan_id" class="form-label">
+                            Satuan <span class="text-danger">*</span>
+                        </label>
+                        <select class="form-select @error('satuan_id') is-invalid @enderror" 
+                                id="satuan_id" 
+                                name="satuan_id" 
+                                required>
+                            <option value="">-- Pilih Satuan --</option>
+                            @foreach($satuans as $satuan)
+                                <option value="{{ $satuan->id }}" 
+                                    {{ old('satuan_id') == $satuan->id ? 'selected' : '' }}>
+                                    {{ $satuan->nama_satuan }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    {{-- TAMBAHAN: Field Harga --}}
+                    <div class="mb-3">
+                        <label for="harga_satuan" class="form-label">
+                            Harga Satuan <span class="text-danger">*</span>
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light">Rp</span>
+                            <input type="number" 
+                                   class="form-control @error('harga_satuan') is-invalid @enderror" 
+                                   id="harga_satuan" 
+                                   name="harga_satuan" 
+                                   value="{{ old('harga_satuan') }}"
+                                   placeholder="0"
+                                   min="0"
+                                   step="1000"
+                                   required>
+                        </div>
+                        @error('harga_satuan')
+                            <div class="text-danger small mt-1">{{ $message }}</div>
+                        @enderror
+                        <small class="text-muted">Masukkan dalam angka (contoh: 50000)</small>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -340,8 +440,16 @@
         background: rgba(2, 136, 209, 0.08);
     }
     
+    .bg-secondary-subtle {
+        background: rgba(100, 116, 139, 0.08);
+    }
+    
     .text-info {
         color: #0288d1 !important;
+    }
+    
+    .text-secondary {
+        color: #475569 !important;
     }
     
     .table td {
@@ -383,6 +491,11 @@
         font-weight: 500;
         font-size: 0.85rem;
     }
+    
+    .input-group-text {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+    }
 </style>
 @endpush
 
@@ -417,7 +530,7 @@
         });
 
         // Dynamic dropdown untuk setiap modal edit
-        $('.edit-kategori').on('change', function() {
+        $(document).on('change', '.edit-kategori', function() {
             var kategoriId = $(this).val();
             var targetId = $(this).data('target');
             var jenisSelect = $('#' + targetId);
@@ -432,7 +545,7 @@
                     success: function(data) {
                         jenisSelect.html('<option value="">-- Pilih Jenis --</option>');
                         $.each(data, function(key, value) {
-                            jenisSelect.append('<option value="' + value.id + '">' + value.nama_jenis + '</option>');
+                            jenisSelect.append('<option value="' + value.id + '">' + value.name_jenis + '</option>');
                         });
                     },
                     error: function() {
@@ -460,7 +573,7 @@
             var visibleRows = $('#barang-table tbody tr:visible').length;
             if (visibleRows === 0) {
                 if ($('#no-results-message').length === 0) {
-                    $('#barang-table tbody').append('<tr id="no-results-message"><td colspan="7" class="text-center py-4"><div class="text-muted"><i class="bi bi-search display-4 d-block mb-3"></i><h5>Tidak Ditemukan</h5><p class="mb-0">Tidak ada barang yang cocok dengan pencarian Anda.</p></div></td></tr>');
+                    $('#barang-table tbody').append('<tr id="no-results-message"><td colspan="9" class="text-center py-4"><div class="text-muted"><i class="bi bi-search display-4 d-block mb-3"></i><h5>Tidak Ditemukan</h5><p class="mb-0">Tidak ada barang yang cocok dengan pencarian Anda.</p></div></td></tr>');
                 }
             } else {
                 $('#no-results-message').remove();

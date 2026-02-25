@@ -33,16 +33,6 @@
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link {{ request()->routeIs('admin.barang*') ? 'active' : '' }}" 
-               href="{{ route('admin.barang.index') }}">
-                <i class="bi bi-box"></i>
-                <span>Barang</span>
-                @if(request()->routeIs('admin.barang*'))
-                    <span class="active-indicator"></span>
-                @endif
-            </a>
-        </li>
-        <li class="nav-item">
             <a class="nav-link {{ request()->routeIs('admin.ekspedisi*') ? 'active' : '' }}" 
                href="{{ route('admin.ekspedisi.index') }}">
                 <i class="bi bi-truck"></i>
@@ -72,6 +62,24 @@
                 <i class="bi bi-diagram-3"></i>
                 <span>Jenis</span>
                 @if(request()->routeIs('admin.jenis*'))
+                    <span class="active-indicator"></span>
+                @endif
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {{ request()->routeIs('admin.satuan*') ? 'active' : '' }}" 
+            href="{{ route('admin.satuan.index') }}">
+                <i class="bi bi-rulers"></i>
+                <span>Satuan</span>
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link {{ request()->routeIs('admin.barang*') ? 'active' : '' }}" 
+               href="{{ route('admin.barang.index') }}">
+                <i class="bi bi-box"></i>
+                <span>Barang</span>
+                @if(request()->routeIs('admin.barang*'))
                     <span class="active-indicator"></span>
                 @endif
             </a>
