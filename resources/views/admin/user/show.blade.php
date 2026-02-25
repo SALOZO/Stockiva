@@ -239,7 +239,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <p class="mb-3">Apakah Anda yakin ingin menghapus user berikut?</p>
+                <p class="mb-3">Apakah Anda yakin ingin menghapus user berikut "{{ $user->nama }}" ?</p>
                 {{-- <div class="alert alert-light border d-flex align-items-center p-3">
                     <div class="bg-light rounded-circle d-flex align-items-center justify-content-center me-3" 
                          style="width: 48px; height: 48px; background: #e2e8f0 !important;">

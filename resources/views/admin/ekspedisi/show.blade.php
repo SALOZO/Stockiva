@@ -240,16 +240,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <p>Apakah Anda yakin ingin menghapus ekspedisi berikut?</p>
-                <div class="alert alert-light border p-3">
-                    <strong class="d-block">{{ $ekspedisi->nama_ekspedisi }}</strong>
-                    <small class="text-muted">PIC: {{ $ekspedisi->nama_pic }}</small>
-                    <small class="text-muted d-block">{{ $ekspedisi->no_telp_pic }}</small>
-                </div>
-                <div class="alert alert-danger mt-3 py-2 small">
-                    <i class="bi bi-exclamation-circle me-1"></i>
-                    Ekspedisi yang dihapus tidak dapat dikembalikan.
-                </div>
+                <p>Apakah Anda yakin ingin menghapus ekspedisi berikut {{ $ekspedisi->nama_ekspedisi }}?</p>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-light" data-bs-dismiss="modal">Batal</button>

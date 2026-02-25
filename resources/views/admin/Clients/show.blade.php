@@ -202,7 +202,7 @@
                         Halaman detail menampilkan informasi lengkap client
                     </small>
                     <div class="d-flex gap-2">
-                        <a href="" class="btn btn-primary">
+                        <a href="{{ route('admin.clients.edit', $client->id) }}" class="btn btn-primary">
                             <i class="bi bi-pencil me-1"></i>
                             Edit Client
                         </a>
@@ -232,17 +232,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <p class="mb-3">Apakah Anda yakin ingin menghapus client berikut?</p>
-                <div class="alert alert-light border p-3">
-                    <strong class="d-block">{{ $client->nama_client }}</strong>
-                    <small class="text-muted">PIC: {{ $client->nama_pic }}</small>
-                    <small class="text-muted d-block">{{ $client->email_pic ?? '-' }}</small>
-                    <small class="text-muted d-block">{{ $client->kabupaten_kota }}, {{ $client->provinsi }}</small>
-                </div>
-                <div class="alert alert-danger mt-3 py-2 small">
-                    <i class="bi bi-exclamation-circle me-1"></i>
-                    Tindakan ini tidak dapat dibatalkan. Semua data terkait client akan hilang.
-                </div>
+                <p class="mb-3">Apakah Anda yakin ingin menghapus client berikut {{ $client->nama_client }} ?</p>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-light" data-bs-dismiss="modal">Batal</button>
