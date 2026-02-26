@@ -68,7 +68,15 @@ class ClientsController extends Controller
     }
 
     public function destroy(Client $client){
+        
+        // Cek apakah client masih punya pesanan
+        if ($client->pesanans()->exists()) {
+            return redirect()->route('admin.clients.index')
+                ->with('error', 'Client tidak dapat dihapus karena masih memiliki pesanan.');
+        }
+
         $client->delete();
+
         return redirect()->route('admin.clients.index')
             ->with('success', 'Client berhasil dihapus.');
     }

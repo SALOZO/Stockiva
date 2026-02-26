@@ -150,7 +150,7 @@
                                                 </div>
                                                 <div class="modal-footer">
                                                     <button type="button" class="btn btn-light" data-bs-dismiss="modal">Batal</button>
-                                                    <form action="{{ route('admin.clients.destroy', $client->id) }}" method="POST">
+                                                    <form action="{{ route('marketing.clients.destroy', $client->id) }}" method="POST">
                                                         @csrf
                                                         @method('DELETE')
                                                         <button type="submit" class="btn btn-danger px-4">

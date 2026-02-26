@@ -33,8 +33,15 @@ class KategoryController extends Controller
     }
 
     public function destroy(Kategori $kategori){
+        // Cek apakah masih dipakai di tabel jenis
+        if ($kategori->jenis()->exists()) {
+            return redirect()->route('admin.kategori.index')
+                ->with('error', 'Kategori tidak dapat dihapus karena masih memiliki data jenis.');
+        }
+
         $kategori->delete();
 
-        return redirect()->route('admin.kategori.index')->with('success', 'Kategori berhasil dihapus.');
+        return redirect()->route('admin.kategori.index')
+            ->with('success', 'Kategori berhasil dihapus.');
     }
 }

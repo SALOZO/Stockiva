@@ -40,10 +40,16 @@ class JenisController extends Controller
     }
 
     public function destroy(Jenis $jeni){
+        // Cek apakah masih dipakai di tabel barang
+        if ($jeni->barang()->exists()) {
+            return redirect()->route('marketing.jenis.index')
+                ->with('error', 'Jenis tidak dapat dihapus karena masih digunakan pada data barang.');
+        }
+
         $namaJenis = $jeni->name_jenis;
         $jeni->delete();
 
-
-        return redirect()->route('marketing.jenis.index')->with('success', 'Jenis "' . $namaJenis . '" berhasil dihapus.');
+        return redirect()->route('marketing.jenis.index')
+            ->with('success', 'Jenis "' . $namaJenis . '" berhasil dihapus.');
     }
 }

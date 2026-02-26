@@ -142,21 +142,17 @@
                                                 </div>
                                                 <div class="modal-body">
                                                     <p>Apakah Anda yakin ingin menghapus satuan:</p>
-                                                    <div class="alert alert-light border p-3">
+                                                    <div class="border p-3">
                                                         <strong class="d-block">{{ $item->nama_satuan }}</strong>
                                                     </div>
-                                                    
-                                                    @if($item->barang()->count() > 0)
-                                                        <div class="alert alert-warning mt-3 py-2 small">
-                                                            <i class="bi bi-exclamation-circle me-1"></i>
-                                                            Satuan ini digunakan oleh {{ $item->barang()->count() }} barang. Tidak dapat dihapus.
-                                                        </div>
+                                                    @if($item->barang()->count() > 0)    
+                                                        <i class="bi bi-exclamation-circle me-1"></i>
+                                                        Satuan ini digunakan oleh {{ $item->barang()->count() }} barang. Tidak dapat dihapus.    
                                                     @else
-                                                        <div class="alert alert-danger mt-3 py-2 small">
-                                                            <i class="bi bi-exclamation-circle me-1"></i>
-                                                            Satuan yang dihapus tidak dapat dikembalikan.
-                                                        </div>
+                                                        <i class="bi bi-exclamation-circle me-1"></i>
+                                                        Satuan yang dihapus tidak dapat dikembalikan.
                                                     @endif
+
                                                 </div>
                                                 <div class="modal-footer">
                                                     <button type="button" class="btn btn-light" data-bs-dismiss="modal">Batal</button>
