@@ -29,6 +29,6 @@ class CheckRole
             return redirect()->route('marketing.dashboard')->with('error', 'Anda tidak memiliki akses ke halaman tersebut.');
         }
 
-        return redirect()->route('admin.dashboard')->with('error', 'Anda tidak memiliki akses ke halaman tersebut.');
+        return redirect()->route('admin.user.index')->with('error', 'Anda tidak memiliki akses ke halaman tersebut.');
     }
 }

@@ -19,7 +19,7 @@ Route::middleware('guest')->group(function () {
 
 Route::post('/logout', [Authcontroller::class, 'logout'])->name('logout');
 
-Route::prefix('admin')->middleware('auth')->group(function () {
+Route::prefix('admin')->middleware(['auth', 'role:Admin'])->group(function () {
 
     Route::prefix('user')->group(function () {;
         Route::get('/', [UserController::class, 'index'])->name('admin.user.index');
