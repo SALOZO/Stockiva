@@ -1,18 +1,19 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Marketing;
 
+use App\Http\Controllers\Controller;
 use App\Models\Jenis;
 use App\Models\Kategori;
 use Illuminate\Http\Request;
 
 class JenisController extends Controller
 {
-    public function index(){
+        public function index(){
         $jenis = Jenis::with('kategori')->latest()->paginate(10);
         $kategoris = Kategori::orderBy('name_kategori')->get();
         
-        return view('admin.jenis.index', compact('jenis', 'kategoris'));
+        return view('marketing.jenis.index', compact('jenis', 'kategoris'));
     }
 
     public function store(Request $request){
@@ -24,7 +25,7 @@ class JenisController extends Controller
 
         Jenis::create($validated);
         
-        return redirect()->route('admin.jenis.index')->with('success', 'Jenis "' . $validated['name_jenis'] . '" berhasil ditambahkan.');
+        return redirect()->route('marketing.jenis.index')->with('success', 'Jenis "' . $validated['name_jenis'] . '" berhasil ditambahkan.');
     }
 
     public function update(Request $request, Jenis $jeni){
@@ -35,7 +36,7 @@ class JenisController extends Controller
 
         $jeni->update($validated);
 
-        return redirect()->route('admin.jenis.index')->with('success', 'Jenis "' . $jeni->nama_jenis . '" berhasil diperbarui.');
+        return redirect()->route('marketing.jenis.index')->with('success', 'Jenis "' . $jeni->name_jenis . '" berhasil diperbarui.');
     }
 
     public function destroy(Jenis $jeni){
@@ -43,6 +44,6 @@ class JenisController extends Controller
         $jeni->delete();
 
 
-        return redirect()->route('admin.jenis.index')->with('success', 'Jenis "' . $namaJenis . '" berhasil dihapus.');
+        return redirect()->route('marketing.jenis.index')->with('success', 'Jenis "' . $namaJenis . '" berhasil dihapus.');
     }
 }

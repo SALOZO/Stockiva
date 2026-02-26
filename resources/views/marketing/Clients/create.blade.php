@@ -1,13 +1,11 @@
-<!-- resources/views/admin/clients/edit.blade.php -->
-@extends('layouts.admin')
+@extends('layouts.marketing')
 
-@section('title', 'Edit Client - Stockiva')
-@section('page-title', 'Edit Client')
+@section('title', 'Tambah Client - Stockiva')
+@section('page-title', 'Tambah Client Baru')
 
 @section('breadcrumb')
-    <li class="breadcrumb-item"><a href="{{ route('admin.clients.index') }}">Clients</a></li>
-    <li class="breadcrumb-item"><a href="{{ route('admin.clients.show', $client->id) }}">{{ $client->nama_client }}</a></li>
-    <li class="breadcrumb-item active">Edit</li>
+    <li class="breadcrumb-item"><a href="{{ route('marketing.clients.index') }}">Clients</a></li>
+    <li class="breadcrumb-item active">Tambah</li>
 @endsection
 
 @section('content')
@@ -16,28 +14,19 @@
         <div class="card">
             <div class="card-header">
                 <div class="d-flex align-items-center">
-                    <a href="{{ route('admin.clients.index') }}" class="btn btn-sm btn-outline-secondary me-3">
+                    <a href="{{ route('marketing.clients.index') }}" class="btn btn-sm btn-outline-secondary me-3">
                         <i class="bi bi-arrow-left"></i>
                     </a>
                     <h5 class="card-title mb-0">
-                        <i class="bi bi-pencil-square me-2"></i>
-                        Form Edit Client
+                        <i class="bi bi-building-add me-2"></i>
+                        Form Tambah Client
                     </h5>
                 </div>
             </div>
             
             <div class="card-body">
-                {{-- Informasi Client yang diedit --}}
-                <div class="alert alert-info bg-light border-0 d-flex align-items-center mb-4">
-                    <div>
-                        <strong>Sedang mengedit:</strong> 
-                        <span class="fw-bold">{{ $client->nama_client }}</span>
-                    </div>
-                </div>
-
-                <form method="POST" action="{{ route('admin.clients.update', $client->id) }}" id="formEditClient">
+                <form method="POST" action="{{ route('marketing.clients.store') }}" id="formCreateClient">
                     @csrf
-                    @method('PUT')
                     
                     {{-- Alert jika ada error validasi --}}
                     @if($errors->any())
@@ -72,7 +61,7 @@
                                            class="form-control @error('nama_client') is-invalid @enderror" 
                                            id="nama_client" 
                                            name="nama_client" 
-                                           value="{{ old('nama_client', $client->nama_client) }}" 
+                                           value="{{ old('nama_client') }}" 
                                            placeholder="Masukkan nama perusahaan"
                                            required>
                                 </div>
@@ -91,13 +80,13 @@
                         </h6>
                         
                         {{-- Hidden fields untuk menyimpan NAMA (yang akan dikirim ke server) --}}
-                        <input type="hidden" name="provinsi" id="provinsi_name" value="{{ old('provinsi', $client->provinsi) }}">
-                        <input type="hidden" name="kabupaten_kota" id="kabupaten_kota_name" value="{{ old('kabupaten_kota', $client->kabupaten_kota) }}">
-                        <input type="hidden" name="kecamatan" id="kecamatan_name" value="{{ old('kecamatan', $client->kecamatan) }}">
-                        <input type="hidden" name="desa" id="desa_name" value="{{ old('desa', $client->desa) }}">
+                        <input type="hidden" name="provinsi" id="provinsi_name" value="{{ old('provinsi') }}">
+                        <input type="hidden" name="kabupaten_kota" id="kabupaten_kota_name" value="{{ old('kabupaten_kota') }}">
+                        <input type="hidden" name="kecamatan" id="kecamatan_name" value="{{ old('kecamatan') }}">
+                        <input type="hidden" name="desa" id="desa_name" value="{{ old('desa') }}">
                         
                         <div class="row mb-3">
-                            {{-- Provinsi Dropdown --}}
+                            {{-- Provinsi Dropdown (untuk dipilih user) --}}
                             <div class="col-md-6">
                                 <label for="provinsi_select" class="form-label">
                                     Provinsi <span class="text-danger">*</span>
@@ -171,7 +160,7 @@
                                           name="alamat" 
                                           rows="3" 
                                           placeholder="Masukkan alamat lengkap"
-                                          required>{{ old('alamat', $client->alamat) }}</textarea>
+                                          required>{{ old('alamat') }}</textarea>
                                 @error('alamat')
                                     <div class="text-danger small mt-1">{{ $message }}</div>
                                 @enderror
@@ -199,7 +188,7 @@
                                            class="form-control @error('nama_pic') is-invalid @enderror" 
                                            id="nama_pic" 
                                            name="nama_pic" 
-                                           value="{{ old('nama_pic', $client->nama_pic) }}" 
+                                           value="{{ old('nama_pic') }}" 
                                            placeholder="Masukkan nama PIC"
                                            required>
                                 </div>
@@ -220,7 +209,7 @@
                                            class="form-control @error('jabatan_pic') is-invalid @enderror" 
                                            id="jabatan_pic" 
                                            name="jabatan_pic" 
-                                           value="{{ old('jabatan_pic', $client->jabatan_pic) }}" 
+                                           value="{{ old('jabatan_pic') }}" 
                                            placeholder="Contoh: Manager, Direktur"
                                            required>
                                 </div>
@@ -241,7 +230,7 @@
                                            class="form-control @error('email_pic') is-invalid @enderror" 
                                            id="email_pic" 
                                            name="email_pic" 
-                                           value="{{ old('email_pic', $client->email_pic) }}" 
+                                           value="{{ old('email_pic') }}" 
                                            placeholder="pic@email.com">
                                 </div>
                                 @error('email_pic')
@@ -259,7 +248,7 @@
                                            class="form-control @error('no_telp_pic') is-invalid @enderror" 
                                            id="no_telp_pic" 
                                            name="no_telp_pic" 
-                                           value="{{ old('no_telp_pic', $client->no_telp_pic) }}" 
+                                           value="{{ old('no_telp_pic') }}" 
                                            placeholder="08xxxxxxxxxx">
                                 </div>
                                 @error('no_telp_pic')
@@ -271,12 +260,12 @@
                     
                     {{-- Tombol Aksi --}}
                     <div class="d-flex justify-content-end gap-2">
-                        <a href="{{ route('admin.clients.show', $client->id) }}" class="btn btn-light px-4">
+                        <a href="{{ route('marketing.clients.index') }}" class="btn btn-light px-4">
                             Batal
                         </a>
                         <button type="submit" class="btn btn-primary px-5" id="btnSubmit">
                             <i class="bi bi-save me-2"></i>
-                            Update Client
+                            Simpan Client
                         </button>
                     </div>
                 </form>
@@ -360,17 +349,6 @@
         color: #0b2b4f;
     }
     
-    /* Alert info */
-    .alert-info {
-        background: #f0f9ff;
-        border-radius: 12px;
-        padding: 1rem 1.5rem;
-    }
-    
-    .bg-primary-subtle {
-        background: rgba(11, 43, 79, 0.08);
-    }
-    
     /* Button styling */
     .btn-light {
         background: #f1f5f9;
@@ -443,12 +421,6 @@
 @push('scripts')
 <script>
     $(document).ready(function() {
-        // Data lama client
-        var oldProvinsi = '{{ $client->provinsi }}';
-        var oldKabupaten = '{{ $client->kabupaten_kota }}';
-        var oldKecamatan = '{{ $client->kecamatan }}';
-        var oldDesa = '{{ $client->desa }}';
-        
         // Load Provinsi dari API Online
         $.ajax({
             url: 'https://www.emsifa.com/api-wilayah-indonesia/api/provinces.json',
@@ -456,19 +428,20 @@
             dataType: 'json',
             success: function(data) {
                 $('#provinsi_select').html('<option value="">-- Pilih Provinsi --</option>');
-                
-                // Cari ID provinsi berdasarkan nama
-                var selectedProvinceId = '';
                 $.each(data, function(key, value) {
                     $('#provinsi_select').append('<option value="' + value.id + '">' + value.name + '</option>');
-                    if (value.name === oldProvinsi) {
-                        selectedProvinceId = value.id;
-                    }
                 });
                 
-                // Set selected provinsi
-                if (selectedProvinceId) {
-                    $('#provinsi_select').val(selectedProvinceId).trigger('change');
+                // Set selected jika ada old value
+                var oldProvinsi = '{{ old('provinsi') }}';
+                if (oldProvinsi) {
+                    $('#provinsi_select option').each(function() {
+                        if ($(this).text() === oldProvinsi) {
+                            $(this).prop('selected', true);
+                            $('#provinsi_name').val(oldProvinsi);
+                            $('#provinsi_select').trigger('change');
+                        }
+                    });
                 }
             },
             error: function() {
@@ -479,7 +452,7 @@
         // Load Kabupaten/Kota berdasarkan Provinsi
         $('#provinsi_select').on('change', function() {
             var selectedOption = $(this).find('option:selected');
-            var provinceName = selectedOption.text();
+            var provinceName = selectedOption.text(); // Ambil NAMA provinsi
             var provinceId = $(this).val();
             
             // Simpan NAMA provinsi ke hidden field
@@ -496,18 +469,9 @@
                     dataType: 'json',
                     success: function(data) {
                         $('#kabupaten_kota_select').html('<option value="">-- Pilih Kabupaten/Kota --</option>');
-                        
-                        var selectedRegencyId = '';
                         $.each(data, function(key, value) {
                             $('#kabupaten_kota_select').append('<option value="' + value.id + '">' + value.name + '</option>');
-                            if (value.name === oldKabupaten) {
-                                selectedRegencyId = value.id;
-                            }
                         });
-                        
-                        if (selectedRegencyId) {
-                            $('#kabupaten_kota_select').val(selectedRegencyId).trigger('change');
-                        }
                     },
                     error: function() {
                         $('#kabupaten_kota_select').html('<option value="">-- Gagal memuat data --</option>');
@@ -521,9 +485,10 @@
         // Load Kecamatan berdasarkan Kabupaten/Kota
         $('#kabupaten_kota_select').on('change', function() {
             var selectedOption = $(this).find('option:selected');
-            var regencyName = selectedOption.text();
+            var regencyName = selectedOption.text(); // Ambil NAMA kab/kota
             var regencyId = $(this).val();
             
+            // Simpan NAMA kab/kota ke hidden field
             $('#kabupaten_kota_name').val(regencyName);
             
             $('#kecamatan_select').html('<option value="">Loading...</option>');
@@ -536,18 +501,9 @@
                     dataType: 'json',
                     success: function(data) {
                         $('#kecamatan_select').html('<option value="">-- Pilih Kecamatan --</option>');
-                        
-                        var selectedDistrictId = '';
                         $.each(data, function(key, value) {
                             $('#kecamatan_select').append('<option value="' + value.id + '">' + value.name + '</option>');
-                            if (value.name === oldKecamatan) {
-                                selectedDistrictId = value.id;
-                            }
                         });
-                        
-                        if (selectedDistrictId) {
-                            $('#kecamatan_select').val(selectedDistrictId).trigger('change');
-                        }
                     },
                     error: function() {
                         $('#kecamatan_select').html('<option value="">-- Gagal memuat data --</option>');
@@ -561,9 +517,10 @@
         // Load Desa berdasarkan Kecamatan
         $('#kecamatan_select').on('change', function() {
             var selectedOption = $(this).find('option:selected');
-            var districtName = selectedOption.text();
+            var districtName = selectedOption.text(); // Ambil NAMA kecamatan
             var districtId = $(this).val();
             
+            // Simpan NAMA kecamatan ke hidden field
             $('#kecamatan_name').val(districtName);
             
             $('#desa_select').html('<option value="">Loading...</option>');
@@ -575,13 +532,8 @@
                     dataType: 'json',
                     success: function(data) {
                         $('#desa_select').html('<option value="">-- Pilih Desa/Kelurahan --</option>');
-                        
                         $.each(data, function(key, value) {
                             $('#desa_select').append('<option value="' + value.id + '">' + value.name + '</option>');
-                            if (value.name === oldDesa) {
-                                $('#desa_select').val(value.id);
-                                $('#desa_name').val(value.name);
-                            }
                         });
                     },
                     error: function() {
@@ -601,7 +553,7 @@
         });
         
         // Loading state saat submit
-        $('#formEditClient').on('submit', function() {
+        $('#formCreateClient').on('submit', function() {
             // Validasi apakah semua hidden field sudah terisi
             if (!$('#provinsi_name').val() || !$('#kabupaten_kota_name').val() || 
                 !$('#kecamatan_name').val() || !$('#desa_name').val()) {

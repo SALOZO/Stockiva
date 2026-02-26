@@ -30,6 +30,10 @@ class Barang extends Model
     {
         return $this->belongsTo(Satuan::class, 'satuan_id');
     }
+    public function detailPesanans()
+    {
+        return $this->hasMany(DetailPesanan::class, 'barang_id');
+    }
     public function createdBy()
     {
         return $this->belongsTo(User::class, 'created_by');

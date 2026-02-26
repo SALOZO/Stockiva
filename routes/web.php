@@ -6,6 +6,8 @@ use App\Http\Controllers\ClientsController;
 use App\Http\Controllers\EkspedisiController;
 use App\Http\Controllers\JenisController;
 use App\Http\Controllers\KategoryController;
+use App\Http\Controllers\Marketing\DashboardController;
+use App\Http\Controllers\PesananController;
 use App\Http\Controllers\SatuanController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -78,29 +80,55 @@ Route::prefix('admin')->middleware('auth')->group(function () {
         Route::delete('/{satuan}', [SatuanController::class, 'destroy'])->name('admin.satuan.destroy');
     });
 
-});
+    
+    });
+    Route::middleware(['auth', 'role:Marketing'])->prefix('marketing')->name('marketing.')->group(function () {
+        Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+        // ========== PESANAN ==========
+        Route::get('/pesanan', [PesananController::class, 'index'])->name('pesanan.index');
+        Route::get('/pesanan/create', [PesananController::class, 'create'])->name('pesanan.create');
+        Route::post('/pesanan', [PesananController::class, 'store'])->name('pesanan.store');
+        Route::get('/pesanan/{pesanan}', [PesananController::class, 'show'])->name('pesanan.show');
+        Route::get('/pesanan/client/{client}', [PesananController::class, 'byClient'])->name('pesanan.by-client');
+        Route::get('/pesanan/{pesanan}/edit', [PesananController::class, 'edit'])->name('pesanan.edit');
+        Route::put('/pesanan/{pesanan}', [PesananController::class, 'update'])->name('pesanan.update');
+        Route::delete('/pesanan/{pesanan}', [PesananController::class, 'destroy'])->name('pesanan.destroy');
+        Route::get('/get-barang-by-kategori/{kategoriId}', [PesananController::class, 'getBarangByKategori'])->name('get.barang.kategori');
+        Route::get('/get-barang-by-jenis/{jenisId}', [PesananController::class, 'getBarangByJenis'])->name('get.barang.jenis');
 
+        // ========== CLIENTS ==========
+        Route::get('/clients', [\App\Http\Controllers\Marketing\ClientController::class, 'index'])->name('clients.index');
+        Route::get('/clients/create', [\App\Http\Controllers\Marketing\ClientController::class, 'create'])->name('clients.create');
+        Route::post('/clients', [\App\Http\Controllers\Marketing\ClientController::class, 'store'])->name('clients.store');
+        Route::get('/clients/{client}', [\App\Http\Controllers\Marketing\ClientController::class, 'show'])->name('clients.show');
+        Route::get('/clients/{client}/edit', [\App\Http\Controllers\Marketing\ClientController::class, 'edit'])->name('clients.edit');
+        Route::put('/clients/{client}', [\App\Http\Controllers\Marketing\ClientController::class, 'update'])->name('clients.update');
+        Route::delete('/clients/{client}', [\App\Http\Controllers\Marketing\ClientController::class, 'destroy'])->name('clients.destroy');
 
+        // ========== KATEGORI ==========
+        Route::get('/kategori', [\App\Http\Controllers\Marketing\KategoryController::class, 'index'])->name('kategori.index');
+        Route::post('/kategori', [\App\Http\Controllers\Marketing\KategoryController::class, 'store'])->name('kategori.store');
+        Route::put('/kategori/{kategori}', [\App\Http\Controllers\Marketing\KategoryController::class, 'update'])->name('kategori.update');
+        Route::delete('/kategori/{kategori}', [\App\Http\Controllers\Marketing\KategoryController::class, 'destroy'])->name('kategori.destroy');
 
+        // ========== JENIS ==========
+        Route::get('/jenis', [\App\Http\Controllers\Marketing\JenisController::class, 'index'])->name('jenis.index');
+        Route::post('/jenis', [\App\Http\Controllers\Marketing\JenisController::class, 'store'])->name('jenis.store');
+        Route::put('/jenis/{jeni}', [\App\Http\Controllers\Marketing\JenisController::class, 'update'])->name('jenis.update');
+        Route::delete('/jenis/{jeni}', [\App\Http\Controllers\Marketing\JenisController::class, 'destroy'])->name('jenis.destroy');
 
+        // ========== SATUAN ==========
+        Route::get('/satuan', [\App\Http\Controllers\Marketing\SatuanController::class, 'index'])->name('satuan.index');
+        Route::post('/satuan', [\App\Http\Controllers\Marketing\SatuanController::class, 'store'])->name('satuan.store');
+        Route::put('/satuan/{satuan}', [\App\Http\Controllers\Marketing\SatuanController::class, 'update'])->name('satuan.update');
+        Route::delete('/satuan/{satuan}', [\App\Http\Controllers\Marketing\SatuanController::class, 'destroy'])->name('satuan.destroy');
 
-
-
-
-
-
-
-
-
-
-
-
-// ALTERNATIVE ROUTE DEFINITIONS USING RESOURCE CONTROLLERS (BELUM DI UJI COBA, TAPI SEHARUSNYA BERFUNGSI SAMA)
-// Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
-//     Route::resource('users', UserController::class);
-//     Route::resource('clients', ClientsController::class);
-//     Route::resource('kategori', KategoryController::class);
-//     Route::resource('jenis', JenisController::class);
-//     Route::resource('barang', BarangController::class);
-//     Route::resource('ekspedisi', EkspedisiController::class); 
-// });
+        // ========== BARANG ==========
+        Route::get('/barang', [\App\Http\Controllers\Marketing\BarangController::class, 'index'])->name('barang.index');
+        Route::post('/barang', [\App\Http\Controllers\Marketing\BarangController::class, 'store'])->name('barang.store');
+        Route::put('/barang/{barang}', [\App\Http\Controllers\Marketing\BarangController::class, 'update'])->name('barang.update');
+        Route::delete('/barang/{barang}', [\App\Http\Controllers\Marketing\BarangController::class, 'destroy'])->name('barang.destroy');
+        Route::get('/get-jenis-by-kategori/{kategoriId}', [\App\Http\Controllers\Marketing\BarangController::class, 'getJenisByKategori'])->name('get.jenis.kategori');
+        
+    });
+    

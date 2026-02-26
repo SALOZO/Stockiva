@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Marketing;
 
+use App\Http\Controllers\Controller;
 use App\Models\Barang;
 use App\Models\Jenis;
 use App\Models\Kategori;
@@ -10,14 +11,14 @@ use Illuminate\Http\Request;
 
 class BarangController extends Controller
 {
-    public function index()
+        public function index()
     {
         $barang = Barang::with(['kategori', 'jenis', 'satuan', 'createdBy'])->latest()->paginate(10);
         $kategoris = Kategori::orderBy('name_kategori')->get();
         $jenis = Jenis::orderBy('name_jenis')->get();
         $satuans = Satuan::orderBy('nama_satuan')->get();
 
-        return view('admin.barang.index', compact('barang', 'kategoris', 'jenis', 'satuans'));
+        return view('marketing.barang.index', compact('barang', 'kategoris', 'jenis', 'satuans'));
     }
 
     public function store(Request $request)
@@ -39,7 +40,7 @@ class BarangController extends Controller
             'created_by' => auth()->id()
         ]);
 
-        return redirect()->route('admin.barang.index')
+        return redirect()->route('marketing.barang.index')
             ->with('success', 'Barang berhasil ditambahkan.');
     }
 
@@ -61,8 +62,7 @@ class BarangController extends Controller
             'harga_satuan' => $request->harga_satuan
         ]);
 
-        return redirect()->route('admin.barang.index')
-            ->with('success', 'Barang berhasil diperbarui.');
+        return redirect()->route('marketing.barang.index')->with('success', 'Barang berhasil diperbarui.');
     }
 
     public function destroy(Barang $barang){
@@ -70,14 +70,14 @@ class BarangController extends Controller
         // cek apakah barang masih dipakai
         if ($barang->detailPesanans()->exists()) {
             return redirect()
-                ->route('admin.barang.index')
+                ->route('marketing.barang.index')
                 ->with('error', 'Barang tidak bisa dihapus karena sudah digunakan dalam transaksi.');
         }
 
         $barang->delete();
 
         return redirect()
-            ->route('admin.barang.index')
+            ->route('marketing.barang.index')
             ->with('success', 'Barang berhasil dihapus.');
     }
 

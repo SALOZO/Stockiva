@@ -1,12 +1,11 @@
-<!-- resources/views/admin/clients/edit.blade.php -->
-@extends('layouts.admin')
+@extends('layouts.marketing')
 
 @section('title', 'Edit Client - Stockiva')
 @section('page-title', 'Edit Client')
 
 @section('breadcrumb')
-    <li class="breadcrumb-item"><a href="{{ route('admin.clients.index') }}">Clients</a></li>
-    <li class="breadcrumb-item"><a href="{{ route('admin.clients.show', $client->id) }}">{{ $client->nama_client }}</a></li>
+    <li class="breadcrumb-item"><a href="{{ route('marketing.clients.index') }}">Clients</a></li>
+    <li class="breadcrumb-item"><a href="{{ route('marketing.clients.show', $client->id) }}">{{ $client->nama_client }}</a></li>
     <li class="breadcrumb-item active">Edit</li>
 @endsection
 
@@ -16,7 +15,7 @@
         <div class="card">
             <div class="card-header">
                 <div class="d-flex align-items-center">
-                    <a href="{{ route('admin.clients.index') }}" class="btn btn-sm btn-outline-secondary me-3">
+                    <a href="{{ route('marketing.clients.index') }}" class="btn btn-sm btn-outline-secondary me-3">
                         <i class="bi bi-arrow-left"></i>
                     </a>
                     <h5 class="card-title mb-0">
@@ -35,7 +34,7 @@
                     </div>
                 </div>
 
-                <form method="POST" action="{{ route('admin.clients.update', $client->id) }}" id="formEditClient">
+                <form method="POST" action="{{ route('marketing.clients.update', $client->id) }}" id="formEditClient">
                     @csrf
                     @method('PUT')
                     
@@ -271,7 +270,7 @@
                     
                     {{-- Tombol Aksi --}}
                     <div class="d-flex justify-content-end gap-2">
-                        <a href="{{ route('admin.clients.show', $client->id) }}" class="btn btn-light px-4">
+                        <a href="{{ route('marketing.clients.show', $client->id) }}" class="btn btn-light px-4">
                             Batal
                         </a>
                         <button type="submit" class="btn btn-primary px-5" id="btnSubmit">

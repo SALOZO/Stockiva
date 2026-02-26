@@ -27,13 +27,24 @@ class Authcontroller extends Controller
 
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
-            return redirect()->intended('/admin/user');
+            
+            // CEK JABATAN USER
+            $user = Auth::user();
+            
+            // Redirect berdasarkan jabatan
+            if ($user->jabatan === 'Marketing') {
+                return redirect()->intended('/marketing/dashboard');
+            } else {
+                // Admin
+                return redirect()->intended('/admin/user');
+            }
         }
 
         return back()->withErrors([
             'login' => 'Email / Username atau password salah.',
         ])->onlyInput('login');
     }
+    
     public function logout(Request $request){
         Auth::logout();
         
