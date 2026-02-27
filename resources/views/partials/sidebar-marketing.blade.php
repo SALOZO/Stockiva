@@ -38,6 +38,20 @@
         </li>
 
         <li class="nav-item">
+            <a class="nav-link {{ request()->routeIs('marketing.semua-pesanan') ? 'active' : '' }}" 
+            href="{{ route('marketing.semua-pesanan') }}">
+                <i class="bi bi-cart-check"></i>
+                <span>Semua Pesanan</span>
+                @if(request()->routeIs('marketing.semua-pesanan'))
+                    <span class="active-indicator"></span>
+                @endif
+            </a>
+        </li>
+
+        {{-- Divider --}}
+        <li class="nav-divider"></li>
+
+        <li class="nav-item">
             <a class="nav-link {{ request()->routeIs('marketing.clients*') ? 'active' : '' }}" 
                href="{{ route('marketing.clients.index') }}">
                 <i class="bi bi-building"></i>
@@ -47,9 +61,6 @@
                 @endif
             </a>
         </li>
-
-        {{-- Divider --}}
-        <li class="nav-divider"></li>
         
         {{-- Master Data --}}
         <li class="nav-item">

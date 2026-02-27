@@ -11,7 +11,7 @@ use Illuminate\Http\Request;
 class PesananController extends Controller
 {
     public function index(){
-        $clients = Client::orderBy('nama_client')->paginate(10);
+        $clients = Client::orderBy('nama_client')->paginate(6);
         return view('marketing.pesanan.index', compact('clients'));
     }
 
@@ -145,6 +145,30 @@ class PesananController extends Controller
         
         return redirect()->route('marketing.pesanan.by-client', $clientId)
             ->with('success', 'Pesanan "' . $noPesanan . '" berhasil dihapus.');
+    }
+
+    public function semuaPesanan(Request $request){
+        $query = Pesanan::with(['client', 'details'])->latest();
+        
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('no_pesanan', 'like', "%{$search}%")
+                ->orWhereHas('client', function($clientQuery) use ($search) {
+                    $clientQuery->where('nama_client', 'like', "%{$search}%");
+                });
+            });
+        }
+        
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+        
+        $pesanans = $query->paginate(10);
+        
+        $statuses = ['baru', 'diproses', 'selesai', 'dibatalkan'];
+        
+        return view('marketing.pesanan.semua-pesanan', compact('pesanans', 'statuses'));
     }
 
 

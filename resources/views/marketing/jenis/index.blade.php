@@ -202,16 +202,17 @@
                 </div>
 
                 {{-- Pagination --}}
-                @if($jenis->hasPages())
+                @if ($jenis->hasPages())
                 <div class="d-flex justify-content-between align-items-center mt-4">
-                    <div>
-                        <small class="text-muted">
-                            Menampilkan {{ $jenis->firstItem() }} - {{ $jenis->lastItem() }} dari {{ $jenis->total() }} data
-                        </small>
-                    </div>
-                    <div>
-                        {{ $jenis->links() }}
-                    </div>
+
+                    <small class="text-muted">
+                        Menampilkan {{ $jenis->firstItem() }} 
+                        - {{ $jenis->lastItem() }} 
+                        dari {{ $jenis->total() }} jenis
+                    </small>
+
+                    {{ $jenis->onEachSide(1)->links('pagination::bootstrap-5') }}
+
                 </div>
                 @endif
             </div>

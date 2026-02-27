@@ -84,6 +84,7 @@ Route::prefix('admin')->middleware(['auth', 'role:Admin'])->group(function () {
     });
     Route::middleware(['auth', 'role:Marketing'])->prefix('marketing')->name('marketing.')->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+        
         // ========== PESANAN ==========
         Route::get('/pesanan', [PesananController::class, 'index'])->name('pesanan.index');
         Route::get('/pesanan/create', [PesananController::class, 'create'])->name('pesanan.create');
@@ -95,6 +96,7 @@ Route::prefix('admin')->middleware(['auth', 'role:Admin'])->group(function () {
         Route::delete('/pesanan/{pesanan}', [PesananController::class, 'destroy'])->name('pesanan.destroy');
         Route::get('/get-barang-by-kategori/{kategoriId}', [PesananController::class, 'getBarangByKategori'])->name('get.barang.kategori');
         Route::get('/get-barang-by-jenis/{jenisId}', [PesananController::class, 'getBarangByJenis'])->name('get.barang.jenis');
+        Route::get('/semua-pesanan', [PesananController::class, 'semuaPesanan'])->name('semua-pesanan');
 
         // ========== CLIENTS ==========
         Route::get('/clients', [\App\Http\Controllers\Marketing\ClientController::class, 'index'])->name('clients.index');
@@ -129,6 +131,7 @@ Route::prefix('admin')->middleware(['auth', 'role:Admin'])->group(function () {
         Route::put('/barang/{barang}', [\App\Http\Controllers\Marketing\BarangController::class, 'update'])->name('barang.update');
         Route::delete('/barang/{barang}', [\App\Http\Controllers\Marketing\BarangController::class, 'destroy'])->name('barang.destroy');
         Route::get('/get-jenis-by-kategori/{kategoriId}', [\App\Http\Controllers\Marketing\BarangController::class, 'getJenisByKategori'])->name('get.jenis.kategori');
+
         
     });
     

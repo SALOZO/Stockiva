@@ -195,16 +195,17 @@
                 </div>
 
                 {{-- Pagination --}}
-                @if($satuans->hasPages())
+                @if ($satuans->hasPages())
                 <div class="d-flex justify-content-between align-items-center mt-4">
-                    <div>
-                        <small class="text-muted">
-                            Menampilkan {{ $satuans->firstItem() }} - {{ $satuans->lastItem() }} dari {{ $satuans->total() }} data
-                        </small>
-                    </div>
-                    <div>
-                        {{ $satuans->links() }}
-                    </div>
+
+                    <small class="text-muted">
+                        Menampilkan {{ $satuans->firstItem() }} 
+                        - {{ $satuans->lastItem() }} 
+                        dari {{ $satuans->total() }} satuan
+                    </small>
+
+                    {{ $satuans->onEachSide(1)->links('pagination::bootstrap-5') }}
+
                 </div>
                 @endif
             </div>

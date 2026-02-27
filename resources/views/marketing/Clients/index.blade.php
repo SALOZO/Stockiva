@@ -184,16 +184,17 @@
                 </div>
 
                 {{-- Pagination --}}
-                @if($clients->hasPages())
+                @if ($clients->hasPages())
                 <div class="d-flex justify-content-between align-items-center mt-4">
-                    <div>
-                        <small class="text-muted">
-                            Menampilkan {{ $clients->firstItem() }} - {{ $clients->lastItem() }} dari {{ $clients->total() }} data
-                        </small>
-                    </div>
-                    <div>
-                        {{ $clients->links() }}
-                    </div>
+
+                    <small class="text-muted">
+                        Menampilkan {{ $clients->firstItem() }} 
+                        - {{ $clients->lastItem() }} 
+                        dari {{ $clients->total() }} client
+                    </small>
+
+                    {{ $clients->onEachSide(1)->links('pagination::bootstrap-5') }}
+
                 </div>
                 @endif
             </div>

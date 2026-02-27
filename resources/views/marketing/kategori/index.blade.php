@@ -168,16 +168,17 @@
                 </div>
 
                 {{-- Pagination --}}
-                @if($kategoris->hasPages())
+                @if ($kategoris->hasPages())
                 <div class="d-flex justify-content-between align-items-center mt-4">
-                    <div>
-                        <small class="text-muted">
-                            Menampilkan {{ $kategoris->firstItem() }} - {{ $kategoris->lastItem() }} dari {{ $kategoris->total() }} data
-                        </small>
-                    </div>
-                    <div>
-                        {{ $kategoris->links() }}
-                    </div>
+
+                    <small class="text-muted">
+                        Menampilkan {{ $kategoris->firstItem() }} 
+                        - {{ $kategoris->lastItem() }} 
+                        dari {{ $kategoris->total() }} kategori
+                    </small>
+
+                    {{ $kategoris->onEachSide(1)->links('pagination::bootstrap-5') }}
+
                 </div>
                 @endif
             </div>

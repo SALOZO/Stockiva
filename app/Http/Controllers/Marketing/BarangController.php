@@ -11,8 +11,7 @@ use Illuminate\Http\Request;
 
 class BarangController extends Controller
 {
-        public function index()
-    {
+    public function index(){
         $barang = Barang::with(['kategori', 'jenis', 'satuan', 'createdBy'])->latest()->paginate(10);
         $kategoris = Kategori::orderBy('name_kategori')->get();
         $jenis = Jenis::orderBy('name_jenis')->get();
