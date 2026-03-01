@@ -6,6 +6,7 @@ use App\Http\Controllers\ClientsController;
 use App\Http\Controllers\Direktur\ProfileController;
 use App\Http\Controllers\Direktur\SphController;
 use App\Http\Controllers\EkspedisiController;
+use App\Http\Controllers\Gudang\SphControll;
 use App\Http\Controllers\JenisController;
 use App\Http\Controllers\KategoryController;
 use App\Http\Controllers\Marketing\DashboardController;
@@ -148,9 +149,19 @@ Route::prefix('admin')->middleware(['auth', 'role:Admin'])->group(function () {
         // Approve & Reject
         Route::post('/sph/{pesanan}/approve', [SphController::class, 'approve'])->name('sph.approve');
         Route::post('/sph/{pesanan}/reject', [SphController::class, 'reject'])->name('sph.reject');
+
+        Route::get('/sph/{pesanan}/download', [SphController::class, 'downloadApproved'])->name('sph.download');
         
         // Profile & Upload TTD
         Route::get('/profile', [ProfileController::class, 'edit'])->name('profile');
         Route::post('/profile/ttd', [ProfileController::class, 'uploadTtd'])->name('profile.upload-ttd');
+    });
+
+    Route::middleware(['auth', 'gudang'])->prefix('gudang')->name('gudang.')->group(function () {    
+        // LANGSUNG KE DAFTAR SPH DISETUJUI
+        // Route::get('/', [SphControll::class, 'index'])->name('dashboard');
+        Route::get('/sph', [SphControll::class, 'index'])->name('sph.index');
+        Route::get('/sph/{pesanan}', [SphControll::class, 'show'])->name('sph.show');
+        Route::get('/sph/{pesanan}/download', [SphControll::class, 'download'])->name('sph.download');
     });
     

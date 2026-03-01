@@ -30,7 +30,8 @@ class Pesanan extends Model
 
     protected $casts = [
         'tanggal_pesanan' => 'date',
-        'total_keseluruhan' => 'decimal:2'
+        'total_keseluruhan' => 'decimal:2',
+        'approved_at' => 'datetime',
     ];
 
     // Relasi ke Client
@@ -47,6 +48,11 @@ class Pesanan extends Model
     // Relasi ke User (pembuat)
     public function createdBy(){
         return $this->belongsTo(User::class, 'created_by');
+    }
+
+    // Relasi ke User (approver)
+    public function approvedBy(){
+        return $this->belongsTo(User::class, 'approved_by');
     }
 
     // Generate nomor pesanan otomatis

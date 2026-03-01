@@ -37,6 +37,8 @@ class Authcontroller extends Controller
             }
             elseif ($user->jabatan === 'Direktur') {
                 return redirect()->intended('/direktur/sph');
+            }elseif ($user->jabatan === 'Gudang') {
+                return redirect()->intended('/gudang/sph');
             }
             else {
                 // Admin

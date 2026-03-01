@@ -19,7 +19,7 @@
                 <table class="table table-borderless">
                     <tr>
                         <td width="30%">Nama</td>
-                        <td>: <strong>{{ Auth::user()->nama }}</strong></td>
+                        <td>: <strong>{{ Auth::user()->name }}</strong></td>
                     </tr>
                     <tr>
                         <td>Username</td>

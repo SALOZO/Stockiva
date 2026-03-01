@@ -21,6 +21,7 @@ class User extends Authenticatable
         'name',
         'username',
         'jabatan',
+        'ttd_path',
         'no_telp',
         'email',
         'password',

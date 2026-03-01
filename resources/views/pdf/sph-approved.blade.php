@@ -3,52 +3,75 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <title>SPH APPROVED - {{ $no_sph }}</title>
+    <title>SPH - {{ $no_sph }}</title>
     <style>
-        /* Style sama dengan sph.blade.php */
         body {
-            font-family: 'Helvetica', sans-serif;
-            font-size: 12px;
+            font-family: 'Helvetica', 'Arial', sans-serif;
+            font-size: 11pt;
             line-height: 1.4;
+            margin: 1.5cm;
         }
+        
         .header {
-            text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             border-bottom: 2px solid #333;
             padding-bottom: 10px;
         }
         .header h1 {
-            font-size: 18px;
-            margin: 0;
+            font-size: 20pt;
+            margin: 0 0 5px 0;
             color: #0b2b4f;
+            text-transform: uppercase;
         }
-        .header h2 {
-            font-size: 14px;
-            margin: 5px 0;
+        .header-table {
+            width: 100%;
+            border-collapse: collapse;
         }
-        .info-section {
-            margin-bottom: 20px;
+        .header-table td {
+            border: none;
+            padding: 5px;
+            vertical-align: middle;
         }
-        .info-box {
-            border: 1px solid #ddd;
-            padding: 10px;
-            margin-bottom: 10px;
+        .header-logo {
+            max-height: 70px;
+            max-width: 150px;
+            object-fit: contain;
         }
+        
+        .sph-ref {
+            width: 100%;
+            margin: 10px 0 15px 0;
+        }
+        .sph-ref td {
+            border: none;
+            padding: 3px 0;
+        }
+        
+        .kepada {
+            margin: 15px 0;
+            line-height: 1.3;
+        }
+        
+        .pembuka {
+            margin: 15px 0;
+            text-align: justify;
+        }
+        
         table {
             width: 100%;
             border-collapse: collapse;
             margin: 15px 0;
+            font-size: 10pt;
         }
         table th {
             background: #0b2b4f;
             color: white;
-            padding: 8px;
+            padding: 8px 5px;
             text-align: center;
-            font-size: 11px;
         }
         table td {
-            border: 1px solid #ddd;
-            padding: 6px;
+            border: 1px solid #999;
+            padding: 6px 5px;
         }
         .text-right {
             text-align: right;
@@ -60,128 +83,164 @@
             font-weight: bold;
             background: #f0f0f0;
         }
-        .footer {
+        
+        .note-section {
+            margin: 15px 0;
+        }
+        .note-section ul {
+            margin: 5px 0 0 20px;
+        }
+        
+        .penutup {
+            margin: 15px 0;
+            text-align: justify;
+        }
+        
+        .signature-wrapper {
+            width: 100%;
             margin-top: 30px;
+            overflow: hidden;
         }
         .signature-box {
-            margin-top: 50px;
+            float: right;
+            width: 250px;
+            text-align: center;
+        }
+        .signature-box p {
+            margin: 3px 0;
+        }
+        .signature-img {
+            max-height: 50px;
+            max-width: 180px;
+            object-fit: contain;
         }
         .signature-line {
             width: 200px;
             border-top: 1px solid #000;
-            margin-top: 40px;
+            margin: 10px auto 5px auto;
         }
-        .signature-img {
-            max-width: 150px;
-            max-height: 60px;
-        }
-        .approved-stamp {
-            color: #28a745;
-            font-size: 40px;
-            font-weight: bold;
-            opacity: 0.3;
-            transform: rotate(-15deg);
-            position: absolute;
-            top: 50%;
-            left: 50%;
+        .clear {
+            clear: both;
         }
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1>STOCKIVA</h1>
-        <h2>SURAT PENAWARAN HARGA</h2>
-        <p>{{ $no_sph }}</p>
-    </div>
 
-    <div class="info-section">
-        <table style="border: none; width: 100%;">
-            <tr>
-                <td style="border: none; width: 50%;">
-                    <strong>Kepada Yth:</strong><br>
-                    {{ $client->nama_client }}<br>
-                    {{ $client->nama_pic }} ({{ $client->jabatan_pic }})<br>
-                    {{ $client->alamat }}, {{ $client->desa }}, {{ $client->kecamatan }}<br>
-                    {{ $client->kabupaten_kota }}, {{ $client->provinsi }}
-                </td>
-                <td style="border: none; width: 50%;">
-                    <strong>Tanggal:</strong> {{ $tanggal }}<br>
-                    <strong>No. Pesanan:</strong> {{ $pesanan->no_pesanan }}<br>
-                    <strong>Disetujui:</strong> {{ $approved_at }}<br>
-                    <strong>Oleh:</strong> {{ $approved_by }}
-                </td>
-            </tr>
-        </table>
-    </div>
-
-    <div class="info-box">
-        <strong>Perihal:</strong> Penawaran Harga Barang (APPROVED)
-    </div>
-
-    <table>
-        <thead>
-            <tr>
-                <th>No</th>
-                <th>Nama Barang</th>
-                <th>Kategori</th>
-                <th>Jenis</th>
-                <th>Satuan</th>
-                <th>Jumlah</th>
-                <th>Harga Satuan</th>
-                <th>Subtotal</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach($items as $index => $item)
-            <tr>
-                <td class="text-center">{{ $index + 1 }}</td>
-                <td>{{ $item->barang->nama_barang ?? '-' }}</td>
-                <td>{{ $item->kategori->name_kategori ?? '-' }}</td>
-                <td>{{ $item->jenis->name_jenis ?? '-' }}</td>
-                <td class="text-center">{{ $item->barang->satuan->nama_satuan ?? '-' }}</td>
-                <td class="text-center">{{ $item->jumlah }}</td>
-                <td class="text-right">Rp {{ number_format($item->harga_satuan, 0, ',', '.') }}</td>
-                <td class="text-right">Rp {{ number_format($item->subtotal, 0, ',', '.') }}</td>
-            </tr>
-            @endforeach
-        </tbody>
-        <tfoot>
-            <tr class="total-row">
-                <td colspan="7" class="text-right"><strong>TOTAL</strong></td>
-                <td class="text-right"><strong>Rp {{ number_format($pesanan->total_keseluruhan, 0, ',', '.') }}</strong></td>
-            </tr>
-        </tfoot>
+{{-- Header Perusahaan --}}
+<div class="header">
+    <table class="header-table">
+        <tr>
+            <td style="width: 18%;">
+                @if($logo_base64)
+                    <img src="{{ $logo_base64 }}" class="header-logo">
+                @endif
+            </td>
+            <td style="width: 82%;">
+                <h1>{{ $company->nama_perusahaan ?? 'Stockiva' }}</h1>
+                <div>
+                    {{ $company->alamat ?? '' }}, {{ $company->kota ?? '' }}, {{ $company->provinsi ?? '' }}<br>
+                    Telp: {{ $company->telepon ?? '-' }} | Email: {{ $company->email ?? '-' }}
+                </div>
+            </td>
+        </tr>
     </table>
+</div>
 
-    <div class="footer">
-        <p><strong>Catatan:</strong> Harga sudah termasuk PPN.</p>
-    </div>
+{{-- Nomor, Perihal, Tanggal --}}
+<table class="sph-ref">
+    <tr>
+        <td style="width: 60%;">
+            <strong>Nomor :</strong> {{ $no_sph }}<br>
+            <strong>Perihal :</strong> {{ $perihal }}
+        </td>
+        <td style="width: 40%; text-align: right;">
+            <strong>{{ $company->kota ?? 'Jakarta' }},</strong> {{ $tanggal }}
+        </td>
+    </tr>
+</table>
 
+{{-- Kepada Yth --}}
+<div class="kepada">
+    <strong>Kepada Yth,</strong><br>
+    UP. {{ $client->nama_pic ?? '-' }}<br>
+    <strong>{{ $client->nama_client ?? '-' }}</strong><br>
+    {{ $client->alamat ?? '' }}, {{ $client->kabupaten_kota ?? '' }}, {{ $client->provinsi ?? '' }}
+</div>
+
+{{-- Pembuka --}}
+<div class="pembuka">
+    <p>Dengan hormat, bersama ini kami sampaikan penawaran harga sebagai berikut:</p>
+</div>
+
+{{-- Tabel Barang --}}
+<table>
+    <thead>
+        <tr>
+            <th>No.</th>
+            <th>Nama Barang</th>
+            <th>Kebutuhan</th>
+            <th>Satuan</th>
+            <th>Harga Satuan</th>
+            <th>Jumlah Harga</th>
+        </tr>
+    </thead>
+    <tbody>
+        @forelse($items as $index => $item)
+        <tr>
+            <td class="text-center">{{ $index + 1 }}</td>
+            <td>{{ $item->barang->nama_barang ?? '-' }}</td>
+            <td class="text-center">{{ $item->jumlah }}</td>
+            <td class="text-center">{{ $item->barang->satuan->nama_satuan ?? '-' }}</td>
+            <td class="text-right">Rp {{ number_format($item->harga_satuan, 0, ',', '.') }}</td>
+            <td class="text-right">Rp {{ number_format($item->subtotal, 0, ',', '.') }}</td>
+        </tr>
+        @empty
+        <tr><td colspan="6" class="text-center">-</td></tr>
+        @endforelse
+    </tbody>
+    <tfoot>
+        <tr class="total-row">
+            <td colspan="5" class="text-right"><strong>Total</strong></td>
+            <td class="text-right"><strong>Rp {{ number_format($pesanan->total_keseluruhan ?? 0, 0, ',', '.') }}</strong></td>
+        </tr>
+    </tfoot>
+</table>
+
+{{-- Note --}}
+<div class="note-section">
+    <strong>Note:</strong>
+    <ul>
+        <li>{{ $catatan_ppn ?? 'Harga belum termasuk PPN' }}</li>
+        <li>Berlaku {{ $masa_berlaku ?? '14 hari' }}</li>
+    </ul>
+</div>
+
+{{-- Penutup --}}
+<div class="penutup">
+    <p>Demikian penawaran ini kami sampaikan, atas perhatiannya kami ucapkan terima kasih.</p>
+</div>
+
+{{-- Tanda Tangan --}}
+<div class="signature-wrapper">
     <div class="signature-box">
-        <table style="border: none; width: 100%;">
-            <tr>
-                <td style="border: none; width: 33%; text-align: center;">
-                    <p>Marketing</p>
-                    <div class="signature-line"></div>
-                    <p>{{ $pesanan->createdBy->nama ?? 'Marketing' }}</p>
-                </td>
-                <td style="border: none; width: 33%; text-align: center;">
-                    <p>Mengetahui</p>
-                    <div class="signature-line"></div>
-                    <p>Manager</p>
-                </td>
-                <td style="border: none; width: 33%; text-align: center;">
-                    <p>Menyetujui,</p>
-                    @if(isset($ttd))
-                        <img src="{{ $ttd }}" class="signature-img" alt="Tanda Tangan">
-                    @else
-                        <div class="signature-line"></div>
-                    @endif
-                    <p>{{ $approved_by }}</p>
-                    <p><small>Direktur</small></p>
-                </td>
-            </tr>
-        </table>
+        <p>Hormat kami,</p>
+        
+        @if($ttd_base64)
+            <img src="{{ $ttd_base64 }}" class="signature-img">
+        @else
+            <div style="height: 30px;"></div>
+        @endif
+        
+        <div class="signature-line"></div>
+        <p><strong>{{ $approved_by ?? $company->nama_direktur ?? 'Direktur' }}</strong></p>
+        <p>{{ $company->jabatan_direktur ?? 'Direktur Utama' }}</p>
+        
+        @if($approved_at)
+            <p style="font-size: 8pt; margin-top: 5px;">{{ \Carbon\Carbon::parse($approved_at)->format('d/m/Y') }}</p>
+        @endif
     </div>
+    <div class="clear"></div>
+</div>
+
 </body>
 </html>

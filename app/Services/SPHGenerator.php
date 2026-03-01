@@ -64,44 +64,49 @@ class SPHGenerator
         return $pdf;
     }
 
-    public function generateWithSignature(Pesanan $pesanan, $signaturePath = null){
-        $noSph = $this->formatNomorSph($pesanan);
-        
-        if (!$signaturePath && $this->company && $this->company->ttd_path) {
-            $signaturePath = storage_path('app/public/' . $this->company->ttd_path);
-        }
-        
-        $data = [
-            'company' => $this->company,
-            'pesanan' => $pesanan,
-            'client' => $pesanan->client,
-            'items' => $pesanan->details,
-            'tanggal' => now()->format('d F Y'),
-            'no_sph' => $noSph,
-            'perihal' => $pesanan->keterangan ?? $this->settings['perihal_default'] ?? 'Surat Penawaran Harga',
-            'catatan_ppn' => $this->settings['catatan_ppn'] ?? 'Harga belum termasuk PPN 11%',
-            'masa_berlaku' => $this->settings['masa_berlaku'] ?? '14 (empat belas) hari kalender',
-            'waktu_pengerjaan' => $this->settings['waktu_pengerjaan'] ?? '25 hari kalender',
-            'footer_text' => $this->settings['footer_text'] ?? 'Demikian Surat Penawaran Harga kami buat...',
-            'logo_path' => $this->getLogoPath(),
-            'ttd' => $signaturePath,
-            'approved_at' => now()->format('d F Y'),
-            'approved_by' => auth()->user()->nama ?? $this->company->nama_direktur ?? 'Direktur'
-        ];
-        
-        $pdf = Pdf::loadView('pdf.sph-approved', $data);
-        $pdf->setPaper('A4', 'portrait');
-        $pdf->setOptions([
-            'margin_left' => 20,
-            'margin_right' => 20,
-            'margin_top' => 25,
-            'margin_bottom' => 25,
-            'isRemoteEnabled' => true,
-            'isHtml5ParserEnabled' => true
-        ]);
-        
-        return $pdf;
+    public function generateWithSignature(Pesanan $pesanan, $ttdPath = null){
+    $noSph = $this->formatNomorSph($pesanan);
+    
+    $perihal = $pesanan->keterangan ?? $this->settings['perihal_default'] ?? 'Surat Penawaran Harga';
+    
+    // Konversi gambar TTD ke base64 untuk PDF
+    $ttdBase64 = null;
+    if ($ttdPath && file_exists($ttdPath)) {
+        $imageData = file_get_contents($ttdPath);
+        $ttdBase64 = 'data:image/png;base64,' . base64_encode($imageData);
     }
+    
+    $data = [
+        'company' => $this->company,
+        'pesanan' => $pesanan,
+        'client' => $pesanan->client,
+        'items' => $pesanan->details,
+        'tanggal' => now()->format('d F Y'),
+        'no_sph' => $noSph,
+        'perihal' => $perihal,
+        'catatan_ppn' => $this->settings['catatan_ppn'] ?? 'Harga belum termasuk PPN 11%',
+        'masa_berlaku' => $this->settings['masa_berlaku'] ?? '14 (empat belas) hari kalender',
+        'waktu_pengerjaan' => $this->settings['waktu_pengerjaan'] ?? '25 hari kalender',
+        'footer_text' => $this->settings['footer_text'] ?? 'Demikian Surat Penawaran Harga kami buat...',
+        'logo_base64' => $this->getLogoBase64(),
+        'ttd_base64' => $ttdBase64,
+        'approved_by' => auth()->user()->nama ?? $this->company->nama_direktur ?? 'Direktur',
+        'approved_at' => now(),
+    ];
+    
+    $pdf = Pdf::loadView('pdf.sph-approved', $data);
+    $pdf->setPaper('A4', 'portrait');
+    $pdf->setOptions([
+        'margin_left' => 20,
+        'margin_right' => 20,
+        'margin_top' => 25,
+        'margin_bottom' => 25,
+        'isRemoteEnabled' => true,
+        'isHtml5ParserEnabled' => true
+    ]);
+    
+    return $pdf;
+}
 
     private function formatNomorSph(Pesanan $pesanan)
     {
@@ -135,5 +140,19 @@ class SPHGenerator
         }
         
         return null;
+    }
+    private function getLogoBase64(){
+        if (!$this->company || !$this->company->logo) {
+            return null;
+        }
+        
+        $logoPath = $this->company->logo_path;
+        if (!$logoPath || !file_exists($logoPath)) {
+            return null;
+        }
+        
+        $imageData = file_get_contents($logoPath);
+        $type = pathinfo($logoPath, PATHINFO_EXTENSION);
+        return 'data:image/' . $type . ';base64,' . base64_encode($imageData);
     }
 }

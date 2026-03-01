@@ -12,8 +12,7 @@ class ProfileController extends Controller
         return view('direktur.profile');
     }
 
-        public function uploadTtd(Request $request)
-    {
+    public function uploadTtd(Request $request){
         $request->validate([
             'ttd' => 'required|image|mimes:png|max:1024'
         ]);

@@ -98,7 +98,9 @@
                         <span class="badge bg-warning">Menunggu Approval Direktur</span>
                         @break
                     @case('disetujui')
-                        <span class="badge bg-success">Disetujui {{ $pesanan->approved_at ? $pesanan->approved_at->format('d/m/Y') : '' }}</span>
+                        <span class="badge bg-success">
+                            Disetujui {{ $pesanan->approved_at?->format('d/m/Y') }}
+                        </span>
                         @break
                     @case('ditolak')
                         <span class="badge bg-danger">Ditolak</span>
