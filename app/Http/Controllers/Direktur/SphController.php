@@ -42,50 +42,53 @@ class SphController extends Controller
         ]);
     }
 
-    public function approve(Pesanan $pesanan){
-        if ($pesanan->sph_status !== 'menunggu') {
-            return back()->with('error', 'SPH tidak dalam status menunggu');
-        }
-
-        // Validasi TTD direktur
-        $direktur = auth()->user();
-        if (!$direktur->ttd_path) {
-            return redirect()->route('direktur.profile')
-                ->with('error', 'Anda harus upload tanda tangan terlebih dahulu');
-        }
-
-        try {
-            $generator = new SPHGenerator();
-            $ttdPath = storage_path('app/public/' . $direktur->ttd_path);
-            
-            $pdf = $generator->generateWithSignature($pesanan, $ttdPath);
-            
-            // Simpan file approved
-            $filename = 'SPH-APPROVED-' . $pesanan->no_pesanan . '-' . date('Ymd') . '.pdf';
-            $path = 'private/sph-approved/' . $filename;
-            
-            // Buat folder jika belum ada
-            if (!Storage::exists('private/sph-approved')) {
-                Storage::makeDirectory('private/sph-approved');
-            }
-            
-            Storage::put($path, $pdf->output());
-            
-            // Update pesanan
-            $pesanan->update([
-                'sph_status' => 'disetujui',
-                'sph_approved_file' => $path,
-                'approved_by' => auth()->id(),
-                'approved_at' => now()
-            ]);
-            
-            return redirect()->route('direktur.sph.index')
-                ->with('success', 'SPH berhasil disetujui');
-                
-        } catch (\Exception $e) {
-            return back()->with('error', 'Gagal approve SPH: ' . $e->getMessage());
-        }
+    public function approve(Pesanan $pesanan)
+{
+    // Validasi status
+    if ($pesanan->sph_status !== 'menunggu') {
+        return back()->with('error', 'SPH tidak dalam status menunggu');
     }
+
+    // Validasi TTD direktur
+    $direktur = auth()->user();
+    if (!$direktur->ttd_path) {
+        return redirect()->route('direktur.profile')
+            ->with('error', 'Anda harus upload tanda tangan terlebih dahulu');
+    }
+
+    try {
+        // Generate PDF final dengan TTD
+        $generator = new SPHGenerator();
+        $ttdPath = storage_path('app/public/' . $direktur->ttd_path);
+        
+        // Kirim data user yang approve
+        $pdf = $generator->generateWithSignature($pesanan, $ttdPath, $direktur);
+        
+        // Simpan file approved
+        $filename = 'SPH-APPROVED-' . $pesanan->no_pesanan . '-' . date('Ymd') . '.pdf';
+        $path = 'private/sph-approved/' . $filename;
+        
+        if (!Storage::exists('private/sph-approved')) {
+            Storage::makeDirectory('private/sph-approved');
+        }
+        
+        Storage::put($path, $pdf->output());
+        
+        // Update pesanan
+        $pesanan->update([
+            'sph_status' => 'disetujui',
+            'sph_approved_file' => $path,
+            'approved_by' => $direktur->id,
+            'approved_at' => now()
+        ]);
+        
+        return redirect()->route('direktur.sph.index')
+            ->with('success', 'SPH berhasil disetujui');
+            
+    } catch (\Exception $e) {
+        return back()->with('error', 'Gagal approve SPH: ' . $e->getMessage());
+    }
+}
 
     public function reject(Request $request, Pesanan $pesanan){
         // Validasi status
@@ -95,13 +98,13 @@ class SphController extends Controller
 
         // Validasi input
         $request->validate([
-            'alasan' => 'required|string|min:5'
+            'approval_notes' => 'required|string|min:5'
         ]);
 
         // Update pesanan
         $pesanan->update([
             'sph_status' => 'ditolak',
-            'approval_notes' => $request->alasan
+            'approval_notes' => $request->approval_notes
         ]);
 
         return redirect()->route('direktur.sph.index')

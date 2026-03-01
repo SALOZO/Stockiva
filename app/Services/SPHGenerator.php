@@ -41,6 +41,7 @@ class SPHGenerator
             'tanggal' => now()->format('d F Y'),
             'no_sph' => $noSph,
             'perihal' => $perihal,
+            'lampiran_text' => $this->settings['lampiran_text'] ?? '1 Lembar',
             'catatan_ppn' => $this->settings['catatan_ppn'] ?? 'Harga belum termasuk PPN 11%',
             'masa_berlaku' => $this->settings['masa_berlaku'] ?? '14 (empat belas) hari kalender',
             'waktu_pengerjaan' => $this->settings['waktu_pengerjaan'] ?? '25 hari kalender',
@@ -64,17 +65,22 @@ class SPHGenerator
         return $pdf;
     }
 
-    public function generateWithSignature(Pesanan $pesanan, $ttdPath = null){
+public function generateWithSignature(Pesanan $pesanan, $ttdPath = null, $user = null)
+{
     $noSph = $this->formatNomorSph($pesanan);
     
     $perihal = $pesanan->keterangan ?? $this->settings['perihal_default'] ?? 'Surat Penawaran Harga';
     
-    // Konversi gambar TTD ke base64 untuk PDF
+    // Konversi gambar TTD ke base64
     $ttdBase64 = null;
     if ($ttdPath && file_exists($ttdPath)) {
         $imageData = file_get_contents($ttdPath);
         $ttdBase64 = 'data:image/png;base64,' . base64_encode($imageData);
     }
+    
+    // Ambil data user yang approve (dikirim dari controller)
+    $approvedBy = $user ? $user->name : ($this->company->nama_direktur ?? 'Direktur');
+    $approvedAt = now();
     
     $data = [
         'company' => $this->company,
@@ -84,14 +90,17 @@ class SPHGenerator
         'tanggal' => now()->format('d F Y'),
         'no_sph' => $noSph,
         'perihal' => $perihal,
+        'lampiran_text' => $this->settings['lampiran_text'] ?? '1 Lembar',
         'catatan_ppn' => $this->settings['catatan_ppn'] ?? 'Harga belum termasuk PPN 11%',
         'masa_berlaku' => $this->settings['masa_berlaku'] ?? '14 (empat belas) hari kalender',
         'waktu_pengerjaan' => $this->settings['waktu_pengerjaan'] ?? '25 hari kalender',
         'footer_text' => $this->settings['footer_text'] ?? 'Demikian Surat Penawaran Harga kami buat...',
         'logo_base64' => $this->getLogoBase64(),
         'ttd_base64' => $ttdBase64,
-        'approved_by' => auth()->user()->nama ?? $this->company->nama_direktur ?? 'Direktur',
-        'approved_at' => now(),
+        'approved_by' => $approvedBy,
+        'approved_at' => $approvedAt,
+        'approved_by_name' => $user->name ?? $this->company->nama_direktur ?? 'Direktur',
+        'approved_by_jabatan' => $user->jabatan ?? $this->company->jabatan_direktur ?? 'Direktur Utama',
     ];
     
     $pdf = Pdf::loadView('pdf.sph-approved', $data);
@@ -107,7 +116,6 @@ class SPHGenerator
     
     return $pdf;
 }
-
     private function formatNomorSph(Pesanan $pesanan)
     {
         $format = $this->settings['nomor_format'] ?? 'SPH/{{no_pesanan}}';

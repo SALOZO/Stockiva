@@ -154,8 +154,8 @@
                 </div>
                 <div class="modal-body">
                     <div class="mb-3">
-                        <label for="notes" class="form-label">Alasan Penolakan</label>
-                        <textarea class="form-control" id="notes" name="notes" rows="3" required></textarea>
+                        <label for="approval_notes" class="form-label">Alasan Penolakan</label>
+                        <textarea class="form-control" id="approval_notes" name="approval_notes" rows="3" required></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">

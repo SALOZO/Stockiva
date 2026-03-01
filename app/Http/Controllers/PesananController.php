@@ -145,7 +145,7 @@ class PesananController extends Controller
         // Hapus pesanan (detail otomatis kehapus karena onDelete cascade)
         $pesanan->delete();
         
-        return redirect()->route('marketing.pesanan.by-client', $clientId)
+        return redirect()->route('marketing.semua-pesanan', $clientId)
             ->with('success', 'Pesanan "' . $noPesanan . '" berhasil dihapus.');
     }
 

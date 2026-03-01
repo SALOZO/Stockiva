@@ -217,7 +217,7 @@
         <td style="width: 60%;">
             <strong>Nomor :</strong> {{ $no_sph }}<br>
             <strong>Perihal :</strong> {{ $perihal }}<br>
-            <strong>Lampiran :</strong> 1 Lembar
+            <strong>Lampiran :</strong> {{ $lampiran_text }}
         </td>
         <td style="width: 40%; text-align: right;">
             <strong>{{ $company->kota ?? 'Jakarta' }},</strong> {{ $tanggal }}
@@ -289,18 +289,6 @@
 {{-- Penutup --}}
 <div class="penutup">
     <p>Demikian Surat Penawaran Harga ini kami buat beserta lampirannya, agar dapat membantu Bapak/Ibu untuk membuat keputusan yang tepat. Jika Bapak/Ibu membutuhkan informasi lanjutan, dapat menghubungi kami langsung pada kontak yang tertera di atas. Atas perhatian dan kerjasamanya, kami ucapkan terima kasih.</p>
-</div>
-
-{{-- Tanda Tangan Kanan --}}
-<div class="signature-wrapper">
-    <div class="signature-box">
-        <p>Hormat kami,</p>
-        <p style="margin-top: 20px;">&nbsp;</p>
-        <div class="signature-line"></div>
-        <p><strong>{{ $company->nama_direktur ?? 'Nama Direktur' }}</strong></p>
-        <p>{{ $company->jabatan_direktur ?? 'Direktur Utama' }}</p>
-    </div>
-    <div class="clear"></div>
 </div>
 
 </body>
