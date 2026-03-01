@@ -72,7 +72,7 @@
                                 <td>: {!! $pesanan->status_badge !!}</td>
                             </tr>
                             <tr>
-                                <td>Keterangan</td>
+                                <td>Perihal</td>
                                 <td>: {{ $pesanan->keterangan ?? '-' }}</td>
                             </tr>
                             <tr>
@@ -161,7 +161,7 @@
 
         {{-- TOMBOL AKSI --}}
         <div class="d-flex justify-content-between mt-4">
-            <a href="{{ route('marketing.pesanan.index') }}" class="btn btn-secondary">
+            <a href="{{ route('marketing.semua-pesanan') }}" class="btn btn-secondary">
                 <i class="bi bi-arrow-left me-1"></i>
                 Kembali
             </a>

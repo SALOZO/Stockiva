@@ -34,7 +34,11 @@ class Authcontroller extends Controller
             // Redirect berdasarkan jabatan
             if ($user->jabatan === 'Marketing') {
                 return redirect()->intended('/marketing/dashboard');
-            } else {
+            }
+            elseif ($user->jabatan === 'Direktur') {
+                return redirect()->intended('/direktur/sph');
+            }
+            else {
                 // Admin
                 return redirect()->intended('/admin/user');
             }

@@ -104,13 +104,41 @@
                                            title="Lihat Detail">
                                             <i class="bi bi-eye"></i>
                                         </a>
-                                        {{-- <a href="{{ route('marketing.pesanan.edit', $pesanan->id) }}" 
-                                           class="btn btn-sm btn-outline-warning"
-                                           data-bs-toggle="tooltip"
-                                           title="Edit Pesanan">
-                                            <i class="bi bi-pencil"></i>
-                                        </a> --}}
+                                    <button type="button" 
+                                            class="btn btn-sm btn-outline-danger"
+                                            data-bs-toggle="modal" 
+                                            data-bs-target="#hapusPesananModal{{ $pesanan->id }}"
+                                            title="Hapus Pesanan">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
                                     </div>
+                            <div class="modal fade" id="hapusPesananModal{{ $pesanan->id }}" tabindex="-1" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">
+                                                <i class="bi bi-exclamation-triangle-fill text-warning me-2"></i>
+                                                Konfirmasi Hapus Pesanan
+                                            </h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p>Apakah Anda yakin ingin menghapus pesanan berikut?</p>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Batal</button>
+                                            <form action="{{ route('marketing.pesanan.destroy', $pesanan->id) }}" method="POST">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-danger px-4">
+                                                    <i class="bi bi-trash me-1"></i>
+                                                    Ya, Hapus Pesanan
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                                 </td>
                             </tr>
                             @empty

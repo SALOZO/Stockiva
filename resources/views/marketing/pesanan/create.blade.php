@@ -47,7 +47,7 @@
                                    required>
                         </div>
                         <div class="col-md-8">
-                            <label for="keterangan" class="form-label">Keterangan</label>
+                            <label for="keterangan" class="form-label">Perihal</label>
                             <input type="text" 
                                    class="form-control @error('keterangan') is-invalid @enderror" 
                                    id="keterangan" 

@@ -3,6 +3,8 @@
 use App\Http\Controllers\Authcontroller;
 use App\Http\Controllers\BarangController;
 use App\Http\Controllers\ClientsController;
+use App\Http\Controllers\Direktur\ProfileController;
+use App\Http\Controllers\Direktur\SphController;
 use App\Http\Controllers\EkspedisiController;
 use App\Http\Controllers\JenisController;
 use App\Http\Controllers\KategoryController;
@@ -135,7 +137,20 @@ Route::prefix('admin')->middleware(['auth', 'role:Admin'])->group(function () {
         // untuk route SPH
         Route::post('/pesanan/{pesanan}/generate-sph', [PesananController::class, 'generateSPH'])->name('pesanan.generate-sph');
         Route::get('/pesanan/{pesanan}/download-sph', [PesananController::class, 'downloadSPH'])->name('pesanan.download-sph');
+    });
 
+    Route::middleware(['auth', 'direktur'])->prefix('direktur')->name('direktur.')->group(function () {
+    
+        Route::get('/sph', [SphController::class, 'index'])->name('sph.index');
+        Route::get('/sph/{pesanan}', [SphController::class, 'show'])->name('sph.show');
+        Route::get('/sph/{pesanan}/preview', [SphController::class, 'previewPdf'])->name('sph.preview');
         
+        // Approve & Reject
+        Route::post('/sph/{pesanan}/approve', [SphController::class, 'approve'])->name('sph.approve');
+        Route::post('/sph/{pesanan}/reject', [SphController::class, 'reject'])->name('sph.reject');
+        
+        // Profile & Upload TTD
+        Route::get('/profile', [ProfileController::class, 'edit'])->name('profile');
+        Route::post('/profile/ttd', [ProfileController::class, 'uploadTtd'])->name('profile.upload-ttd');
     });
     

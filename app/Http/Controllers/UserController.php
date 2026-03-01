@@ -23,7 +23,7 @@ class UserController extends Controller
             'username' => 'required|string|max:255|unique:users',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
-            'jabatan' => 'required|in:Admin,Marketing,Gudang,Keuangan',
+            'jabatan' => 'required|in:Admin,Direktur,Marketing,Gudang,Keuangan',
             'no_telp' => 'required|string|max:20',
         ]);
 

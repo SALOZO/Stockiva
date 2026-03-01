@@ -119,6 +119,7 @@
                                 
                                 <option value="">Pilih Jabatan</option>
                                 <option value="Admin" {{ old('jabatan') == 'Admin' ? 'selected' : '' }}>Admin</option>
+                                <option value="Direktur" {{ old('jabatan') == 'Direktur' ? 'selected' : '' }}>Direktur</option>
                                 <option value="Marketing" {{ old('jabatan') == 'Marketing' ? 'selected' : '' }}>Marketing</option>
                                 <option value="Gudang" {{ old('jabatan') == 'Gudang' ? 'selected' : '' }}>Gudang</option>
                                 <option value="Keuangan" {{ old('jabatan') == 'Keuangan' ? 'selected' : '' }}>Keuangan</option>
