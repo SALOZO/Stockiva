@@ -7,6 +7,8 @@ use App\Models\Client;
 use App\Models\Kategori;
 use App\Models\Pesanan;
 use Illuminate\Http\Request;
+use App\Services\SPHGenerator;
+use Illuminate\Support\Facades\Storage;
 
 class PesananController extends Controller
 {
@@ -180,5 +182,41 @@ class PesananController extends Controller
     public function getBarangByJenis($jenisId){
         $barangs = Barang::where('jenis_id', $jenisId)->with('satuan','jenis')->orderBy('nama_barang')->get();
         return response()->json($barangs);
+    }
+
+    public function generateSPH(Pesanan $pesanan){
+    // Validasi: hanya bisa generate jika status draft
+    if ($pesanan->sph_status !== 'draft') {
+        return back()->with('error', 'SPH sudah pernah dibuat atau sedang dalam proses approval.');
+    }
+
+    // Generate PDF
+    $generator = new SPHGenerator();
+    $pdf = $generator->generate($pesanan);
+    
+    // Simpan file
+    $filename = 'SPH-' . $pesanan->no_pesanan . '-' . date('Ymd') . '.pdf';
+    $path = 'sph/' . $filename;
+    Storage::put($path, $pdf->output());
+    
+    // Update status pesanan
+    $pesanan->update([
+        'sph_status' => 'menunggu',
+        'sph_file' => $path
+    ]);
+    
+    return redirect()->route('marketing.pesanan.show', $pesanan->id)
+        ->with('success', 'SPH berhasil dibuat dan menunggu approval direktur.');
+}
+
+    public function downloadSPH(Pesanan $pesanan){
+        // Tentukan file mana yang akan didownload
+        $file = $pesanan->sph_approved_file ?? $pesanan->sph_file;
+        
+        if (!$file || !Storage::exists($file)) {
+            return back()->with('error', 'File SPH tidak ditemukan.');
+        }
+        
+        return Storage::download($file);
     }
 }

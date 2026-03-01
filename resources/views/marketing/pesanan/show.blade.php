@@ -89,6 +89,29 @@
             </div>
         </div>
 
+                    {{-- Info Status SPH --}}
+            @if($pesanan->sph_status != 'draft')
+            <div class="mt-3">
+                <strong>Status SPH:</strong> 
+                @switch($pesanan->sph_status)
+                    @case('menunggu')
+                        <span class="badge bg-warning">Menunggu Approval Direktur</span>
+                        @break
+                    @case('disetujui')
+                        <span class="badge bg-success">Disetujui {{ $pesanan->approved_at ? $pesanan->approved_at->format('d/m/Y') : '' }}</span>
+                        @break
+                    @case('ditolak')
+                        <span class="badge bg-danger">Ditolak</span>
+                        @if($pesanan->approval_notes)
+                            <p class="mt-2 mb-0"><strong>Catatan:</strong> {{ $pesanan->approval_notes }}</p>
+                        @endif
+                        @break
+                @endswitch
+            </div>
+            @endif
+
+        <br>
+
         {{-- DAFTAR ITEM PESANAN --}}
         <div class="card">
             <div class="card-header">
@@ -142,13 +165,42 @@
                 <i class="bi bi-arrow-left me-1"></i>
                 Kembali
             </a>
+
+            <div class="d-flex gap-2">
+                    {{-- Tombol Generate SPH (hanya muncul jika status draft) --}}
+                    @if($pesanan->sph_status == 'draft')
+                    <form action="{{ route('marketing.pesanan.generate-sph', $pesanan->id) }}" method="POST">
+                        @csrf
+                        <button type="submit" class="btn btn-success" onclick="return confirm('Buat SPH?')">
+                            <i class="bi bi-file-pdf me-1"></i>Cetak SPH
+                        </button>
+                    </form>
+                    @endif
+                    
+                    {{-- Tombol Download SPH (jika sudah ada file) --}}
+                    @if($pesanan->sph_file || $pesanan->sph_approved_file)
+                    <a href="{{ route('marketing.pesanan.download-sph', $pesanan->id) }}" 
+                    class="btn btn-info" target="_blank">
+                        <i class="bi bi-download me-1"></i>Download SPH
+                    </a>
+                    @endif
+                    
+                    {{-- Tombol Edit (hanya jika status draft/menunggu) --}}
+                    @if(in_array($pesanan->sph_status, ['draft', 'menunggu']))
+                    <a href="{{ route('marketing.pesanan.edit', $pesanan->id) }}" class="btn btn-warning">
+                        <i class="bi bi-pencil me-1"></i>Edit
+                    </a>
+                    @endif
+                </div>
+            </div>
+
             <div>
-                @if($pesanan->status == 'baru')
+                {{-- @if($pesanan->status == 'baru')
                 <a href="{{ route('marketing.pesanan.edit', $pesanan->id) }}" class="btn btn-warning">
                     <i class="bi bi-pencil me-1"></i>
                     Edit Pesanan
                 </a>
-                @endif
+                @endif --}}
                 {{-- <button type="button" class="btn btn-primary" onclick="window.print()">
                     <i class="bi bi-printer me-1"></i>
                     Cetak

@@ -132,6 +132,10 @@ Route::prefix('admin')->middleware(['auth', 'role:Admin'])->group(function () {
         Route::delete('/barang/{barang}', [\App\Http\Controllers\Marketing\BarangController::class, 'destroy'])->name('barang.destroy');
         Route::get('/get-jenis-by-kategori/{kategoriId}', [\App\Http\Controllers\Marketing\BarangController::class, 'getJenisByKategori'])->name('get.jenis.kategori');
 
+        // untuk route SPH
+        Route::post('/pesanan/{pesanan}/generate-sph', [PesananController::class, 'generateSPH'])->name('pesanan.generate-sph');
+        Route::get('/pesanan/{pesanan}/download-sph', [PesananController::class, 'downloadSPH'])->name('pesanan.download-sph');
+
         
     });
     

@@ -19,6 +19,12 @@ class Pesanan extends Model
         'status',
         'total_keseluruhan',
         'keterangan',
+        'sph_status',
+        'sph_file',
+        'sph_approved_file',
+        'approved_at',
+        'approved_by',
+        'approval_notes',
         'created_by'
     ];
 
