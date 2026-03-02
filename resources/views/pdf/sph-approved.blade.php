@@ -9,11 +9,11 @@
             font-family: 'Helvetica', 'Arial', sans-serif;
             font-size: 11pt;
             line-height: 1.4;
-            margin: 1.5cm;
+            margin: 0.1cm;
         }
         
         .header {
-            margin-bottom: 15px;
+            margin-bottom: 8px;
             border-bottom: 2px solid #333;
             padding-bottom: 10px;
         }
@@ -98,7 +98,7 @@
         
         .signature-wrapper {
             width: 100%;
-            margin-top: 30px;
+            margin-top: 15px;
             overflow: hidden;
         }
         .signature-box {

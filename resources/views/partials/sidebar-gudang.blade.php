@@ -7,7 +7,7 @@
     
     <div class="sidebar-user">
         <div class="user-info">
-            <div class="fw-bold">{{ Auth::user()->nama }}</div>
+            <div class="fw-bold">{{ Auth::user()->name }}</div>
             <small><i class="bi bi-briefcase me-1"></i>{{ Auth::user()->jabatan }}</small>
         </div>
     </div>
