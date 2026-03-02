@@ -20,6 +20,7 @@ class Pesanan extends Model
         'total_keseluruhan',
         'keterangan',
         'sph_status',
+        'gudang_status',
         'sph_file',
         'sph_approved_file',
         'approved_at',
@@ -32,6 +33,7 @@ class Pesanan extends Model
         'tanggal_pesanan' => 'date',
         'total_keseluruhan' => 'decimal:2',
         'approved_at' => 'datetime',
+        'gudang_status' => 'string',
     ];
 
     // Relasi ke Client
@@ -80,4 +82,14 @@ class Pesanan extends Model
             default => '<span class="badge bg-secondary">Unknown</span>',
         };
     }
+    public function getGudangStatusBadgeAttribute(){
+    return match($this->gudang_status) {
+        'Menunggu' => '<span class="badge bg-secondary">Menunggu</span>',
+        'Sedang diproses' => '<span class="badge bg-primary">Diproses</span>',
+        'Siap_dikirim' => '<span class="badge bg-info">Siap Dikirim</span>',
+        'Dikirim' => '<span class="badge bg-warning">Dikirim</span>',
+        'Diterima' => '<span class="badge bg-success">Diterima</span>',
+        default => '<span class="badge bg-dark">Unknown</span>',
+    };
+}
 }

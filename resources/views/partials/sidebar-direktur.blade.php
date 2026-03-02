@@ -10,30 +10,42 @@
             <small><i class="bi bi-briefcase me-1"></i>{{ Auth::user()->jabatan }}</small>
         </div>
     </div>
+
     
     <ul class="sidebar-menu">
         <li class="nav-item">
             <a class="nav-link {{ request()->routeIs('direktur.sph.index') ? 'active' : '' }}" 
-               href="{{ route('direktur.sph.index') }}">
+                href="{{ route('direktur.sph.index') }}">
                 <i class="bi bi-file-text"></i>
                 <span>Daftar SPH</span>
                 @if(request()->routeIs('direktur.sph.index'))
-                    <span class="active-indicator"></span>
+                <span class="active-indicator"></span>
                 @endif
             </a>
         </li>
 
         <li class="nav-item">
             <a class="nav-link {{ request()->routeIs('direktur.profile') ? 'active' : '' }}" 
-               href="{{ route('direktur.profile') }}">
+                href="{{ route('direktur.profile') }}">
                 <i class="bi bi-person-circle"></i>
                 <span>Profile & TTD</span>
                 @if(request()->routeIs('direktur.profile'))
+                <span class="active-indicator"></span>
+                @endif
+            </a>
+        </li>
+        
+        <li class="nav-item">
+            <a class="nav-link {{ request()->routeIs('direktur.sph-settings*') ? 'active' : '' }}" 
+            href="{{ route('direktur.sph-settings.index') }}">
+                <i class="bi bi-gear"></i>
+                <span>Pengaturan SPH</span>
+                @if(request()->routeIs('direktur.sph-settings*'))
                     <span class="active-indicator"></span>
                 @endif
             </a>
         </li>
-
+        
         {{-- DIVIDER --}}
         <li class="nav-divider"></li>
 

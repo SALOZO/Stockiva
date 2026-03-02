@@ -37,4 +37,17 @@ class SphControll extends Controller
 
         return Storage::download($pesanan->sph_approved_file);
     }
+
+    public function updateStatus(Request $request, Pesanan $pesanan){
+        $request->validate([
+            'gudang_status' => 'required|in:Menunggu,Sedang diproses,Siap_dikirim,Dikirim,Diterima'
+        ]);
+
+        $pesanan->update([
+            'gudang_status' => $request->gudang_status
+        ]);
+
+        return redirect()->route('gudang.sph.index')
+            ->with('success', 'Status berhasil diperbarui.');
+    }
 }

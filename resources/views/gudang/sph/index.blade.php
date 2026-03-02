@@ -8,6 +8,18 @@
     <li class="breadcrumb-item active">Disetujui</li>
 @endsection
 
+@push('styles')
+<style>
+    .btn-group .btn {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.75rem;
+    }
+    .btn-group .btn i {
+        font-size: 0.9rem;
+    }
+</style>
+@endpush
+
 @section('content')
 <div class="row">
     <div class="col-12">
@@ -44,6 +56,7 @@
                                 <th>Total Item</th>
                                 <th>Total Nilai</th>
                                 <th>Disetujui Oleh</th>
+                                <th>Status</th>
                                 <th>Aksi</th>
                             </tr>
                         </thead>
@@ -66,11 +79,77 @@
                                     Rp {{ number_format($sph->total_keseluruhan, 0, ',', '.') }}
                                 </td>
                                 <td>{{ $sph->approvedBy->name ?? '-' }}</td>
+                                 <td>{!! $sph->gudang_status_badge !!}</td>
                                 <td>
                                     <a href="{{ route('gudang.sph.show', $sph->id) }}" 
                                        class="btn btn-sm btn-info text-white">
                                         <i class="bi bi-eye"></i> Detail
                                     </a>
+                                    {{-- SURAT JALAN --}}
+                                    <a href="#" 
+                                        class="btn btn-sm btn-primary"
+                                        data-bs-toggle="tooltip" 
+                                        title="Buat Surat Jalan">
+                                        <i class="bi bi-truck"></i>
+                                    </a>
+                                    {{-- BAST PENGIRIMAN --}}
+                                    <a href="#" 
+                                        class="btn btn-sm btn-warning text-white"
+                                        data-bs-toggle="tooltip" 
+                                        title="Buat BAST Pengiriman">
+                                        <i class="bi bi-box-seam"></i>
+                                    </a>
+                                    {{-- TOMBOL BAST CLIENT --}}
+                                    <a href="#" 
+                                        class="btn btn-sm btn-success"
+                                        data-bs-toggle="tooltip" 
+                                        title="Buat BAST Client">
+                                        <i class="bi bi-file-text"></i>
+                                    </a>
+                                            {{-- TOMBOL UBAH STATUS --}}
+                                    <button type="button" 
+                                            class="btn btn-sm btn-secondary"
+                                            data-bs-toggle="modal" 
+                                            data-bs-target="#ubahStatusModal{{ $sph->id }}"
+                                            data-bs-toggle="tooltip" 
+                                            title="Ubah Status">
+                                        <i class="bi bi-arrow-repeat"></i>
+                                    </button>
+                                      {{-- Modal Ubah Status --}}
+                                        <div class="modal fade" id="ubahStatusModal{{ $sph->id }}" tabindex="-1">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title">Ubah Status</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                    </div>
+                                                     <form action="{{ route('gudang.sph.update-status', $sph->id) }}" method="POST">
+                                                        @csrf
+                                                        @method('PUT')
+                                                        <div class="modal-body">
+                                                            <div class="mb-3">
+                                                                <label class="form-label">SPH: <strong>SPH/{{ $sph->no_pesanan }}</strong></label>
+                                                            </div>
+                                                            <div class="mb-3">
+                                                                <label class="form-label">Status</label>
+                                                                    <select class="form-select" name="gudang_status" required>
+                                                                            <option value="Menunggu" {{ $sph->gudang_status == 'Menunggu' ? 'selected' : '' }}>Menunggu</option>
+                                                                            <option value="Sedang diproses" {{ $sph->gudang_status == 'Sedang diproses' ? 'selected' : '' }}>Sedang Diproses</option>
+                                                                            <option value="Siap_dikirim" {{ $sph->gudang_status == 'Siap_dikirim' ? 'selected' : '' }}>Siap Dikirim</option>
+                                                                            <option value="Dikirim" {{ $sph->gudang_status == 'Dikirim' ? 'selected' : '' }}>Dikirim</option>
+                                                                            <option value="Diterima" {{ $sph->gudang_status == 'Diterima' ? 'selected' : '' }}>Diterima</option>
+                                                                    </select>
+                                                                </div>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Batal</button>
+                                                            <button type="submit" class="btn btn-primary">Simpan</button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
                                 </td>
                             </tr>
                             @empty
@@ -106,6 +185,22 @@
         rows.forEach(row => {
             let text = row.textContent.toLowerCase();
             row.style.display = text.includes(searchText) ? '' : 'none';
+        });
+    });
+    document.getElementById('search')?.addEventListener('keyup', function() {
+        let searchText = this.value.toLowerCase();
+        let rows = document.querySelectorAll('tbody tr');
+        
+        rows.forEach(row => {
+            let text = row.textContent.toLowerCase();
+            row.style.display = text.includes(searchText) ? '' : 'none';
+        });
+    });
+
+    document.addEventListener('DOMContentLoaded', function() {
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
         });
     });
 </script>

@@ -5,6 +5,7 @@ use App\Http\Controllers\BarangController;
 use App\Http\Controllers\ClientsController;
 use App\Http\Controllers\Direktur\ProfileController;
 use App\Http\Controllers\Direktur\SphController;
+use App\Http\Controllers\Direktur\SphSettingController;
 use App\Http\Controllers\EkspedisiController;
 use App\Http\Controllers\Gudang\SphControll;
 use App\Http\Controllers\JenisController;
@@ -155,6 +156,9 @@ Route::prefix('admin')->middleware(['auth', 'role:Admin'])->group(function () {
         // Profile & Upload TTD
         Route::get('/profile', [ProfileController::class, 'edit'])->name('profile');
         Route::post('/profile/ttd', [ProfileController::class, 'uploadTtd'])->name('profile.upload-ttd');
+
+        Route::get('/sph-settings', [SphSettingController::class, 'index'])->name('sph-settings.index');
+        Route::put('/sph-settings/{setting}', [SphSettingController::class, 'update'])->name('sph-settings.update');
     });
 
     Route::middleware(['auth', 'gudang'])->prefix('gudang')->name('gudang.')->group(function () {    
@@ -163,5 +167,6 @@ Route::prefix('admin')->middleware(['auth', 'role:Admin'])->group(function () {
         Route::get('/sph', [SphControll::class, 'index'])->name('sph.index');
         Route::get('/sph/{pesanan}', [SphControll::class, 'show'])->name('sph.show');
         Route::get('/sph/{pesanan}/download', [SphControll::class, 'download'])->name('sph.download');
+        Route::put('/sph/{pesanan}/update-status', [SphControll::class, 'updateStatus'])->name('sph.update-status');
     });
     
