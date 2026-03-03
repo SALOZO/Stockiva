@@ -396,7 +396,6 @@
                                                                     value="{{ $item->harga_satuan }}"
                                                                     placeholder="0"
                                                                     min="0"
-                                                                    step="1000"
                                                                     required>
                                                             </div>
                                                             <small class="text-muted">Masukkan dalam angka (contoh: 50000)</small>
@@ -625,7 +624,6 @@
                                    value="{{ old('harga_satuan') }}"
                                    placeholder="0"
                                    min="0"
-                                   step="1000"
                                    required>
                         </div>
                         @error('harga_satuan')
