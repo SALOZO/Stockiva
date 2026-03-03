@@ -50,11 +50,12 @@
                         <thead class="text-center">
                             <tr>
                                 <th width="5%">NO</th>
+                                <th>FOTO</th>
                                 <th width="15%">NAMA BARANG</th>
-                                <th width="12%">KATEGORI</th>
-                                <th width="12%">JENIS</th>
+                                <th width="10%">KATEGORI</th>
+                                <th width="10%">JENIS</th>
                                 <th width="10%">SATUAN</th>
-                                <th width="15%">HARGA SATUAN</th>
+                                <th width="10%">HARGA SATUAN</th>
                                 <th width="15%">DIBUAT OLEH</th>
                                 <th width="10%">TANGGAL</th>
                                 <th width="8%">AKSI</th>
@@ -64,6 +65,13 @@
                             @forelse($barang as $index => $item)
                             <tr>
                                 <td class="align-middle">{{ $barang->firstItem() + $index }}</td>
+                                <td class="align-middle">
+                                    @if($item->foto)
+                                        <img src="{{ $item->foto_url }}" alt="foto" style="max-width: 90px; max-height: 90px; border-radius: 4px;">
+                                    @else
+                                        <span class="text-muted">-</span>
+                                    @endif
+                                </td>
                                 <td class="align-middle">
                                     <span class="fw-medium">{{ $item->nama_barang }}</span>
                                 </td>
@@ -131,11 +139,119 @@
                                                 title="Hapus Barang">
                                             <i class="bi bi-trash"></i>
                                         </button>
+                                        <button type="button" 
+                                                class="btn btn-sm btn-outline-info"
+                                                data-bs-toggle="modal" 
+                                                data-bs-target="#modalDetail{{ $item->id }}"
+                                                title="Detail Barang">
+                                            <i class="bi bi-eye"></i>
+                                        </button>
                                     </div>
 
-                                    {{-- Modal Edit --}}
+                                    <div class="modal fade" id="modalDetail{{ $item->id }}" tabindex="-1" aria-hidden="true">
+                                        <div class="modal-dialog modal-lg modal-dialog-centered">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title">
+                                                        <i class="bi bi-info-circle me-2 text-info"></i>
+                                                        Detail Barang
+                                                    </h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                </div>
+                                                
+                                                <div class="modal-body">
+                                                    <div class="row">
+                                                        {{-- Kolom Foto --}}
+                                                        <div class="col-md-5 text-center mb-3">
+                                                            @if($item->foto)
+                                                                <img src="{{ $item->foto_url }}" 
+                                                                    alt="{{ $item->nama_barang }}" 
+                                                                    class="img-fluid rounded border"
+                                                                    style="max-height: 250px; object-fit: contain;">
+                                                            @else
+                                                                <div class="bg-light d-flex align-items-center justify-content-center rounded" 
+                                                                    style="height: 200px; width: 100%;">
+                                                                    <i class="bi bi-image text-secondary" style="font-size: 3rem;"></i>
+                                                                    <p class="text-muted mt-2">Tidak ada foto</p>
+                                                                </div>
+                                                            @endif
+                                                        </div>
+
+                                                        {{-- Kolom Informasi --}}
+                                                        <div class="col-md-7">
+                                                            <table class="table table-sm table-borderless">
+                                                                <tr>
+                                                                    <td width="35%"><strong>Nama Barang</strong></td>
+                                                                    <td width="65%">: {{ $item->nama_barang }}</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td><strong>Kategori</strong></td>
+                                                                    <td>: {{ $item->kategori->name_kategori ?? '-' }}</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td><strong>Jenis</strong></td>
+                                                                    <td>: {{ $item->jenis->name_jenis ?? '-' }}</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td><strong>Satuan</strong></td>
+                                                                    <td>: {{ $item->satuan->nama_satuan ?? '-' }}</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td><strong>Harga Satuan</strong></td>
+                                                                    <td>: <strong class="text-primary">Rp {{ number_format($item->harga_satuan, 0, ',', '.') }}</strong></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td><strong>Dibuat Oleh</strong></td>
+                                                                    <td>: {{ $item->createdBy->name ?? '-' }}</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td><strong>Tanggal Dibuat</strong></td>
+                                                                    <td>: {{ $item->created_at->format('d/m/Y H:i') }}</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td><strong>Terakhir Update</strong></td>
+                                                                    <td>: {{ $item->updated_at->format('d/m/Y H:i') }}</td>
+                                                                </tr>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+
+                                                    {{-- Spesifikasi --}}
+                                                    @if($item->spesifikasi)
+                                                    <div class="row mt-3">
+                                                        <div class="col-12">
+                                                            <div class="card bg-light">
+                                                                <div class="card-body">
+                                                                    <h6 class="fw-bold mb-2">
+                                                                        <i class="bi bi-file-text me-2"></i>Spesifikasi Barang
+                                                                    </h6>
+                                                                    <p class="mb-0" style="white-space: pre-line;">{{ $item->spesifikasi }}</p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    @endif
+                                                </div>
+
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">
+                                                        <i class="bi bi-x-circle me-1"></i> Tutup
+                                                    </button>
+                                                    <button type="button" 
+                                                            class="btn btn-primary"
+                                                            data-bs-toggle="modal" 
+                                                            data-bs-target="#modalEdit{{ $item->id }}"
+                                                            data-bs-dismiss="modal">
+                                                        <i class="bi bi-pencil me-1"></i> Edit Barang
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                 {{-- Modal Edit --}}
                                     <div class="modal fade" id="modalEdit{{ $item->id }}" tabindex="-1" aria-hidden="true">
-                                        <div class="modal-dialog modal-dialog-centered">
+                                        <div class="modal-dialog modal-dialog-centered modal-lg">
                                             <div class="modal-content">
                                                 <div class="modal-header">
                                                     <h5 class="modal-title">
@@ -144,82 +260,129 @@
                                                     </h5>
                                                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                                 </div>
-                                                <form action="{{ route('admin.barang.update', $item->id) }}" method="POST">
+                                                
+                                                <form action="{{ route('admin.barang.update', $item->id) }}" 
+                                                    method="POST" 
+                                                    enctype="multipart/form-data">
                                                     @csrf
                                                     @method('PUT')
+                                                    
                                                     <div class="modal-body">
+                                                        {{-- Nama Barang --}}
                                                         <div class="mb-3">
                                                             <label for="edit_nama_barang_{{ $item->id }}" class="form-label">
                                                                 Nama Barang <span class="text-danger">*</span>
                                                             </label>
                                                             <input type="text" 
-                                                                   class="form-control" 
-                                                                   id="edit_nama_barang_{{ $item->id }}" 
-                                                                   name="nama_barang" 
-                                                                   value="{{ $item->nama_barang }}"
-                                                                   placeholder="Masukkan nama barang"
-                                                                   required>
-                                                        </div>
-                                                        
-                                                        <div class="mb-3">
-                                                            <label for="edit_kategori_id_{{ $item->id }}" class="form-label">
-                                                                Kategori <span class="text-danger">*</span>
-                                                            </label>
-                                                            <select class="form-select edit-kategori" 
-                                                                    name="kategori_id"
-                                                                    id="edit_kategori_id_{{ $item->id }}" 
-                                                                    data-target="edit_jenis_id_{{ $item->id }}"
-                                                                    required>
-                                                                <option value="">-- Pilih Kategori --</option>
-                                                                @foreach($kategoris as $kategori)
-                                                                    <option value="{{ $kategori->id }}" 
-                                                                        {{ $item->kategori_id == $kategori->id ? 'selected' : '' }}>
-                                                                        {{ $kategori->name_kategori }}
-                                                                    </option>
-                                                                @endforeach
-                                                            </select>
+                                                                class="form-control" 
+                                                                id="edit_nama_barang_{{ $item->id }}" 
+                                                                name="nama_barang" 
+                                                                value="{{ $item->nama_barang }}"
+                                                                placeholder="Masukkan nama barang"
+                                                                required>
                                                         </div>
 
+                                                        {{-- Spesifikasi --}}
                                                         <div class="mb-3">
-                                                            <label for="edit_jenis_id_{{ $item->id }}" class="form-label">
-                                                                Jenis <span class="text-danger">*</span>
-                                                            </label>
-                                                            <select class="form-select" 
-                                                                    id="edit_jenis_id_{{ $item->id }}" 
-                                                                    name="jenis_id" 
-                                                                    required>
-                                                                <option value="">-- Pilih Jenis --</option>
-                                                                @foreach($jenis as $j)
-                                                                    @if($j->kategori_id == $item->kategori_id)
-                                                                        <option value="{{ $j->id }}" 
-                                                                            {{ $item->jenis_id == $j->id ? 'selected' : '' }}>
-                                                                            {{ $j->name_jenis }}
+                                                            <label for="edit_spesifikasi_{{ $item->id }}" class="form-label">Spesifikasi Barang</label>
+                                                            <textarea class="form-control" 
+                                                                    id="edit_spesifikasi_{{ $item->id }}" 
+                                                                    name="spesifikasi" 
+                                                                    rows="3" 
+                                                                    placeholder="Masukkan spesifikasi lengkap barang">{{ $item->spesifikasi }}</textarea>
+                                                        </div>
+
+                                                        {{-- Foto Barang --}}
+                                                        <div class="mb-3">
+                                                            <label for="edit_foto_{{ $item->id }}" class="form-label">Foto Barang</label>
+                                                            
+                                                            {{-- Preview foto lama --}}
+                                                            @if($item->foto)
+                                                            <div class="mb-2 p-2 border rounded bg-light">
+                                                                <div class="align-items-center">
+                                                                    <img src="{{ $item->foto_url }}" 
+                                                                        style="max-height: 80px; max-width: 80px; object-fit: cover; border-radius: 4px;" 
+                                                                        class="me-3">
+                                                                </div>
+                                                            </div>
+                                                            @endif
+                                                            
+                                                            <input type="file" 
+                                                                class="form-control" 
+                                                                id="edit_foto_{{ $item->id }}" 
+                                                                name="foto" 
+                                                                accept="image/jpeg,image/png,image/jpg">
+                                                            <small class="text-muted">Format: JPG, PNG. Maks: 2MB. Kosongkan jika tidak ingin mengubah foto.</small>
+                                                            
+                                                            {{-- Preview foto baru --}}
+                                                            <div id="previewEditFoto{{ $item->id }}" class="mt-2" style="display: none;">
+                                                                <img src="#" alt="Preview" style="max-height: 100px; border-radius: 4px;">
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="row">
+                                                            {{-- Kategori --}}
+                                                            <div class="col-md-4 mb-3">
+                                                                <label for="edit_kategori_id_{{ $item->id }}" class="form-label">
+                                                                    Kategori <span class="text-danger">*</span>
+                                                                </label>
+                                                                <select class="form-select edit-kategori" 
+                                                                        name="kategori_id"
+                                                                        id="edit_kategori_id_{{ $item->id }}" 
+                                                                        data-target="edit_jenis_id_{{ $item->id }}"
+                                                                        required>
+                                                                    <option value="">-- Pilih Kategori --</option>
+                                                                    @foreach($kategoris as $kategori)
+                                                                        <option value="{{ $kategori->id }}" 
+                                                                            {{ $item->kategori_id == $kategori->id ? 'selected' : '' }}>
+                                                                            {{ $kategori->name_kategori }}
                                                                         </option>
-                                                                    @endif
-                                                                @endforeach
-                                                            </select>
+                                                                    @endforeach
+                                                                </select>
+                                                            </div>
+
+                                                            {{-- Jenis (Dynamic) --}}
+                                                            <div class="col-md-4 mb-3">
+                                                                <label for="edit_jenis_id_{{ $item->id }}" class="form-label">
+                                                                    Jenis <span class="text-danger">*</span>
+                                                                </label>
+                                                                <select class="form-select" 
+                                                                        id="edit_jenis_id_{{ $item->id }}" 
+                                                                        name="jenis_id" 
+                                                                        required>
+                                                                    <option value="">-- Pilih Jenis --</option>
+                                                                    @foreach($jenis as $j)
+                                                                        @if($j->kategori_id == $item->kategori_id)
+                                                                            <option value="{{ $j->id }}" 
+                                                                                {{ $item->jenis_id == $j->id ? 'selected' : '' }}>
+                                                                                {{ $j->name_jenis }}
+                                                                            </option>
+                                                                        @endif
+                                                                    @endforeach
+                                                                </select>
+                                                            </div>
+
+                                                            {{-- Satuan --}}
+                                                            <div class="col-md-4 mb-3">
+                                                                <label for="edit_satuan_id_{{ $item->id }}" class="form-label">
+                                                                    Satuan <span class="text-danger">*</span>
+                                                                </label>
+                                                                <select class="form-select" 
+                                                                        id="edit_satuan_id_{{ $item->id }}" 
+                                                                        name="satuan_id" 
+                                                                        required>
+                                                                    <option value="">-- Pilih Satuan --</option>
+                                                                    @foreach($satuans as $satuan)
+                                                                        <option value="{{ $satuan->id }}" 
+                                                                            {{ $item->satuan_id == $satuan->id ? 'selected' : '' }}>
+                                                                            {{ $satuan->nama_satuan }}
+                                                                        </option>
+                                                                    @endforeach
+                                                                </select>
+                                                            </div>
                                                         </div>
 
-                                                        {{-- TAMBAHAN: Field Satuan --}}
-                                                        <div class="mb-3">
-                                                            <label for="edit_satuan_id_{{ $item->id }}" class="form-label">
-                                                                Satuan <span class="text-danger">*</span>
-                                                            </label>
-                                                            <select class="form-select" 
-                                                                    id="edit_satuan_id_{{ $item->id }}" 
-                                                                    name="satuan_id" 
-                                                                    required>
-                                                                <option value="">-- Pilih Satuan --</option>
-                                                                @foreach($satuans as $satuan)
-                                                                    <option value="{{ $satuan->id }}" 
-                                                                        {{ $item->satuan_id == $satuan->id ? 'selected' : '' }}>
-                                                                        {{ $satuan->nama_satuan }}
-                                                                    </option>
-                                                                @endforeach
-                                                            </select>
-                                                        </div>
-
-                                                        {{-- TAMBAHAN: Field Harga --}}
+                                                        {{-- Harga --}}
                                                         <div class="mb-3">
                                                             <label for="edit_harga_satuan_{{ $item->id }}" class="form-label">
                                                                 Harga Satuan <span class="text-danger">*</span>
@@ -227,30 +390,31 @@
                                                             <div class="input-group">
                                                                 <span class="input-group-text bg-light">Rp</span>
                                                                 <input type="number" 
-                                                                       class="form-control" 
-                                                                       id="edit_harga_satuan_{{ $item->id }}" 
-                                                                       name="harga_satuan" 
-                                                                       value="{{ $item->harga_satuan }}"
-                                                                       placeholder="0"
-                                                                       min="0"
-                                                                       step="1000"
-                                                                       required>
+                                                                    class="form-control" 
+                                                                    id="edit_harga_satuan_{{ $item->id }}" 
+                                                                    name="harga_satuan" 
+                                                                    value="{{ $item->harga_satuan }}"
+                                                                    placeholder="0"
+                                                                    min="0"
+                                                                    step="1000"
+                                                                    required>
                                                             </div>
                                                             <small class="text-muted">Masukkan dalam angka (contoh: 50000)</small>
                                                         </div>
                                                     </div>
+
                                                     <div class="modal-footer">
-                                                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Batal</button>
+                                                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">
+                                                            <i class="bi bi-x-circle me-1"></i> Batal
+                                                        </button>
                                                         <button type="submit" class="btn btn-primary">
-                                                            <i class="bi bi-save me-1"></i>
-                                                            Update
+                                                            <i class="bi bi-save me-1"></i> Update
                                                         </button>
                                                     </div>
                                                 </form>
                                             </div>
                                         </div>
                                     </div>
-
                                     {{-- Modal Delete --}}
                                     <div class="modal fade" id="modalDelete{{ $item->id }}" tabindex="-1" aria-hidden="true">
                                         <div class="modal-dialog modal-dialog-centered">
@@ -320,7 +484,7 @@
 
 {{-- Modal Tambah --}}
 <div class="modal fade" id="modalTambah" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">
@@ -329,9 +493,14 @@
                 </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <form action="{{ route('admin.barang.store') }}" method="POST">
+            
+            <form action="{{ route('admin.barang.store') }}" 
+                  method="POST" 
+                  enctype="multipart/form-data">
                 @csrf
+                
                 <div class="modal-body">
+                    {{-- Nama Barang --}}
                     <div class="mb-3">
                         <label for="nama_barang" class="form-label">
                             Nama Barang <span class="text-danger">*</span>
@@ -343,58 +512,106 @@
                                value="{{ old('nama_barang') }}"
                                placeholder="Masukkan nama barang"
                                required>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label for="kategori_id" class="form-label">
-                            Kategori <span class="text-danger">*</span>
-                        </label>
-                        <select class="form-select @error('kategori_id') is-invalid @enderror" 
-                                id="kategori_id" 
-                                name="kategori_id" 
-                                required>
-                            <option value="">-- Pilih Kategori --</option>
-                            @foreach($kategoris as $kategori)
-                                <option value="{{ $kategori->id }}" 
-                                    {{ old('kategori_id') == $kategori->id ? 'selected' : '' }}>
-                                    {{ $kategori->name_kategori }}
-                                </option>
-                            @endforeach
-                        </select>
+                        @error('nama_barang')
+                            <div class="text-danger small mt-1">{{ $message }}</div>
+                        @enderror
                     </div>
 
+                    {{-- Spesifikasi --}}
                     <div class="mb-3">
-                        <label for="jenis_id" class="form-label">
-                            Jenis <span class="text-danger">*</span>
-                        </label>
-                        <select class="form-select @error('jenis_id') is-invalid @enderror" 
-                                id="jenis_id" 
-                                name="jenis_id" 
-                                required>
-                            <option value="">-- Pilih Kategori Terlebih Dahulu --</option>
-                        </select>
+                        <label for="spesifikasi" class="form-label">Spesifikasi Barang</label>
+                        <textarea class="form-control @error('spesifikasi') is-invalid @enderror" 
+                                  id="spesifikasi" 
+                                  name="spesifikasi" 
+                                  rows="3" 
+                                  placeholder="Masukkan spesifikasi lengkap barang (warna, bahan, ukuran, dll)">{{ old('spesifikasi') }}</textarea>
+                        @error('spesifikasi')
+                            <div class="text-danger small mt-1">{{ $message }}</div>
+                        @enderror
                     </div>
 
-                    {{-- TAMBAHAN: Field Satuan --}}
+                    {{-- Foto Barang --}}
                     <div class="mb-3">
-                        <label for="satuan_id" class="form-label">
-                            Satuan <span class="text-danger">*</span>
-                        </label>
-                        <select class="form-select @error('satuan_id') is-invalid @enderror" 
-                                id="satuan_id" 
-                                name="satuan_id" 
-                                required>
-                            <option value="">-- Pilih Satuan --</option>
-                            @foreach($satuans as $satuan)
-                                <option value="{{ $satuan->id }}" 
-                                    {{ old('satuan_id') == $satuan->id ? 'selected' : '' }}>
-                                    {{ $satuan->nama_satuan }}
-                                </option>
-                            @endforeach
-                        </select>
+                        <label for="foto" class="form-label">Foto Barang</label>
+                        <input type="file" 
+                               class="form-control @error('foto') is-invalid @enderror" 
+                               id="foto" 
+                               name="foto" 
+                               accept="image/jpeg,image/png,image/jpg">
+                        <small class="text-muted">Format: JPG, PNG. Maks: 2MB</small>
+                        @error('foto')
+                            <div class="text-danger small mt-1">{{ $message }}</div>
+                        @enderror
+                        
+                        {{-- Preview foto sementara --}}
+                        <div id="previewFoto" class="mt-2" style="display: none;">
+                            <img src="#" alt="Preview" style="max-height: 100px; border-radius: 4px;">
+                        </div>
                     </div>
 
-                    {{-- TAMBAHAN: Field Harga --}}
+                    <div class="row">
+                        {{-- Kategori --}}
+                        <div class="col-md-4 mb-3">
+                            <label for="kategori_id" class="form-label">
+                                Kategori <span class="text-danger">*</span>
+                            </label>
+                            <select class="form-select @error('kategori_id') is-invalid @enderror" 
+                                    id="kategori_id" 
+                                    name="kategori_id" 
+                                    required>
+                                <option value="">-- Pilih Kategori --</option>
+                                @foreach($kategoris as $kategori)
+                                    <option value="{{ $kategori->id }}" 
+                                        {{ old('kategori_id') == $kategori->id ? 'selected' : '' }}>
+                                        {{ $kategori->name_kategori }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('kategori_id')
+                                <div class="text-danger small mt-1">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        {{-- Jenis (Dynamic) --}}
+                        <div class="col-md-4 mb-3">
+                            <label for="jenis_id" class="form-label">
+                                Jenis <span class="text-danger">*</span>
+                            </label>
+                            <select class="form-select @error('jenis_id') is-invalid @enderror" 
+                                    id="jenis_id" 
+                                    name="jenis_id" 
+                                    required>
+                                <option value="">-- Pilih Kategori Terlebih Dahulu --</option>
+                            </select>
+                            @error('jenis_id')
+                                <div class="text-danger small mt-1">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        {{-- Satuan --}}
+                        <div class="col-md-4 mb-3">
+                            <label for="satuan_id" class="form-label">
+                                Satuan <span class="text-danger">*</span>
+                            </label>
+                            <select class="form-select @error('satuan_id') is-invalid @enderror" 
+                                    id="satuan_id" 
+                                    name="satuan_id" 
+                                    required>
+                                <option value="">-- Pilih Satuan --</option>
+                                @foreach($satuans as $satuan)
+                                    <option value="{{ $satuan->id }}" 
+                                        {{ old('satuan_id') == $satuan->id ? 'selected' : '' }}>
+                                        {{ $satuan->nama_satuan }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('satuan_id')
+                                <div class="text-danger small mt-1">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
+
+                    {{-- Harga --}}
                     <div class="mb-3">
                         <label for="harga_satuan" class="form-label">
                             Harga Satuan <span class="text-danger">*</span>
@@ -417,11 +634,13 @@
                         <small class="text-muted">Masukkan dalam angka (contoh: 50000)</small>
                     </div>
                 </div>
+
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Batal</button>
-                    <button type="submit" class="btn btn-primary">
-                        <i class="bi bi-save me-1"></i>
-                        Simpan
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">
+                        <i class="bi bi-x-circle me-1"></i> Batal
+                    </button>
+                    <button type="submit" class="btn btn-primary" id="btnSubmit">
+                        <i class="bi bi-save me-1"></i> Simpan Barang
                     </button>
                 </div>
             </form>
@@ -496,6 +715,19 @@
         background: #f8fafc;
         border: 1px solid #e2e8f0;
     }
+        .table-borderless td {
+        padding: 0.5rem 0;
+    }
+    .modal-lg {
+        max-width: 800px;
+    }
+    .bg-light {
+        background-color: #f8f9fa !important;
+    }
+    .img-fluid {
+        max-width: 100%;
+        height: auto;
+    }
 </style>
 @endpush
 
@@ -528,6 +760,7 @@
                 jenisSelect.html('<option value="">-- Pilih Kategori Terlebih Dahulu --</option>');
             }
         });
+        
 
         // Dynamic dropdown untuk setiap modal edit
         $(document).on('change', '.edit-kategori', function() {

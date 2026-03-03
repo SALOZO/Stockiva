@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class Barang extends Model
 {
@@ -11,6 +12,8 @@ class Barang extends Model
     protected $table = 'barang';
     protected $fillable = [
         'nama_barang',
+        'spesifikasi',
+        'foto',
         'harga_satuan',
         'kategori_id',
         'jenis_id',
@@ -38,4 +41,28 @@ class Barang extends Model
     {
         return $this->belongsTo(User::class, 'created_by');
     }
+
+    public function getFotoUrlAttribute(){
+    if (!$this->foto) {
+        return null;
+    }
+    
+    if (filter_var($this->foto, FILTER_VALIDATE_URL)) {
+        return $this->foto;
+    }
+    
+    return Storage::url($this->foto);
+    }
+    public function getSpesifikasiSingkatAttribute(){
+        $panjang = 50;
+
+        if (!$this->spesifikasi) {
+            return null;
+        }
+
+        return strlen($this->spesifikasi) > $panjang
+            ? substr($this->spesifikasi, 0, $panjang) . '...'
+            : $this->spesifikasi;
+    }
+
 }
