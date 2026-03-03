@@ -1,10 +1,10 @@
-@extends('layouts.direktur')
+@extends('layouts.marketing')
 
 @section('title', 'Pengaturan SPH - Stockiva')
 @section('page-title', 'Pengaturan SPH')
 
 @section('breadcrumb')
-    <li class="breadcrumb-item"><a href="{{ route('direktur.sph.index') }}">SPH</a></li>
+    {{-- <li class="breadcrumb-item"><a href="{{ route('marketing.sph.index') }}">SPH</a></li> --}}
     <li class="breadcrumb-item active">Pengaturan</li>
 @endsection
 
@@ -72,7 +72,7 @@
 <div class="modal fade" id="editModal{{ $setting->id }}" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
-            <form action="{{ route('direktur.sph-settings.update', $setting->id) }}" method="POST">
+            <form action="{{ route('marketing.sph-settings.update', $setting->id) }}" method="POST">
                 @csrf
                 @method('PUT')
                 

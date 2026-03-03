@@ -35,16 +35,7 @@
             </a>
         </li>
         
-        <li class="nav-item">
-            <a class="nav-link {{ request()->routeIs('direktur.sph-settings*') ? 'active' : '' }}" 
-            href="{{ route('direktur.sph-settings.index') }}">
-                <i class="bi bi-gear"></i>
-                <span>Pengaturan SPH</span>
-                @if(request()->routeIs('direktur.sph-settings*'))
-                    <span class="active-indicator"></span>
-                @endif
-            </a>
-        </li>
+
         
         {{-- DIVIDER --}}
         <li class="nav-divider"></li>

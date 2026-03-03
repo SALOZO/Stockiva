@@ -5,7 +5,7 @@ use App\Http\Controllers\BarangController;
 use App\Http\Controllers\ClientsController;
 use App\Http\Controllers\Direktur\ProfileController;
 use App\Http\Controllers\Direktur\SphController;
-use App\Http\Controllers\Direktur\SphSettingController;
+use App\Http\Controllers\Marketing\SphSettingController;
 use App\Http\Controllers\EkspedisiController;
 use App\Http\Controllers\Gudang\SphControll;
 use App\Http\Controllers\JenisController;
@@ -139,6 +139,9 @@ Route::prefix('admin')->middleware(['auth', 'role:Admin'])->group(function () {
         // untuk route SPH
         Route::post('/pesanan/{pesanan}/generate-sph', [PesananController::class, 'generateSPH'])->name('pesanan.generate-sph');
         Route::get('/pesanan/{pesanan}/download-sph', [PesananController::class, 'downloadSPH'])->name('pesanan.download-sph');
+
+        Route::get('/sph-settings', [SphSettingController::class, 'index'])->name('sph-settings.index');
+        Route::put('/sph-settings/{setting}', [SphSettingController::class, 'update'])->name('sph-settings.update');
     });
 
     Route::middleware(['auth', 'direktur'])->prefix('direktur')->name('direktur.')->group(function () {
@@ -156,9 +159,6 @@ Route::prefix('admin')->middleware(['auth', 'role:Admin'])->group(function () {
         // Profile & Upload TTD
         Route::get('/profile', [ProfileController::class, 'edit'])->name('profile');
         Route::post('/profile/ttd', [ProfileController::class, 'uploadTtd'])->name('profile.upload-ttd');
-
-        Route::get('/sph-settings', [SphSettingController::class, 'index'])->name('sph-settings.index');
-        Route::put('/sph-settings/{setting}', [SphSettingController::class, 'update'])->name('sph-settings.update');
     });
 
     Route::middleware(['auth', 'gudang'])->prefix('gudang')->name('gudang.')->group(function () {    
