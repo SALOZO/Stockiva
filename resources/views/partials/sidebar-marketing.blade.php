@@ -59,6 +59,17 @@
             </a>
         </li>
 
+        <li class="nav-item">
+            <a class="nav-link {{ request()->routeIs('history.sph.index') ? 'active' : '' }}" 
+            href="{{ route('history.sph.index') }}">
+                <i class="bi bi-clock-history"></i>
+                <span>History SPH</span>
+                @if(request()->routeIs('history.sph.index'))
+                    <span class="active-indicator"></span>
+                @endif
+            </a>
+        </li>
+
         {{-- Divider --}}
         <li class="nav-divider"></li>
 

@@ -249,6 +249,7 @@ private function getBarangImageBase64($path){
     return 'data:image/' . $type . ';base64,' . base64_encode($data);
 }
 
+// DALAM PENGEMBANGAN
 private function hitungHalamanLampiran(Pesanan $pesanan){
     $jumlahItem = $pesanan->details->count();
     

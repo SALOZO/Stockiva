@@ -11,6 +11,16 @@
         </div>
     </div>
 
+    <li class="nav-item">
+        <a class="nav-link {{ request()->routeIs('direktur.profile') ? 'active' : '' }}" 
+            href="{{ route('direktur.profile') }}">
+            <i class="bi bi-person-circle"></i>
+            <span>Profile & TTD</span>
+            @if(request()->routeIs('direktur.profile'))
+            <span class="active-indicator"></span>
+            @endif
+        </a>
+    </li>
     
     <ul class="sidebar-menu">
         <li class="nav-item">
@@ -25,16 +35,15 @@
         </li>
 
         <li class="nav-item">
-            <a class="nav-link {{ request()->routeIs('direktur.profile') ? 'active' : '' }}" 
-                href="{{ route('direktur.profile') }}">
-                <i class="bi bi-person-circle"></i>
-                <span>Profile & TTD</span>
-                @if(request()->routeIs('direktur.profile'))
-                <span class="active-indicator"></span>
+            <a class="nav-link {{ request()->routeIs('history.sph.index') ? 'active' : '' }}" 
+            href="{{ route('history.sph.index') }}">
+                <i class="bi bi-clock-history"></i>
+                <span>History SPH</span>
+                @if(request()->routeIs('history.sph.index'))
+                    <span class="active-indicator"></span>
                 @endif
             </a>
         </li>
-        
 
         
         {{-- DIVIDER --}}

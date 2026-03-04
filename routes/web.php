@@ -5,12 +5,13 @@ use App\Http\Controllers\BarangController;
 use App\Http\Controllers\ClientsController;
 use App\Http\Controllers\Direktur\ProfileController;
 use App\Http\Controllers\Direktur\SphController;
-use App\Http\Controllers\Marketing\SphSettingController;
 use App\Http\Controllers\EkspedisiController;
 use App\Http\Controllers\Gudang\SphControll;
+use App\Http\Controllers\HistorySphController;
 use App\Http\Controllers\JenisController;
 use App\Http\Controllers\KategoryController;
 use App\Http\Controllers\Marketing\DashboardController;
+use App\Http\Controllers\Marketing\SphSettingController;
 use App\Http\Controllers\PesananController;
 use App\Http\Controllers\SatuanController;
 use App\Http\Controllers\UserController;
@@ -19,6 +20,12 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('guest')->group(function () {
     Route::get('/', [Authcontroller::class, 'showLoginForm'])->name('login');
     Route::post('/login', [Authcontroller::class, 'authenticate'])->name('login.submit');
+});
+
+Route::middleware(['auth'])->prefix('history-sph')->name('history.sph.')->group(function () {
+    Route::get('/', [HistorySphController::class, 'index'])->name('index');
+    Route::get('/{pesanan}/preview', [HistorySphController::class, 'preview'])->name('preview');
+    Route::get('/{pesanan}/download', [HistorySphController::class, 'download'])->name('download');
 });
 
 Route::post('/logout', [Authcontroller::class, 'logout'])->name('logout');
