@@ -112,7 +112,7 @@
         /* Kolom Lebar */
         th:nth-child(1) { width: 5%; }
         th:nth-child(2) { width: 25%; }
-        th:nth-child(3) { width: 10%; }
+        th:nth-child(3) { width: 15%; }
         th:nth-child(4) { width: 10%; }
         th:nth-child(5) { width: 20%; }
         th:nth-child(6) { width: 30%; }
@@ -286,6 +286,16 @@
             <td colspan="5" class="text-right"><strong>Total</strong></td>
             <td class="text-right"><strong>Rp {{ number_format($pesanan->total_keseluruhan ?? 0, 0, ',', '.') }}</strong></td>
         </tr>
+        @if($ppn_aktif)
+            <tr>
+                <td colspan="5" class="text-right"><strong>PPN {{ $ppn_persen }}%</strong></td>
+                <td class="text-right">Rp {{ number_format($ppn, 0, ',', '.') }}</td>
+            </tr>
+            <tr class="total-row">
+                <td colspan="5" class="text-right"><strong>Total termasuk PPN</strong></td>
+                <td class="text-right"><strong>Rp {{ number_format($total_include_ppn, 0, ',', '.') }}</strong></td>
+            </tr>
+        @endif
     </tfoot>
 </table>
 

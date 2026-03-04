@@ -19,10 +19,21 @@ class SPHGenerator
         $this->settings = SphSetting::all()->pluck('value', 'key')->toArray();
     }
 
-    public function generate(Pesanan $pesanan)
-    {
+    public function generate(Pesanan $pesanan){
     $noSph = $this->formatNomorSph($pesanan);
     $perihal = $pesanan->keterangan ?? $this->settings['perihal_default'] ?? 'Surat Penawaran Harga';
+    $total = $pesanan->total_keseluruhan;
+
+            $ppnAktif = ($this->settings['ppn_aktif'] ?? '1') == '1';
+            $ppnPersen = (float)($this->settings['ppn_persen'] ?? 11);
+
+            if ($ppnAktif) {
+                $ppn = $total * ($ppnPersen / 100);
+                $totalIncludePpn = $total + $ppn;
+            } else {
+                $ppn = 0;
+                $totalIncludePpn = $total;
+            }
 
     foreach ($pesanan->details as $detail) {
     if ($detail->barang && $detail->barang->foto) {
@@ -47,7 +58,13 @@ class SPHGenerator
         'waktu_pengerjaan' => $this->settings['waktu_pengerjaan'] ?? '25 hari kalender',
         'footer_text' => $this->settings['footer_text'] ?? 'Demikian Surat Penawaran Harga preview...',
         'logo_base64' => $this->getLogoBase64(),
-        'is_preview' => true
+        'is_preview' => true,
+        // testing :
+            'ppn_aktif' => $ppnAktif,
+            'ppn_persen' => $ppnPersen,
+            'ppn' => $ppn,
+            'total_include_ppn' => $totalIncludePpn,
+            'dpp' => $total
     ];
 
     $data2 = [
@@ -73,6 +90,18 @@ class SPHGenerator
     {
         $noSph = $this->formatNomorSph($pesanan);
         $perihal = $pesanan->keterangan ?? $this->settings['perihal_default'] ?? 'Surat Penawaran Harga';
+        $total = $pesanan->total_keseluruhan;
+
+            $ppnAktif = ($this->settings['ppn_aktif'] ?? '1') == '1';
+            $ppnPersen = (float)($this->settings['ppn_persen'] ?? 11);
+
+            if ($ppnAktif) {
+                $ppn = $total * ($ppnPersen / 100);
+                $totalIncludePpn = $total + $ppn;
+            } else {
+                $ppn = 0;
+                $totalIncludePpn = $total;
+            }
 
         // Konversi foto barang ke base64
         foreach ($pesanan->details as $detail) {
@@ -112,6 +141,12 @@ class SPHGenerator
             'approved_at' => now(),
             'approved_by_name' => $user->name ?? $this->company->nama_direktur ?? 'Direktur',
             'approved_by_jabatan' => $user->jabatan ?? $this->company->jabatan_direktur ?? 'Direktur Utama',
+            // testing :
+            'ppn_aktif' => $ppnAktif,
+            'ppn_persen' => $ppnPersen,
+            'ppn' => $ppn,
+            'total_include_ppn' => $totalIncludePpn,
+            'dpp' => $total
         ];
 
         // Data untuk Halaman 2 (Lampiran Barang)
@@ -134,19 +169,24 @@ class SPHGenerator
 
         return $pdf;
     }
+
+    private function extractNomorUrut($noPesanan){
+        $parts = explode('-', $noPesanan);
+        
+        $lastPart = end($parts);
+        
+        return $lastPart;
+    }
+
     private function formatNomorSph(Pesanan $pesanan)
     {
-        $format = $this->settings['nomor_format'] ?? 'SPH/{{no_pesanan}}';
+        $noUrut = $this->extractNomorUrut($pesanan->no_pesanan);
         
-        $replacements = [
-            '{{no_pesanan}}' => $pesanan->no_pesanan,
-            '{{id}}' => $pesanan->id,
-            '{{tahun}}' => now()->format('Y'),
-            '{{bulan}}' => now()->format('m'),
-            '{{tanggal}}' => now()->format('d'),
-        ];
+        $bulan = now()->format('m');
+        $tahun = now()->format('Y');
+    
         
-        return str_replace(array_keys($replacements), array_values($replacements), $format);
+        return $noUrut . ' / SPH / RP / ' . $bulan . ' / ' . $tahun;
     }
 
     private function getLogoPath()
@@ -186,11 +226,24 @@ public function generatePreview(Pesanan $pesanan)
 {
     $noSph = $this->formatNomorSph($pesanan);
     $perihal = $pesanan->keterangan ?? $this->settings['perihal_default'] ?? 'Surat Penawaran Harga';
+    $total = $pesanan->total_keseluruhan;
+
+    $ppnAktif = ($this->settings['ppn_aktif'] ?? '1') == '1';
+    $ppnPersen = (float)($this->settings['ppn_persen'] ?? 11);
+
+    if ($ppnAktif) {
+        $ppn = $total * ($ppnPersen / 100);
+        $totalIncludePpn = $total + $ppn;
+    } else {
+        $ppn = 0;
+        $totalIncludePpn = $total;
+    }
+    
 
     foreach ($pesanan->details as $detail) {
-    if ($detail->barang && $detail->barang->foto) {
-        $detail->barang->foto_base64 = $this->getBarangImageBase64($detail->barang->foto);
-    }
+        if ($detail->barang && $detail->barang->foto) {
+            $detail->barang->foto_base64 = $this->getBarangImageBase64($detail->barang->foto);
+        }
     }
     $jumlahHalamanLampiran = $this->hitungHalamanLampiran($pesanan);
     
@@ -210,7 +263,13 @@ public function generatePreview(Pesanan $pesanan)
         'waktu_pengerjaan' => $this->settings['waktu_pengerjaan'] ?? '25 hari kalender',
         'footer_text' => $this->settings['footer_text'] ?? 'Demikian Surat Penawaran Harga preview...',
         'logo_base64' => $this->getLogoBase64(),
-        'is_preview' => true
+        'is_preview' => true,
+        // testing :
+        'ppn_aktif' => $ppnAktif,
+        'ppn_persen' => $ppnPersen,
+        'ppn' => $ppn,
+        'total_include_ppn' => $totalIncludePpn,
+        'dpp' => $total
     ];
 
     $data2 = [
@@ -252,15 +311,7 @@ private function getBarangImageBase64($path){
 // DALAM PENGEMBANGAN
 private function hitungHalamanLampiran(Pesanan $pesanan){
     $jumlahItem = $pesanan->details->count();
-    
-    if ($jumlahItem <= 10) {
-        return 1;
-    } elseif ($jumlahItem <= 15) {
-        return 2;
-    } elseif ($jumlahItem <= 20) {
-        return 3;
-    } else {
-        return ceil($jumlahItem / 15); // Pembulatan ke atas
-    }
+    $itemsPerPage = 2; 
+    return ceil($jumlahItem / $itemsPerPage);
 }
 }

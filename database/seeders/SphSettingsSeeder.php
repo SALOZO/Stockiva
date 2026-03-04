@@ -55,12 +55,16 @@ class SphSettingsSeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
-                'key' => 'nomor_format',
-                'value' => 'SPH/{{no_pesanan}}',
-                'description' => 'Format nomor SPH (gunakan {{no_pesanan}} sebagai placeholder)',
+                'key' => 'ppn_aktif',
+                'value' => '1', // 1 = Ya, 0 = Tidak
+                'description' => 'Aktifkan perhitungan PPN?',
+                'type' => 'boolean',
+            ],
+            [
+                'key' => 'ppn_persen',
+                'value' => '11',
+                'description' => 'Persentase PPN (%)',
                 'type' => 'text',
-                'created_at' => now(),
-                'updated_at' => now(),
             ],
         ];
 
