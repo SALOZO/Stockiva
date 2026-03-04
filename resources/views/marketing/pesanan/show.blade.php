@@ -6,7 +6,7 @@
 
 @section('breadcrumb')
     <li class="breadcrumb-item"><a href="{{ route('marketing.pesanan.index') }}">Pilih Client</a></li>
-    <li class="breadcrumb-item"><a href="{{ route('marketing.pesanan.index') }}">Pesanan</a></li>
+    <li class="breadcrumb-item"><a href="{{ route('marketing.semua-pesanan') }}">Semua Pesanan</a></li>
     <li class="breadcrumb-item active">Detail Pesanan</li>
 @endsection
 
@@ -89,9 +89,11 @@
             </div>
         </div>
 
-                    {{-- Info Status SPH --}}
-            @if($pesanan->sph_status != 'draft')
-            <div class="mt-3">
+        {{-- Status SPH --}}
+        @if($pesanan->sph_status != 'draft')
+        <div class="alert alert-info d-flex align-items-center mb-3">
+            <i class="bi bi-info-circle-fill me-2 fs-5"></i>
+            <div>
                 <strong>Status SPH:</strong> 
                 @switch($pesanan->sph_status)
                     @case('menunggu')
@@ -110,12 +112,11 @@
                         @break
                 @endswitch
             </div>
-            @endif
-
-        <br>
+        </div>
+        @endif
 
         {{-- DAFTAR ITEM PESANAN --}}
-        <div class="card">
+        <div class="card mb-4">
             <div class="card-header">
                 <h5 class="mb-0">Detail Item Pesanan</h5>
             </div>
@@ -137,20 +138,20 @@
                         <tbody class="text-center">
                             @foreach($pesanan->details as $index => $detail)
                             <tr>
-                                <td class="text-center">{{ $index + 1 }}</td>
+                                <td>{{ $index + 1 }}</td>
                                 <td>{{ $detail->kategori->name_kategori ?? '-' }}</td>
                                 <td>{{ $detail->jenis->name_jenis ?? '-' }}</td>
                                 <td>{{ $detail->barang->nama_barang ?? '-' }}</td>
-                                <td class="text-center">{{ $detail->barang->satuan->nama_satuan ?? '-' }}</td>
-                                <td class="text-center">{{ $detail->jumlah }}</td>
-                                <td class="text-center">Rp {{ number_format($detail->harga_satuan, 0, ',', '.') }}</td>
-                                <td class="text-center fw-bold">Rp {{ number_format($detail->subtotal, 0, ',', '.') }}</td>
+                                <td>{{ $detail->barang->satuan->nama_satuan ?? '-' }}</td>
+                                <td>{{ $detail->jumlah }}</td>
+                                <td>Rp {{ number_format($detail->harga_satuan, 0, ',', '.') }}</td>
+                                <td class="fw-bold">Rp {{ number_format($detail->subtotal, 0, ',', '.') }}</td>
                             </tr>
                             @endforeach
                         </tbody>
                         <tfoot>
                             <tr>
-                                <td colspan="7" class="text-start fw-bold">TOTAL</td>
+                                <td colspan="7" class="text-end fw-bold">TOTAL</td>
                                 <td class="text-center fw-bold text-primary">
                                     Rp {{ number_format($pesanan->total_keseluruhan, 0, ',', '.') }}
                                 </td>
@@ -162,51 +163,81 @@
         </div>
 
         {{-- TOMBOL AKSI --}}
-        <div class="d-flex justify-content-between mt-4">
+        <div class="d-flex justify-content-between align-items-start mt-4">
             <a href="{{ route('marketing.semua-pesanan') }}" class="btn btn-secondary">
-                <i class="bi bi-arrow-left me-1"></i>
-                Kembali
+                <i class="bi bi-arrow-left me-1"></i> Kembali
             </a>
 
-            <div class="d-flex gap-2">
-                    {{-- Tombol Generate SPH (hanya muncul jika status draft) --}}
-                    @if($pesanan->sph_status == 'draft')
-                    <form action="{{ route('marketing.pesanan.generate-sph', $pesanan->id) }}" method="POST">
-                        @csrf
-                        <button type="submit" class="btn btn-success" onclick="return confirm('Buat SPH?')">
-                            <i class="bi bi-file-pdf me-1"></i>Cetak SPH
-                        </button>
-                    </form>
-                    @endif
-                    
-                    {{-- Tombol Download SPH (jika sudah ada file) --}}
-                    @if($pesanan->sph_file || $pesanan->sph_approved_file)
-                    <a href="{{ route('marketing.pesanan.download-sph', $pesanan->id) }}" 
-                    class="btn btn-info" target="_blank">
-                        <i class="bi bi-download me-1"></i>Download SPH
-                    </a>
-                    @endif
-                    
-                    {{-- Tombol Edit (hanya jika status draft/menunggu) --}}
-                    @if(in_array($pesanan->sph_status, ['draft', 'menunggu']))
-                    <a href="{{ route('marketing.pesanan.edit', $pesanan->id) }}" class="btn btn-warning">
-                        <i class="bi bi-pencil me-1"></i>Edit
-                    </a>
-                    @endif
+            <div class="d-flex gap-2 align-items-start">
+                {{-- Shortcut ke Pengaturan SPH --}}
+                <a href="{{ route('marketing.sph-settings.index') }}" 
+                   class="btn btn-outline-secondary" 
+                   target="_blank"
+                   data-bs-toggle="tooltip" 
+                   title="Atur format SPH">
+                    <i class="bi bi-gear"></i> Pengaturan SPH
+                </a>
+
+                {{-- Preview SPH --}}
+                <div class="d-flex flex-column align-items-center">
+                    <button type="button" 
+                            class="btn btn-info"
+                            id="btnPreview"
+                            data-pesanan-id="{{ $pesanan->id }}">
+                        <i class="bi bi-eye"></i> Preview SPH
+                    </button>
+                </div>
+
+                {{-- Cetak SPH (draft) --}}
+                @if($pesanan->sph_status == 'draft')
+                <form action="{{ route('marketing.pesanan.generate-sph', $pesanan->id) }}" 
+                      method="POST" 
+                      class="d-inline">
+                    @csrf
+                    <button type="submit" 
+                            class="btn btn-success"
+                            onclick="return confirm('Buat SPH?')">
+                        <i class="bi bi-file-pdf"></i> Cetak SPH
+                    </button>
+                </form>
+                @endif
+
+                {{-- Download SPH (jika sudah ada file) --}}
+                @if($pesanan->sph_file || $pesanan->sph_approved_file)
+                <a href="{{ route('marketing.pesanan.download-sph', $pesanan->id) }}" 
+                   class="btn btn-info"
+                   target="_blank">
+                    <i class="bi bi-download"></i> Download SPH
+                </a>
+                @endif
+
+                {{-- Edit (hanya jika draft/menunggu) --}}
+                @if(in_array($pesanan->sph_status, ['draft', 'menunggu']))
+                <a href="{{ route('marketing.pesanan.edit', $pesanan->id) }}" 
+                   class="btn btn-warning">
+                    <i class="bi bi-pencil"></i> Edit
+                </a>
+                @endif
+            </div>
+        </div>
+
+        {{-- AREA PREVIEW PDF --}}
+        <div class="card mt-4" id="previewArea" style="display: none;">
+            <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                <span>
+                    <i class="bi bi-file-pdf text-danger me-2"></i>
+                    <strong>Preview SPH</strong> - {{ $pesanan->no_pesanan }}
+                </span>
+                <div>
+                    <span class="badge bg-warning me-2">PREVIEW</span>
+                    <button type="button" class="btn-close" id="closePreview"></button>
                 </div>
             </div>
-
-            <div>
-                {{-- @if($pesanan->status == 'baru')
-                <a href="{{ route('marketing.pesanan.edit', $pesanan->id) }}" class="btn btn-warning">
-                    <i class="bi bi-pencil me-1"></i>
-                    Edit Pesanan
-                </a>
-                @endif --}}
-                {{-- <button type="button" class="btn btn-primary" onclick="window.print()">
-                    <i class="bi bi-printer me-1"></i>
-                    Cetak
-                </button> --}}
+            <div class="card-body p-0">
+                <iframe id="previewFrame" 
+                        src="" 
+                        style="width: 100%; height: 600px; border: none; border-radius: 0 0 8px 8px;">
+                </iframe>
             </div>
         </div>
     </div>
@@ -224,25 +255,20 @@
         font-size: 0.85rem;
     }
     
-    .bg-info {
-        background-color: #0dcaf0 !important;
+    .btn {
+        padding: 0.6rem 1.2rem;
     }
     
-    .bg-warning {
-        background-color: #ffc107 !important;
-        color: #000 !important;
+    .btn i {
+        margin-right: 0.3rem;
     }
     
-    .bg-success {
-        background-color: #198754 !important;
-    }
-    
-    .bg-danger {
-        background-color: #dc3545 !important;
+    .table td, .table th {
+        vertical-align: middle;
     }
     
     @media print {
-        .sidebar, .btn, .card-header, .breadcrumb, footer {
+        .sidebar, .btn, .card-header, .breadcrumb, footer, #previewArea {
             display: none !important;
         }
         .main-content {
@@ -251,4 +277,49 @@
         }
     }
 </style>
+@endpush
+
+@push('scripts')
+<script>
+    $(document).ready(function() {
+        // ========== PREVIEW SPH ==========
+        $('#btnPreview').click(function() {
+            let pesananId = $(this).data('pesanan-id');
+            
+            // Tampilkan loading
+            $('#previewArea').slideDown();
+            $('#previewFrame').attr('src', 'about:blank');
+            
+            // Set iframe source
+            let previewUrl = '/marketing/pesanan/' + pesananId + '/preview-sph';
+            $('#previewFrame').attr('src', previewUrl);
+            
+            // Scroll ke preview
+            $('html, body').animate({
+                scrollTop: $('#previewArea').offset().top - 20
+            }, 500);
+        });
+
+        // ========== TUTUP PREVIEW ==========
+        $('#closePreview').click(function() {
+            $('#previewFrame').attr('src', '');
+            $('#previewArea').slideUp();
+        });
+
+        // ========== TOOLTIP ==========
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+
+        // ========== AUTO HIDE ALERT ==========
+        setTimeout(function() {
+            document.querySelectorAll('.alert').forEach(function(alert) {
+                alert.style.transition = 'opacity 0.5s';
+                alert.style.opacity = '0';
+                setTimeout(() => alert.remove(), 500);
+            });
+        }, 5000);
+    });
+</script>
 @endpush

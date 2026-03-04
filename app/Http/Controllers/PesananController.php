@@ -219,4 +219,14 @@ class PesananController extends Controller
         
         return Storage::download($file);
     }
+
+    public function previewSph(Pesanan $pesanan){
+
+        $pesanan->load(['client', 'details.barang', 'details.kategori', 'details.jenis']);
+        
+        $generator = new SPHGenerator();
+        $pdf = $generator->generatePreview($pesanan);
+        
+        return $pdf->stream('preview-' . $pesanan->no_pesanan . '.pdf');
+    }
 }

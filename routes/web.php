@@ -139,6 +139,7 @@ Route::prefix('admin')->middleware(['auth', 'role:Admin'])->group(function () {
         // untuk route SPH
         Route::post('/pesanan/{pesanan}/generate-sph', [PesananController::class, 'generateSPH'])->name('pesanan.generate-sph');
         Route::get('/pesanan/{pesanan}/download-sph', [PesananController::class, 'downloadSPH'])->name('pesanan.download-sph');
+        Route::get('/pesanan/{pesanan}/preview-sph', [PesananController::class, 'previewSph'])->name('pesanan.preview-sph');
 
         Route::get('/sph-settings', [SphSettingController::class, 'index'])->name('sph-settings.index');
         Route::put('/sph-settings/{setting}', [SphSettingController::class, 'update'])->name('sph-settings.update');

@@ -41,7 +41,7 @@ class SPHGenerator
             'tanggal' => now()->format('d F Y'),
             'no_sph' => $noSph,
             'perihal' => $perihal,
-            'lampiran_text' => $this->settings['lampiran_text'] ?? '1 Lembar',
+            'lampiran_text' =>'1 Lembar',
             'catatan_ppn' => $this->settings['catatan_ppn'] ?? 'Harga belum termasuk PPN 11%',
             'masa_berlaku' => $this->settings['masa_berlaku'] ?? '14 (empat belas) hari kalender',
             'waktu_pengerjaan' => $this->settings['waktu_pengerjaan'] ?? '25 hari kalender',
@@ -90,7 +90,7 @@ public function generateWithSignature(Pesanan $pesanan, $ttdPath = null, $user =
         'tanggal' => now()->format('d F Y'),
         'no_sph' => $noSph,
         'perihal' => $perihal,
-        'lampiran_text' => $this->settings['lampiran_text'] ?? '1 Lembar',
+        'lampiran_text' =>'1 Lembar',
         'catatan_ppn' => $this->settings['catatan_ppn'] ?? 'Harga belum termasuk PPN 11%',
         'masa_berlaku' => $this->settings['masa_berlaku'] ?? '14 (empat belas) hari kalender',
         'waktu_pengerjaan' => $this->settings['waktu_pengerjaan'] ?? '25 hari kalender',
@@ -163,4 +163,39 @@ public function generateWithSignature(Pesanan $pesanan, $ttdPath = null, $user =
         $type = pathinfo($logoPath, PATHINFO_EXTENSION);
         return 'data:image/' . $type . ';base64,' . base64_encode($imageData);
     }
+
+    public function generatePreview(Pesanan $pesanan){
+    $noSph = $this->formatNomorSph($pesanan);
+    $perihal = $pesanan->keterangan ?? $this->settings['perihal_default'] ?? 'Surat Penawaran Harga';
+    
+    $data = [
+        'company' => $this->company,
+        'pesanan' => $pesanan,
+        'client' => $pesanan->client,
+        'items' => $pesanan->details,
+        'tanggal' => now()->format('d F Y'),
+        'no_sph' => $noSph,
+        'perihal' => $perihal,
+        'catatan_ppn' => $this->settings['catatan_ppn'] ?? 'Harga belum termasuk PPN 11%',
+        'masa_berlaku' => $this->settings['masa_berlaku'] ?? '14 (empat belas) hari kalender',
+        'waktu_pengerjaan' => $this->settings['waktu_pengerjaan'] ?? '25 hari kalender',
+        'footer_text' => $this->settings['footer_text'] ?? 'Demikian Surat Penawaran Harga preview...',
+        'lampiran_text' =>'1 Lembar',
+        'logo_base64' => $this->getLogoBase64(),
+        'is_preview' => true
+    ];
+    
+    $pdf = Pdf::loadView('pdf.sph-preview', $data);
+    $pdf->setPaper('A4', 'portrait');
+    $pdf->setOptions([
+        'margin_left' => 20,
+        'margin_right' => 20,
+        'margin_top' => 25,
+        'margin_bottom' => 25,
+        'isRemoteEnabled' => true,
+        'isHtml5ParserEnabled' => true
+    ]);
+    
+    return $pdf;
+}
 }
