@@ -72,10 +72,6 @@
                                 <td>: {!! $pesanan->status_badge !!}</td>
                             </tr>
                             <tr>
-                                <td>Perihal</td>
-                                <td>: {{ $pesanan->keterangan ?? '-' }}</td>
-                            </tr>
-                            <tr>
                                 <td>Dibuat Oleh</td>
                                 <td>: {{ $pesanan->createdBy->name ?? '-' }} ({{ $pesanan->createdBy->jabatan ?? '-' }})</td>
                             </tr>
@@ -91,8 +87,6 @@
 
         {{-- Status SPH --}}
         @if($pesanan->sph_status != 'draft')
-        <div class="alert alert-info d-flex align-items-center mb-3">
-            <i class="bi bi-info-circle-fill me-2 fs-5"></i>
             <div>
                 <strong>Status SPH:</strong> 
                 @switch($pesanan->sph_status)

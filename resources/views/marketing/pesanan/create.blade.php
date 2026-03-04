@@ -46,15 +46,6 @@
                                    value="{{ old('tanggal_pesanan', date('Y-m-d')) }}"
                                    required>
                         </div>
-                        <div class="col-md-8">
-                            <label for="keterangan" class="form-label">Perihal</label>
-                            <input type="text" 
-                                   class="form-control @error('keterangan') is-invalid @enderror" 
-                                   id="keterangan" 
-                                   name="keterangan" 
-                                   value="{{ old('keterangan') }}"
-                                   placeholder="Catatan untuk pesanan ini (opsional)">
-                        </div>
                     </div>
 
                     {{-- DAFTAR ITEM PESANAN --}}

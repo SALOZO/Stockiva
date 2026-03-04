@@ -1,24 +1,25 @@
-<!-- resources/views/pdf/sph.blade.php -->
 <!DOCTYPE html>
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <title>SPH - {{ $no_sph }}</title>
     <style>
+        @page {
+            margin: 0.5cm 1.5cm 1cm 1.5cm;
+        }
         body {
             font-family: 'Helvetica', 'Arial', sans-serif;
             font-size: 11pt; /* Diperbesar dari 10pt */
             line-height: 1.4;
-            margin: 1.5cm 1.5cm 1cm 1.5cm; /* Margin diperbesar */
+            margin: 0;
             padding: 0;
-            position: relative;
         }
         
         /* Header */
         .header {
-            margin-bottom: 15px;
+            margin: 0 0 8px 0;
             border-bottom: 2px solid #333;
-            padding-bottom: 10px;
+            padding-bottom: 6px;
         }
         .header h1 {
             font-size: 20pt; /* Diperbesar dari 18pt */
@@ -38,7 +39,7 @@
         }
         .header-table td {
             border: none;
-            padding: 5px;
+            padding: 2px;
             vertical-align: middle;
         }
         .header-logo {

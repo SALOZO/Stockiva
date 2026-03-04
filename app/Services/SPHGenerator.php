@@ -21,67 +21,18 @@ class SPHGenerator
 
     public function generate(Pesanan $pesanan)
     {
-        $noSph = $this->formatNomorSph($pesanan);
-        
-        $perihal = $pesanan->keterangan ?? $this->settings['perihal_default'] ?? 'Surat Penawaran Harga';
-
-        $logoBase64 = null;
-
-        if ($this->company && $this->company->logo_path) {
-            $type = pathinfo($this->company->logo_path, PATHINFO_EXTENSION);
-            $data = file_get_contents($this->company->logo_path);
-            $logoBase64 = 'data:image/' . $type . ';base64,' . base64_encode($data);
-        }
-        
-        $data = [
-            'company' => $this->company,
-            'pesanan' => $pesanan,
-            'client' => $pesanan->client,
-            'items' => $pesanan->details,
-            'tanggal' => now()->format('d F Y'),
-            'no_sph' => $noSph,
-            'perihal' => $perihal,
-            'lampiran_text' =>'1 Lembar',
-            'catatan_ppn' => $this->settings['catatan_ppn'] ?? 'Harga belum termasuk PPN 11%',
-            'masa_berlaku' => $this->settings['masa_berlaku'] ?? '14 (empat belas) hari kalender',
-            'waktu_pengerjaan' => $this->settings['waktu_pengerjaan'] ?? '25 hari kalender',
-            'footer_text' => $this->settings['footer_text'] ?? 'Demikian Surat Penawaran Harga kami buat...',
-            'logo_base64' => $logoBase64,
-        ];
-
-        // dd($this->company?->logo_path);
-        
-        $pdf = Pdf::loadView('pdf.sph', $data);
-        $pdf->setPaper('A4', 'portrait');
-        $pdf->setOptions([
-            'margin_left' => 20,
-            'margin_right' => 20,
-            'margin_top' => 25,
-            'margin_bottom' => 25,
-            'isRemoteEnabled' => true,
-            'isHtml5ParserEnabled' => true
-        ]);
-        
-        return $pdf;
-    }
-
-public function generateWithSignature(Pesanan $pesanan, $ttdPath = null, $user = null)
-{
     $noSph = $this->formatNomorSph($pesanan);
-    
     $perihal = $pesanan->keterangan ?? $this->settings['perihal_default'] ?? 'Surat Penawaran Harga';
-    
-    // Konversi gambar TTD ke base64
-    $ttdBase64 = null;
-    if ($ttdPath && file_exists($ttdPath)) {
-        $imageData = file_get_contents($ttdPath);
-        $ttdBase64 = 'data:image/png;base64,' . base64_encode($imageData);
+
+    foreach ($pesanan->details as $detail) {
+    if ($detail->barang && $detail->barang->foto) {
+        $detail->barang->foto_base64 = $this->getBarangImageBase64($detail->barang->foto);
     }
+    }
+    $jumlahHalamanLampiran = $this->hitungHalamanLampiran($pesanan);
     
-    // Ambil data user yang approve (dikirim dari controller)
-    $approvedBy = $user ? $user->name : ($this->company->nama_direktur ?? 'Direktur');
-    $approvedAt = now();
-    
+    $lampiranText = $jumlahHalamanLampiran .' lembar';
+
     $data = [
         'company' => $this->company,
         'pesanan' => $pesanan,
@@ -90,32 +41,99 @@ public function generateWithSignature(Pesanan $pesanan, $ttdPath = null, $user =
         'tanggal' => now()->format('d F Y'),
         'no_sph' => $noSph,
         'perihal' => $perihal,
-        'lampiran_text' =>'1 Lembar',
+        'lampiran_text' => $lampiranText,
         'catatan_ppn' => $this->settings['catatan_ppn'] ?? 'Harga belum termasuk PPN 11%',
         'masa_berlaku' => $this->settings['masa_berlaku'] ?? '14 (empat belas) hari kalender',
         'waktu_pengerjaan' => $this->settings['waktu_pengerjaan'] ?? '25 hari kalender',
-        'footer_text' => $this->settings['footer_text'] ?? 'Demikian Surat Penawaran Harga kami buat...',
+        'footer_text' => $this->settings['footer_text'] ?? 'Demikian Surat Penawaran Harga preview...',
         'logo_base64' => $this->getLogoBase64(),
-        'ttd_base64' => $ttdBase64,
-        'approved_by' => $approvedBy,
-        'approved_at' => $approvedAt,
-        'approved_by_name' => $user->name ?? $this->company->nama_direktur ?? 'Direktur',
-        'approved_by_jabatan' => $user->jabatan ?? $this->company->jabatan_direktur ?? 'Direktur Utama',
+        'is_preview' => true
     ];
-    
-    $pdf = Pdf::loadView('pdf.sph-approved', $data);
-    $pdf->setPaper('A4', 'portrait');
-    $pdf->setOptions([
-        'margin_left' => 20,
-        'margin_right' => 20,
-        'margin_top' => 25,
-        'margin_bottom' => 25,
-        'isRemoteEnabled' => true,
-        'isHtml5ParserEnabled' => true
-    ]);
-    
+
+    $data2 = [
+        'pesanan' => $pesanan,
+        'no_sph' => $noSph,
+    ];
+
+    // Render HTML dulu
+    $htmlHalaman1 = view('pdf.sph', $data)->render();
+    $htmlHalaman2 = view('pdf.lampiran-barang', $data2)->render();
+
+    // Gabungkan HTML
+    $htmlGabungan = $htmlHalaman1 . $htmlHalaman2;
+
+    // Load ke PDF
+    $pdf = Pdf::loadHTML($htmlGabungan)
+        ->setPaper('A4', 'portrait');
+
     return $pdf;
-}
+    }
+
+  public function generateWithSignature(Pesanan $pesanan, $ttdPath = null, $user = null)
+    {
+        $noSph = $this->formatNomorSph($pesanan);
+        $perihal = $pesanan->keterangan ?? $this->settings['perihal_default'] ?? 'Surat Penawaran Harga';
+
+        // Konversi foto barang ke base64
+        foreach ($pesanan->details as $detail) {
+            if ($detail->barang && $detail->barang->foto) {
+                $detail->barang->foto_base64 = $this->getBarangImageBase64($detail->barang->foto);
+            }
+        }
+
+        // Konversi TTD ke base64
+        $ttdBase64 = null;
+        if ($ttdPath && file_exists($ttdPath)) {
+            $imageData = file_get_contents($ttdPath);
+            $ttdBase64 = 'data:image/png;base64,' . base64_encode($imageData);
+        }
+
+        // Hitung jumlah halaman lampiran
+        $jumlahHalamanLampiran = $this->hitungHalamanLampiran($pesanan);
+        $lampiranText = $jumlahHalamanLampiran . ' lembar';
+
+        // Data untuk Halaman 1 (SPH Approved)
+        $dataSph = [
+            'company' => $this->company,
+            'pesanan' => $pesanan,
+            'client' => $pesanan->client,
+            'items' => $pesanan->details,
+            'tanggal' => now()->format('d F Y'),
+            'no_sph' => $noSph,
+            'perihal' => $perihal,
+            'lampiran_text' => $lampiranText,
+            'catatan_ppn' => $this->settings['catatan_ppn'] ?? 'Harga belum termasuk PPN 11%',
+            'masa_berlaku' => $this->settings['masa_berlaku'] ?? '14 (empat belas) hari kalender',
+            'waktu_pengerjaan' => $this->settings['waktu_pengerjaan'] ?? '25 hari kalender',
+            'footer_text' => $this->settings['footer_text'] ?? 'Demikian Surat Penawaran Harga ini kami buat...',
+            'logo_base64' => $this->getLogoBase64(),
+            'ttd_base64' => $ttdBase64,
+            'approved_by' => $user->name ?? $this->company->nama_direktur ?? 'Direktur',
+            'approved_at' => now(),
+            'approved_by_name' => $user->name ?? $this->company->nama_direktur ?? 'Direktur',
+            'approved_by_jabatan' => $user->jabatan ?? $this->company->jabatan_direktur ?? 'Direktur Utama',
+        ];
+
+        // Data untuk Halaman 2 (Lampiran Barang)
+        $dataLampiran = [
+            'pesanan' => $pesanan,
+            'no_sph' => $noSph,
+        ];
+
+        // Render HTML
+        $htmlHalaman1 = view('pdf.sph-approved', $dataSph)->render();
+        $htmlHalaman2 = view('pdf.lampiran-barang', $dataLampiran)->render();
+
+        // Gabungkan HTML
+        $htmlGabungan = $htmlHalaman1 . $htmlHalaman2;
+
+        // Load ke PDF
+        $pdf = Pdf::loadHTML($htmlGabungan);
+        $pdf->setPaper('A4', 'portrait');
+        
+
+        return $pdf;
+    }
     private function formatNomorSph(Pesanan $pesanan)
     {
         $format = $this->settings['nomor_format'] ?? 'SPH/{{no_pesanan}}';
@@ -164,10 +182,20 @@ public function generateWithSignature(Pesanan $pesanan, $ttdPath = null, $user =
         return 'data:image/' . $type . ';base64,' . base64_encode($imageData);
     }
 
-    public function generatePreview(Pesanan $pesanan){
+public function generatePreview(Pesanan $pesanan)
+{
     $noSph = $this->formatNomorSph($pesanan);
     $perihal = $pesanan->keterangan ?? $this->settings['perihal_default'] ?? 'Surat Penawaran Harga';
+
+    foreach ($pesanan->details as $detail) {
+    if ($detail->barang && $detail->barang->foto) {
+        $detail->barang->foto_base64 = $this->getBarangImageBase64($detail->barang->foto);
+    }
+    }
+    $jumlahHalamanLampiran = $this->hitungHalamanLampiran($pesanan);
     
+    $lampiranText = $jumlahHalamanLampiran .' lembar';
+
     $data = [
         'company' => $this->company,
         'pesanan' => $pesanan,
@@ -176,26 +204,62 @@ public function generateWithSignature(Pesanan $pesanan, $ttdPath = null, $user =
         'tanggal' => now()->format('d F Y'),
         'no_sph' => $noSph,
         'perihal' => $perihal,
+        'lampiran_text' => $lampiranText,
         'catatan_ppn' => $this->settings['catatan_ppn'] ?? 'Harga belum termasuk PPN 11%',
         'masa_berlaku' => $this->settings['masa_berlaku'] ?? '14 (empat belas) hari kalender',
         'waktu_pengerjaan' => $this->settings['waktu_pengerjaan'] ?? '25 hari kalender',
         'footer_text' => $this->settings['footer_text'] ?? 'Demikian Surat Penawaran Harga preview...',
-        'lampiran_text' =>'1 Lembar',
         'logo_base64' => $this->getLogoBase64(),
         'is_preview' => true
     ];
-    
-    $pdf = Pdf::loadView('pdf.sph-preview', $data);
-    $pdf->setPaper('A4', 'portrait');
-    $pdf->setOptions([
-        'margin_left' => 20,
-        'margin_right' => 20,
-        'margin_top' => 25,
-        'margin_bottom' => 25,
-        'isRemoteEnabled' => true,
-        'isHtml5ParserEnabled' => true
-    ]);
-    
+
+    $data2 = [
+        'pesanan' => $pesanan,
+        'no_sph' => $noSph,
+    ];
+
+    // Render HTML dulu
+    $htmlHalaman1 = view('pdf.sph', $data)->render();
+    $htmlHalaman2 = view('pdf.lampiran-barang', $data2)->render();
+
+    // Gabungkan HTML
+    $htmlGabungan = $htmlHalaman1 . $htmlHalaman2;
+
+    // Load ke PDF
+    $pdf = Pdf::loadHTML($htmlGabungan)
+        ->setPaper('A4', 'portrait');
+
     return $pdf;
+}
+
+private function getBarangImageBase64($path){
+    if (!$path) {
+        return null;
+    }
+
+    $fullPath = storage_path('app/public/' . $path);
+
+    if (!file_exists($fullPath)) {
+        return null;
+    }
+
+    $type = pathinfo($fullPath, PATHINFO_EXTENSION);
+    $data = file_get_contents($fullPath);
+
+    return 'data:image/' . $type . ';base64,' . base64_encode($data);
+}
+
+private function hitungHalamanLampiran(Pesanan $pesanan){
+    $jumlahItem = $pesanan->details->count();
+    
+    if ($jumlahItem <= 10) {
+        return 1;
+    } elseif ($jumlahItem <= 15) {
+        return 2;
+    } elseif ($jumlahItem <= 20) {
+        return 3;
+    } else {
+        return ceil($jumlahItem / 15); // Pembulatan ke atas
+    }
 }
 }

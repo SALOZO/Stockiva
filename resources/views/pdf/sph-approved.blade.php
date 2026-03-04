@@ -5,23 +5,34 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <title>SPH - {{ $no_sph }}</title>
     <style>
+        @page {
+            margin: 0.5cm 1cm 0.8cm 1cm;
+        }
         body {
             font-family: 'Helvetica', 'Arial', sans-serif;
-            font-size: 11pt;
-            line-height: 1.4;
-            margin: 0.1cm;
+            font-size: 10.5pt;
+            line-height: 1.3;
+            margin: 0;
+            padding: 0;
         }
         
+        /* Header */
         .header {
-            margin-bottom: 8px;
+            margin: 0 0 6px 0;
             border-bottom: 2px solid #333;
-            padding-bottom: 10px;
+            padding-bottom: 5px;
         }
         .header h1 {
-            font-size: 20pt;
-            margin: 0 0 5px 0;
+            font-size: 18pt;
+            margin: 0 0 3px 0;
             color: #0b2b4f;
             text-transform: uppercase;
+            font-weight: bold;
+        }
+        .header .company-detail {
+            font-size: 8.5pt;
+            color: #555;
+            line-height: 1.25;
         }
         .header-table {
             width: 100%;
@@ -29,49 +40,63 @@
         }
         .header-table td {
             border: none;
-            padding: 5px;
+            padding: 2px;
             vertical-align: middle;
         }
         .header-logo {
-            max-height: 70px;
-            max-width: 150px;
+            max-height: 65px;
+            max-width: 140px;
             object-fit: contain;
         }
         
+        /* Info Surat */
         .sph-ref {
             width: 100%;
-            margin: 10px 0 15px 0;
+            margin: 6px 0 10px 0;
+            font-size: 10pt;
         }
         .sph-ref td {
             border: none;
-            padding: 3px 0;
+            padding: 2px 0;
         }
         
+        /* Kepada */
         .kepada {
-            margin: 15px 0;
+            margin: 10px 0;
+            font-size: 10pt;
             line-height: 1.3;
         }
         
+        /* Pembuka */
         .pembuka {
-            margin: 15px 0;
+            margin: 10px 0;
             text-align: justify;
         }
+        .pembuka p {
+            margin: 4px 0;
+        }
         
+        /* Tabel */
         table {
             width: 100%;
             border-collapse: collapse;
-            margin: 15px 0;
-            font-size: 10pt;
+            margin: 10px 0;
+            font-size: 9.5pt;
+            table-layout: fixed;
         }
         table th {
             background: #0b2b4f;
             color: white;
-            padding: 8px 5px;
+            padding: 6px 4px;
             text-align: center;
+            font-weight: bold;
+            font-size: 9.5pt;
+            border: 1px solid #0b2b4f;
         }
         table td {
             border: 1px solid #999;
-            padding: 6px 5px;
+            padding: 5px 4px;
+            word-wrap: break-word;
         }
         .text-right {
             text-align: right;
@@ -84,43 +109,93 @@
             background: #f0f0f0;
         }
         
+        /* Kolom Lebar */
+        th:nth-child(1) { width: 5%; }
+        th:nth-child(2) { width: 25%; }
+        th:nth-child(3) { width: 10%; }
+        th:nth-child(4) { width: 10%; }
+        th:nth-child(5) { width: 20%; }
+        th:nth-child(6) { width: 30%; }
+        
+        /* Note */
         .note-section {
-            margin: 15px 0;
+            margin: 8px 0;
+            font-size: 9.5pt;
         }
         .note-section ul {
-            margin: 5px 0 0 20px;
+            margin: 3px 0 0 18px;
+            padding-left: 0;
+        }
+        .note-section li {
+            margin-bottom: 2px;
         }
         
+        /* Penutup */
         .penutup {
-            margin: 15px 0;
+            margin: 8px 0;
             text-align: justify;
+            font-size: 9.5pt;
+            line-height: 1.3;
+        }
+        .penutup p {
+            margin: 0;
         }
         
+        /* Tanda Tangan */
         .signature-wrapper {
             width: 100%;
-            margin-top: 15px;
+            margin-top: 12px;
             overflow: hidden;
+            page-break-inside: avoid;
         }
         .signature-box {
             float: right;
-            width: 250px;
+            width: 230px;
             text-align: center;
+            font-size: 10pt;
         }
         .signature-box p {
-            margin: 3px 0;
+            margin: 2px 0;
         }
         .signature-img {
-            max-height: 50px;
+            height: 60px;
             max-width: 180px;
             object-fit: contain;
+            display: block;
+            margin: 4px auto;
         }
         .signature-line {
-            width: 200px;
+            width: 190px;
             border-top: 1px solid #000;
-            margin: 10px auto 5px auto;
+            margin: 6px auto 4px auto;
         }
         .clear {
             clear: both;
+        }
+        
+        /* Footer */
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            font-size: 8pt;
+            color: #999;
+            text-align: center;
+            padding: 5px 0;
+        }
+        hr {
+            border: none;
+            border-top: 1px solid #ccc;
+            margin: 4px 0;
+        }
+        
+        /* Utility */
+        .page-break {
+            page-break-after: always;
+        }
+        .no-margin {
+            margin: 0;
         }
     </style>
 </head>
@@ -132,15 +207,18 @@
         <tr>
             <td style="width: 18%;">
                 @if($logo_base64)
-                    <img src="{{ $logo_base64 }}" class="header-logo">
+                    <img src="{{ $logo_base64 }}" class="header-logo" alt="Logo">
                 @endif
             </td>
             <td style="width: 82%;">
                 <h1>{{ $company->nama_perusahaan ?? 'Stockiva' }}</h1>
-                <div>
-                    {{ $company->alamat ?? '' }}, {{ $company->kota ?? '' }}, {{ $company->provinsi ?? '' }}<br>
-                    Telp: {{ $company->telepon ?? '-' }} | Email: {{ $company->email ?? '-' }}
+                @if($company)
+                <div class="company-detail">
+                    {{ $company->alamat ?? '' }}{{ $company->alamat && $company->kelurahan ? ', ' : '' }}{{ $company->kelurahan ?? '' }}{{ ($company->alamat || $company->kelurahan) && $company->kecamatan ? ', ' : '' }}{{ $company->kecamatan ?? '' }}<br>
+                    {{ $company->kota ?? '' }}{{ $company->kota && $company->provinsi ? ', ' : '' }}{{ $company->provinsi ?? '' }} {{ $company->kode_pos ?? '' }}<br>
+                    Telp.: {{ $company->telepon ?? '-' }} | Email: {{ $company->email ?? '-' }} | Web: {{ $company->website ?? '-' }}
                 </div>
+                @endif
             </td>
         </tr>
     </table>
@@ -151,7 +229,7 @@
     <tr>
         <td style="width: 60%;">
             <strong>Nomor :</strong> {{ $no_sph }}<br>
-            <strong>Perihal :</strong> {{ $perihal }}
+            <strong>Perihal :</strong> {{ $perihal }}<br>
             <strong>Lampiran :</strong> {{ $lampiran_text }}
         </td>
         <td style="width: 40%; text-align: right;">
@@ -177,7 +255,7 @@
 
 {{-- Tabel Barang --}}
 <table>
-    <thead class="text-center">
+    <thead>
         <tr>
             <th>No.</th>
             <th>Nama Barang</th>
@@ -187,18 +265,20 @@
             <th>Jumlah Harga</th>
         </tr>
     </thead>
-    <tbody class="text-center">
+    <tbody>
         @forelse($items as $index => $item)
         <tr>
             <td class="text-center">{{ $index + 1 }}</td>
-            <td>{{ $item->barang->nama_barang ?? '-' }}</td>
+            <td>{{ $item->barang->nama_barang ?? $item->nama_barang ?? '-' }}</td>
             <td class="text-center">{{ $item->jumlah }}</td>
-            <td class="text-center">{{ $item->barang->satuan->nama_satuan ?? '-' }}</td>
+            <td class="text-center">{{ $item->barang->satuan->nama_satuan ?? $item->satuan ?? '-' }}</td>
             <td class="text-right">Rp {{ number_format($item->harga_satuan, 0, ',', '.') }}</td>
             <td class="text-right">Rp {{ number_format($item->subtotal, 0, ',', '.') }}</td>
         </tr>
         @empty
-        <tr><td colspan="6" class="text-center">-</td></tr>
+        <tr>
+            <td colspan="6" class="text-center">Tidak ada data barang</td>
+        </tr>
         @endforelse
     </tbody>
     <tfoot>
@@ -227,12 +307,12 @@
 {{-- Tanda Tangan --}}
 <div class="signature-wrapper">
     <div class="signature-box">
-        <p>Hormat kami, {{ $company->nama_perusahaan }}</p>
+        <p>Hormat kami,</p>
         
         @if($ttd_base64)
             <img src="{{ $ttd_base64 }}" class="signature-img">
         @else
-            <p style="margin-top: 20px;">&nbsp;</p>
+            <p style="margin-top: 30px;">&nbsp;</p>
         @endif
         
         <div class="signature-line"></div>
@@ -240,7 +320,7 @@
         <p>{{ $approved_by_jabatan ?? $company->jabatan_direktur ?? 'Direktur Utama' }}</p>
         
         @if($approved_at)
-            <p style="font-size: 8pt; margin-top: 5px;">{{ \Carbon\Carbon::parse($approved_at)->format('d/m/Y') }}</p>
+            <p style="font-size: 8pt; margin-top: 3px;">{{ \Carbon\Carbon::parse($approved_at)->format('d/m/Y') }}</p>
         @endif
     </div>
     <div class="clear"></div>
