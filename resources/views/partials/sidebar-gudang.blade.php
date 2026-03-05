@@ -25,6 +25,17 @@
         </li>
 
         <li class="nav-item">
+            <a class="nav-link {{ request()->routeIs('gudang.tugas-gudang*') ? 'active' : '' }}" 
+            href="{{ route('gudang.tugas-gudang.index') }}">
+                <i class="bi bi-clipboard-check"></i>
+                <span>Tugas Gudang</span>
+                @if(request()->routeIs('gudang.tugas-gudang*'))
+                    <span class="active-indicator"></span>
+                @endif
+            </a>
+        </li>
+
+        <li class="nav-item">
             <a class="nav-link {{ request()->routeIs('history.sph.index') ? 'active' : '' }}" 
             href="{{ route('history.sph.index') }}">
                 <i class="bi bi-clock-history"></i>

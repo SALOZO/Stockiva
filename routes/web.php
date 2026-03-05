@@ -8,6 +8,7 @@ use App\Http\Controllers\Direktur\SphController;
 use App\Http\Controllers\EkspedisiController;
 use App\Http\Controllers\Gudang\EkspedisiControll;
 use App\Http\Controllers\Gudang\SphControll;
+use App\Http\Controllers\Gudang\TugasGudangController;
 use App\Http\Controllers\HistorySphController;
 use App\Http\Controllers\JenisController;
 use App\Http\Controllers\KategoryController;
@@ -187,5 +188,7 @@ Route::prefix('admin')->middleware(['auth', 'role:Admin'])->group(function () {
             Route::put('/{ekspedisi}', [EkspedisiControll::class, 'update'])->name('ekspedisi.update');
             Route::delete('/{ekspedisi}', [EkspedisiControll::class, 'destroy'])->name('ekspedisi.destroy');
         });
+
+        Route::get('/tugas-gudang', [TugasGudangController::class, 'index'])->name('tugas-gudang.index');
     });
     
