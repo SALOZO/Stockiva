@@ -131,7 +131,7 @@
         
         /* Penutup */
         .penutup {
-            margin: 15px 0;
+            margin: 5px 0;
             text-align: justify;
             font-size: 10pt;
             line-height: 1.3;
