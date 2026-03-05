@@ -1,10 +1,10 @@
-@extends('layouts.admin')
+@extends('layouts.gudang')
 
 @section('title', 'Tambah Ekspedisi - Stockiva')
 @section('page-title', 'Tambah Ekspedisi Baru')
 
 @section('breadcrumb')
-    <li class="breadcrumb-item"><a href="{{ route('admin.ekspedisi.index') }}">Ekspedisi</a></li>
+    <li class="breadcrumb-item"><a href="{{ route('gudang.ekspedisi.index') }}">Ekspedisi</a></li>
     <li class="breadcrumb-item active">Tambah</li>
 @endsection
 
@@ -14,7 +14,7 @@
         <div class="card">
             <div class="card-header">
                 <div class="d-flex align-items-center">
-                    <a href="{{ route('admin.ekspedisi.index') }}" class="btn btn-sm btn-outline-secondary me-3">
+                    <a href="{{ route('gudang.ekspedisi.index') }}" class="btn btn-sm btn-outline-secondary me-3">
                         <i class="bi bi-arrow-left"></i>
                     </a>
                     <h5 class="card-title mb-0">
@@ -25,7 +25,7 @@
             </div>
             
             <div class="card-body">
-                <form action="{{ route('admin.ekspedisi.store') }}" method="POST" id="formTambahEkspedisi">
+                <form action="{{ route('gudang.ekspedisi.store') }}" method="POST" id="formTambahEkspedisi">
                     @csrf
                     
                     {{-- Alert jika ada error validasi --}}
@@ -216,7 +216,7 @@
                     
                     {{-- Tombol Aksi --}}
                     <div class="d-flex justify-content-end gap-2">
-                        <a href="{{ route('admin.ekspedisi.index') }}" class="btn btn-light px-4">
+                        <a href="{{ route('gudang.ekspedisi.index') }}" class="btn btn-light px-4">
                             Batal
                         </a>
                         <button type="submit" class="btn btn-primary px-5" id="btnSubmit">

@@ -1,11 +1,11 @@
-@extends('layouts.admin')
+@extends('layouts.gudang')
 
-@section('title', 'Tambah Ekspedisi - Stockiva')
-@section('page-title', 'Tambah Ekspedisi Baru')
+@section('title', 'Edit Ekspedisi - Stockiva')
+@section('page-title', 'Edit Ekspedisi')
 
 @section('breadcrumb')
-    <li class="breadcrumb-item"><a href="{{ route('admin.ekspedisi.index') }}">Ekspedisi</a></li>
-    <li class="breadcrumb-item active">Tambah</li>
+    <li class="breadcrumb-item"><a href="{{ route('gudang.ekspedisi.index') }}">Ekspedisi</a></li>
+    <li class="breadcrumb-item active">Edit</li>
 @endsection
 
 @section('content')
@@ -14,19 +14,31 @@
         <div class="card">
             <div class="card-header">
                 <div class="d-flex align-items-center">
-                    <a href="{{ route('admin.ekspedisi.index') }}" class="btn btn-sm btn-outline-secondary me-3">
+                    <a href="{{ route('gudang.ekspedisi.index') }}" class="btn btn-sm btn-outline-secondary me-3">
                         <i class="bi bi-arrow-left"></i>
                     </a>
                     <h5 class="card-title mb-0">
-                        <i class="bi bi-plus-circle me-2"></i>
-                        Form Tambah Ekspedisi
+                        <i class="bi bi-pencil-square me-2"></i>
+                        Form Edit Ekspedisi
                     </h5>
                 </div>
             </div>
             
             <div class="card-body">
-                <form action="{{ route('admin.ekspedisi.store') }}" method="POST" id="formTambahEkspedisi">
+                {{-- Informasi yang diedit --}}
+                <div class="alert alert-info bg-light border-0 d-flex align-items-center mb-4">
+                    <div class="bg-primary-subtle rounded-circle p-2 me-3">
+                        <i class="bi bi-truck fs-5 text-primary"></i>
+                    </div>
+                    <div>
+                        <strong>Sedang mengedit:</strong> 
+                        <span class="fw-bold">{{ $ekspedisi->nama_ekspedisi }}</span>
+                    </div>
+                </div>
+
+                <form action="{{ route('gudang.ekspedisi.update', $ekspedisi->id) }}" method="POST" id="formEditEkspedisi">
                     @csrf
+                    @method('PUT')
                     
                     {{-- Alert jika ada error validasi --}}
                     @if($errors->any())
@@ -42,10 +54,10 @@
                     @endif
                     
                     {{-- Hidden fields untuk lokasi --}}
-                    <input type="hidden" name="provinsi" id="provinsi_name" value="{{ old('provinsi') }}">
-                    <input type="hidden" name="kabupaten_kota" id="kabupaten_kota_name" value="{{ old('kabupaten_kota') }}">
-                    <input type="hidden" name="kecamatan" id="kecamatan_name" value="{{ old('kecamatan') }}">
-                    <input type="hidden" name="desa" id="desa_name" value="{{ old('desa') }}">
+                    <input type="hidden" name="provinsi" id="provinsi_name" value="{{ old('provinsi', $ekspedisi->provinsi) }}">
+                    <input type="hidden" name="kabupaten_kota" id="kabupaten_kota_name" value="{{ old('kabupaten_kota', $ekspedisi->kabupaten_kota) }}">
+                    <input type="hidden" name="kecamatan" id="kecamatan_name" value="{{ old('kecamatan', $ekspedisi->kecamatan) }}">
+                    <input type="hidden" name="desa" id="desa_name" value="{{ old('desa', $ekspedisi->desa) }}">
                     
                     {{-- Informasi Ekspedisi --}}
                     <div class="mb-4">
@@ -64,7 +76,7 @@
                                            class="form-control @error('nama_ekspedisi') is-invalid @enderror" 
                                            id="nama_ekspedisi" 
                                            name="nama_ekspedisi" 
-                                           value="{{ old('nama_ekspedisi') }}"
+                                           value="{{ old('nama_ekspedisi', $ekspedisi->nama_ekspedisi) }}"
                                            placeholder="Contoh: JNE, TIKI, SiCepat"
                                            required>
                                     @error('nama_ekspedisi')
@@ -148,7 +160,7 @@
                                           name="alamat" 
                                           rows="3" 
                                           placeholder="Nama jalan, gedung, nomor gedung"
-                                          required>{{ old('alamat') }}</textarea>
+                                          required>{{ old('alamat', $ekspedisi->alamat) }}</textarea>
                                 @error('alamat')
                                     <div class="text-danger small mt-1">{{ $message }}</div>
                                 @enderror
@@ -172,7 +184,7 @@
                                        class="form-control @error('nama_pic') is-invalid @enderror" 
                                        id="nama_pic" 
                                        name="nama_pic" 
-                                       value="{{ old('nama_pic') }}"
+                                       value="{{ old('nama_pic', $ekspedisi->nama_pic) }}"
                                        placeholder="Nama penanggung jawab"
                                        required>
                                 @error('nama_pic')
@@ -188,40 +200,38 @@
                                        class="form-control @error('no_telp_pic') is-invalid @enderror" 
                                        id="no_telp_pic" 
                                        name="no_telp_pic" 
-                                       value="{{ old('no_telp_pic') }}"
+                                       value="{{ old('no_telp_pic', $ekspedisi->no_telp_pic) }}"
                                        placeholder="08xxxxxxxxxx"
                                        required>
                                 @error('no_telp_pic')
                                     <div class="text-danger small mt-1">{{ $message }}</div>
                                 @enderror
                             </div>
-                            
-                            <div class="col-md-12 mb-3">
-                                <label for="email_pic" class="form-label">
-                                    Email PIC <span class="text-danger">*</span>
-                                </label>
-                                <input type="email" 
-                                       class="form-control @error('email_pic') is-invalid @enderror" 
-                                       id="email_pic" 
-                                       name="email_pic" 
-                                       value="{{ old('email_pic') }}"
-                                       placeholder="email@contoh.com"
-                                       required>
-                                @error('email_pic')
-                                    <div class="text-danger small mt-1">{{ $message }}</div>
-                                @enderror
+                                <div class="col-md-12 mb-3">
+                                    <label for="email_pic" class="form-label">
+                                        Email PIC <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="email" 
+                                           class="form-control @error('email_pic') is-invalid @enderror" 
+                                           id="email_pic" 
+                                           name="email_pic" 
+                                           value="{{ old('email_pic', $ekspedisi->email_pic) }}"
+                                           placeholder="email@contoh.com">
+                                            @error('email_pic')
+                                                <div class="text-danger small mt-1">{{ $message }}</div>
+                                            @enderror
+                                 </div>
                             </div>
-                        </div>
                     </div>
                     
                     {{-- Tombol Aksi --}}
                     <div class="d-flex justify-content-end gap-2">
-                        <a href="{{ route('admin.ekspedisi.index') }}" class="btn btn-light px-4">
+                        <a href="{{ route('gudang.ekspedisi.index') }}" class="btn btn-light px-4">
                             Batal
                         </a>
                         <button type="submit" class="btn btn-primary px-5" id="btnSubmit">
                             <i class="bi bi-save me-2"></i>
-                            Simpan Ekspedisi
+                            Update Ekspedisi
                         </button>
                     </div>
                 </form>
@@ -281,8 +291,13 @@
         color: #475569;
     }
     
-    .btn-light:hover {
-        background: #e2e8f0;
+    .alert-info {
+        background: #f0f9ff;
+        border-radius: 12px;
+    }
+    
+    .bg-primary-subtle {
+        background: rgba(11, 43, 79, 0.08);
     }
 </style>
 @endpush
@@ -290,6 +305,12 @@
 @push('scripts')
 <script>
     $(document).ready(function() {
+        // Data lama
+        var oldProvinsi = '{{ $ekspedisi->provinsi }}';
+        var oldKabupaten = '{{ $ekspedisi->kabupaten_kota }}';
+        var oldKecamatan = '{{ $ekspedisi->kecamatan }}';
+        var oldDesa = '{{ $ekspedisi->desa }}';
+        
         // Load Provinsi dari API
         $.ajax({
             url: 'https://www.emsifa.com/api-wilayah-indonesia/api/provinces.json',
@@ -297,20 +318,17 @@
             dataType: 'json',
             success: function(data) {
                 $('#provinsi_select').html('<option value="">-- Pilih Provinsi --</option>');
+                
+                var selectedProvinceId = '';
                 $.each(data, function(key, value) {
                     $('#provinsi_select').append('<option value="' + value.id + '">' + value.name + '</option>');
+                    if (value.name === oldProvinsi) {
+                        selectedProvinceId = value.id;
+                    }
                 });
                 
-                // Set selected jika ada old value
-                var oldProvinsi = '{{ old('provinsi') }}';
-                if (oldProvinsi) {
-                    $('#provinsi_select option').each(function() {
-                        if ($(this).text() === oldProvinsi) {
-                            $(this).prop('selected', true);
-                            $('#provinsi_name').val(oldProvinsi);
-                            $('#provinsi_select').trigger('change');
-                        }
-                    });
+                if (selectedProvinceId) {
+                    $('#provinsi_select').val(selectedProvinceId).trigger('change');
                 }
             }
         });
@@ -325,9 +343,6 @@
             $('#kabupaten_kota_select').html('<option value="">Loading...</option>');
             $('#kecamatan_select').html('<option value="">-- Pilih Kecamatan --</option>');
             $('#desa_select').html('<option value="">-- Pilih Desa/Kelurahan --</option>');
-            $('#kabupaten_kota_name').val('');
-            $('#kecamatan_name').val('');
-            $('#desa_name').val('');
             
             if (provinceId) {
                 $.ajax({
@@ -336,9 +351,18 @@
                     dataType: 'json',
                     success: function(data) {
                         $('#kabupaten_kota_select').html('<option value="">-- Pilih Kabupaten/Kota --</option>');
+                        
+                        var selectedRegencyId = '';
                         $.each(data, function(key, value) {
                             $('#kabupaten_kota_select').append('<option value="' + value.id + '">' + value.name + '</option>');
+                            if (value.name === oldKabupaten) {
+                                selectedRegencyId = value.id;
+                            }
                         });
+                        
+                        if (selectedRegencyId) {
+                            $('#kabupaten_kota_select').val(selectedRegencyId).trigger('change');
+                        }
                     }
                 });
             }
@@ -353,8 +377,6 @@
             $('#kabupaten_kota_name').val(regencyName);
             $('#kecamatan_select').html('<option value="">Loading...</option>');
             $('#desa_select').html('<option value="">-- Pilih Desa/Kelurahan --</option>');
-            $('#kecamatan_name').val('');
-            $('#desa_name').val('');
             
             if (regencyId) {
                 $.ajax({
@@ -363,9 +385,18 @@
                     dataType: 'json',
                     success: function(data) {
                         $('#kecamatan_select').html('<option value="">-- Pilih Kecamatan --</option>');
+                        
+                        var selectedDistrictId = '';
                         $.each(data, function(key, value) {
                             $('#kecamatan_select').append('<option value="' + value.id + '">' + value.name + '</option>');
+                            if (value.name === oldKecamatan) {
+                                selectedDistrictId = value.id;
+                            }
                         });
+                        
+                        if (selectedDistrictId) {
+                            $('#kecamatan_select').val(selectedDistrictId).trigger('change');
+                        }
                     }
                 });
             }
@@ -379,7 +410,6 @@
             
             $('#kecamatan_name').val(districtName);
             $('#desa_select').html('<option value="">Loading...</option>');
-            $('#desa_name').val('');
             
             if (districtId) {
                 $.ajax({
@@ -388,8 +418,13 @@
                     dataType: 'json',
                     success: function(data) {
                         $('#desa_select').html('<option value="">-- Pilih Desa/Kelurahan --</option>');
+                        
                         $.each(data, function(key, value) {
                             $('#desa_select').append('<option value="' + value.id + '">' + value.name + '</option>');
+                            if (value.name === oldDesa) {
+                                $('#desa_select').val(value.id);
+                                $('#desa_name').val(value.name);
+                            }
                         });
                     }
                 });
@@ -404,7 +439,7 @@
         });
 
         // Validasi form sebelum submit
-        $('#formTambahEkspedisi').on('submit', function(e) {
+        $('#formEditEkspedisi').on('submit', function(e) {
             if (!$('#provinsi_name').val() || !$('#kabupaten_kota_name').val() || 
                 !$('#kecamatan_name').val() || !$('#desa_name').val()) {
                 e.preventDefault();

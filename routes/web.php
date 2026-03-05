@@ -6,6 +6,7 @@ use App\Http\Controllers\ClientsController;
 use App\Http\Controllers\Direktur\ProfileController;
 use App\Http\Controllers\Direktur\SphController;
 use App\Http\Controllers\EkspedisiController;
+use App\Http\Controllers\Gudang\EkspedisiControll;
 use App\Http\Controllers\Gudang\SphControll;
 use App\Http\Controllers\HistorySphController;
 use App\Http\Controllers\JenisController;
@@ -176,5 +177,15 @@ Route::prefix('admin')->middleware(['auth', 'role:Admin'])->group(function () {
         Route::get('/sph/{pesanan}', [SphControll::class, 'show'])->name('sph.show');
         Route::get('/sph/{pesanan}/download', [SphControll::class, 'download'])->name('sph.download');
         Route::put('/sph/{pesanan}/update-status', [SphControll::class, 'updateStatus'])->name('sph.update-status');
+
+        Route::prefix('ekspedisi')->group(function () {
+            Route::get('/', [EkspedisiControll::class, 'index'])->name('ekspedisi.index');
+            Route::get('/create', [EkspedisiControll::class, 'create'])->name('ekspedisi.create');
+            Route::post('/', [EkspedisiControll::class, 'store'])->name('ekspedisi.store');
+            Route::get('/{ekspedisi}', [EkspedisiControll::class, 'show'])->name('ekspedisi.show');
+            Route::get('/{ekspedisi}/edit', [EkspedisiControll::class, 'edit'])->name('ekspedisi.edit');
+            Route::put('/{ekspedisi}', [EkspedisiControll::class, 'update'])->name('ekspedisi.update');
+            Route::delete('/{ekspedisi}', [EkspedisiControll::class, 'destroy'])->name('ekspedisi.destroy');
+        });
     });
     

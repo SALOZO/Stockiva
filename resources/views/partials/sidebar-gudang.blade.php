@@ -13,7 +13,6 @@
     </div>
     
     <ul class="sidebar-menu">
-        {{-- MENU UTAMA: SPH DISETUJUI (LANGSUNG HALAMAN PERTAMA) --}}
         <li class="nav-item">
             <a class="nav-link {{ request()->routeIs('gudang.sph.index') ? 'active' : '' }}" 
                href="{{ route('gudang.sph.index') }}">
@@ -31,6 +30,19 @@
                 <i class="bi bi-clock-history"></i>
                 <span>History SPH</span>
                 @if(request()->routeIs('history.sph.index'))
+                    <span class="active-indicator"></span>
+                @endif
+            </a>
+        </li>
+
+        <li class="nav-divider"></li>
+
+        <li class="nav-item">
+            <a class="nav-link {{ request()->routeIs('admin.ekspedisi*') ? 'active' : '' }}" 
+               href="{{ route('gudang.ekspedisi.index') }}">
+                <i class="bi bi-truck"></i>
+                <span>Ekspedisi</span>
+                @if(request()->routeIs('admin.ekspedisi*'))
                     <span class="active-indicator"></span>
                 @endif
             </a>
