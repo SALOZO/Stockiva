@@ -83,13 +83,27 @@ class Pesanan extends Model
         };
     }
     public function getGudangStatusBadgeAttribute(){
-    return match($this->gudang_status) {
-        'Menunggu' => '<span class="badge bg-secondary">Menunggu</span>',
-        'Sedang diproses' => '<span class="badge bg-primary">Diproses</span>',
-        'Siap_dikirim' => '<span class="badge bg-info">Siap Dikirim</span>',
-        'Dikirim' => '<span class="badge bg-warning">Dikirim</span>',
-        'Diterima' => '<span class="badge bg-success">Diterima</span>',
-        default => '<span class="badge bg-dark">Unknown</span>',
-    };
-}
+        return match($this->gudang_status) {
+            'Menunggu' => '<span class="badge bg-secondary">Menunggu</span>',
+            'Sedang diproses' => '<span class="badge bg-primary">Diproses</span>',
+            'Siap_dikirim' => '<span class="badge bg-info">Siap Dikirim</span>',
+            'Dikirim' => '<span class="badge bg-warning">Dikirim</span>',
+            'Diterima' => '<span class="badge bg-success">Diterima</span>',
+            default => '<span class="badge bg-dark">Unknown</span>',
+        };
+    }
+    public function getNoSphFormattedAttribute(){
+        // Ambil nomor urut dari no_pesanan
+        $noUrut = $this->extractNomorUrut();
+        $bulan = $this->created_at->format('m');
+        $tahun = $this->created_at->format('Y');
+        
+        return $noUrut . ' / SPH / RP / ' . $bulan . ' / ' . $tahun;
+    }
+
+    private function extractNomorUrut()
+    {
+        $parts = explode('-', $this->no_pesanan);
+        return end($parts);
+    }
 }

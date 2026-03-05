@@ -64,7 +64,7 @@
                             @forelse($sphList as $sph)
                             <tr>
                                 <td>
-                                    <strong>SPH/{{ $sph->no_pesanan }}</strong>
+                                    <strong>{{ $sph->no_sph_formatted }}</strong>
                                 </td>
                                 <td>
                                     {{ $sph->client->nama_client ?? '-' }}
@@ -86,27 +86,27 @@
                                         <i class="bi bi-eye"></i> Detail
                                     </a>
                                     {{-- SURAT JALAN --}}
-                                    <a href="#" 
+                                    {{-- <a href="#" 
                                         class="btn btn-sm btn-primary"
                                         data-bs-toggle="tooltip" 
                                         title="Buat Surat Jalan">
                                         <i class="bi bi-truck"></i>
-                                    </a>
+                                    </a> --}}
                                     {{-- BAST PENGIRIMAN --}}
-                                    <a href="#" 
+                                    {{-- <a href="#" 
                                         class="btn btn-sm btn-warning text-white"
                                         data-bs-toggle="tooltip" 
                                         title="Buat BAST Pengiriman">
                                         <i class="bi bi-box-seam"></i>
-                                    </a>
+                                    </a> --}}
                                     {{-- TOMBOL BAST CLIENT --}}
-                                    <a href="#" 
+                                    {{-- <a href="#" 
                                         class="btn btn-sm btn-success"
                                         data-bs-toggle="tooltip" 
                                         title="Buat BAST Client">
                                         <i class="bi bi-file-text"></i>
-                                    </a>
-                                            {{-- TOMBOL UBAH STATUS --}}
+                                    </a> --}}
+                                    {{-- TOMBOL UBAH STATUS --}}
                                     <button type="button" 
                                             class="btn btn-sm btn-secondary"
                                             data-bs-toggle="modal" 
@@ -128,7 +128,7 @@
                                                         @method('PUT')
                                                         <div class="modal-body">
                                                             <div class="mb-3">
-                                                                <label class="form-label">SPH: <strong>SPH/{{ $sph->no_pesanan }}</strong></label>
+                                                                <label class="form-label"><strong>{{ $sph->no_sph_formatted }}</strong></label>
                                                             </div>
                                                             <div class="mb-3">
                                                                 <label class="form-label">Status</label>
