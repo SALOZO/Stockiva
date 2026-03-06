@@ -110,7 +110,7 @@
                                         </a>
                                         
                                         {{-- Tombol KIRIM / PENGIRIMAN --}}
-                                        <a href="#" 
+                                        <a href="{{ route('gudang.pengiriman.index', $tugas->id) }}" 
                                            class="btn btn-sm btn-outline-success"
                                            data-bs-toggle="tooltip" 
                                            title="Pengiriman">

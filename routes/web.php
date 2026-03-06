@@ -7,6 +7,7 @@ use App\Http\Controllers\Direktur\ProfileController;
 use App\Http\Controllers\Direktur\SphController;
 use App\Http\Controllers\EkspedisiController;
 use App\Http\Controllers\Gudang\EkspedisiControll;
+use App\Http\Controllers\Gudang\PengirimanController;
 use App\Http\Controllers\Gudang\ProduksiController;
 use App\Http\Controllers\Gudang\SphControll;
 use App\Http\Controllers\Gudang\TugasGudangController;
@@ -191,8 +192,12 @@ Route::prefix('admin')->middleware(['auth', 'role:Admin'])->group(function () {
         });
 
         Route::get('/tugas-gudang', [TugasGudangController::class, 'index'])->name('tugas-gudang.index');
-            // ===== PRODUKSI =====
+        // ===== PRODUKSI =====
         Route::get('/produksi/{pesanan}', [ProduksiController::class, 'index'])->name('produksi.index');
         Route::post('/produksi/{pesanan}', [ProduksiController::class, 'update'])->name('produksi.update');
+        //===== PENGIRIMAN =====
+        Route::get('/pengiriman/{pesanan}', [PengirimanController::class, 'index'])->name('pengiriman.index');
+        Route::get('/pengiriman/{pesanan}/create', [PengirimanController::class, 'create'])->name('pengiriman.create');
+        Route::post('/pengiriman/{pesanan}', [PengirimanController::class, 'store'])->name('pengiriman.store');
     });
     
