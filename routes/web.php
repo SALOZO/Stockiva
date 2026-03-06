@@ -7,6 +7,7 @@ use App\Http\Controllers\Direktur\ProfileController;
 use App\Http\Controllers\Direktur\SphController;
 use App\Http\Controllers\EkspedisiController;
 use App\Http\Controllers\Gudang\EkspedisiControll;
+use App\Http\Controllers\Gudang\ProduksiController;
 use App\Http\Controllers\Gudang\SphControll;
 use App\Http\Controllers\Gudang\TugasGudangController;
 use App\Http\Controllers\HistorySphController;
@@ -190,5 +191,8 @@ Route::prefix('admin')->middleware(['auth', 'role:Admin'])->group(function () {
         });
 
         Route::get('/tugas-gudang', [TugasGudangController::class, 'index'])->name('tugas-gudang.index');
+            // ===== PRODUKSI =====
+        Route::get('/produksi/{pesanan}', [ProduksiController::class, 'index'])->name('produksi.index');
+        Route::post('/produksi/{pesanan}', [ProduksiController::class, 'update'])->name('produksi.update');
     });
     

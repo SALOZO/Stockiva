@@ -64,7 +64,7 @@
                             <tr>
                                 <td>{{ $tugasList->firstItem() + $index }}</td>
                                 <td>
-                                    <strong>{{ $tugas->no_sph ?? 'SPH/'.$tugas->no_pesanan }}</strong>
+                                    <strong>{{ $tugas->no_sph_formatted }}</strong>
                                 </td>
                                 <td class="text-center">
                                     <strong>{{ $tugas->client->nama_client ?? '-' }}</strong>
@@ -75,7 +75,26 @@
                                     </small>
                                 </td>
                                 <td>
-                                    <span class="text-muted">-</span>
+                                    @php
+                                        $totalPersen = 0;
+                                        $jumlahBarang = $tugas->details->count();
+                                        
+                                        foreach ($tugas->details as $detail) {
+                                            if ($detail->jumlah > 0) {
+                                                $persen = ($detail->produced_qty / $detail->jumlah) * 100;
+                                                $totalPersen += $persen;
+                                            }
+                                        }
+                                        
+                                        $rataRata = $jumlahBarang > 0 ? round($totalPersen / $jumlahBarang) : 0;
+                                    @endphp
+                                    
+                                    <div class="fw-bold {{ $rataRata == 100 ? 'text-success' : 'text-primary' }}">
+                                        {{ $rataRata }}%
+                                    </div>
+                                    <small class="text-muted">
+                                        {{ $tugas->details->sum('produced_qty') }}/{{ $tugas->details->sum('jumlah') }} item
+                                    </small>
                                 </td>
                                 <td>
                                     <span class="text-muted">-</span>
@@ -83,7 +102,7 @@
                                 <td>
                                     <div class="btn-group" role="group">
                                         {{-- Tombol PRODUKSI --}}
-                                        <a href="#" 
+                                        <a href="{{ route('gudang.produksi.index', $tugas->id) }}" 
                                            class="btn btn-sm btn-outline-primary"
                                            data-bs-toggle="tooltip" 
                                            title="Produksi Barang">

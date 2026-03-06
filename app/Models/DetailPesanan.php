@@ -18,7 +18,8 @@ class DetailPesanan extends Model
         'barang_id',
         'jumlah',
         'harga_satuan',
-        'subtotal'
+        'subtotal',
+        'produced_qty'
     ];
 
     protected $casts = [

@@ -9,19 +9,21 @@ use Illuminate\Http\Request;
 class TugasGudangController extends Controller
 {
     public function index(Request $request){
-        $query = Pesanan::with(['client', 'details'])->where('sph_status', 'disetujui')->orderBy('approved_at', 'desc');
+        $query = Pesanan::with(['client', 'details'])
+                        ->where('sph_status', 'disetujui')
+                        ->orderBy('approved_at', 'desc');
         
-        // Fitur search
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function($q) use ($search) {
-                $q->where('no_pesanan', 'like', "%{$search}%")->orWhereHas('client', function($clientQuery) use ($search) {
-                      $clientQuery->where('nama_client', 'like', "%{$search}%");
-                  });
+                $q->where('no_pesanan', 'like', "%{$search}%")
+                ->orWhereHas('client', function($clientQuery) use ($search) {
+                    $clientQuery->where('nama_client', 'like', "%{$search}%");
+                });
             });
         }
 
-        $tugasList = $query->paginate(10)->withQueryString();
+        $tugasList = $query->paginate(15)->withQueryString();
 
         return view('gudang.tugas-gudang.index', compact('tugasList'));
     }
