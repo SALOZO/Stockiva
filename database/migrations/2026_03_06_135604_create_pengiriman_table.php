@@ -18,10 +18,10 @@ return new class extends Migration
             $table->integer('pengiriman_ke');
             $table->date('tanggal');
             $table->enum('status', ['pending', 'diproses', 'dikirim', 'selesai', 'dibatalkan'])->default('pending');
-            $table->string('penerima_ekspedisi')->nullable();
+            // $table->string('penerima_ekspedisi')->nullable();
             $table->string('penerima_client')->nullable();
             $table->string('ekspedisi')->nullable();
-            $table->string('no_resi')->nullable();
+            // $table->string('no_resi')->nullable();
             $table->datetime('tanggal_kirim')->nullable();
             $table->datetime('tanggal_terima')->nullable();
             $table->text('catatan')->nullable();

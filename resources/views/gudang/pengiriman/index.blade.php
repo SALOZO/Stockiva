@@ -86,7 +86,12 @@
                                     </td>
                                     <td>{{ $kirim->tanggal->format('d/m/Y') }}</td>
                                     <td>{!! $kirim->status_badge !!}</td>
-                                    <td>{{ $kirim->penerima_ekspedisi ?? '-' }}</td>
+                                    <td>{{ $kirim->ekspedisi ?? '-' }}
+                                        <br>
+                                        <small class="text-muted">
+                                            <i class="bi bi-person"></i> {{ $kirim->nama_kurir }}
+                                        </small>
+                                    </td>
                                     <td>{{ $kirim->penerima_client ?? '-' }}</td>
                                     <td>
                                         <div class="btn-group" role="group">

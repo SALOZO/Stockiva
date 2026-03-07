@@ -134,7 +134,7 @@ class PengirimanController extends Controller
 
         $data = [
             'penerima_client' => $request->penerima_client,
-            'status' => 'selesai',
+            // 'status' => 'selesai',
             'tanggal_terima' => now()
         ];
 

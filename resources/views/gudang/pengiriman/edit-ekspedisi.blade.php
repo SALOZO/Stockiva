@@ -88,16 +88,18 @@
                     @method('PUT')
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label for="ekspedisi_id" class="form-label">Pilih Ekspedisi <span class="text-danger">*</span></label>
-                            <select class="form-select @error('ekspedisi_id') is-invalid @enderror" 
-                                    id="ekspedisi_id" 
-                                    name="ekspedisi_id" 
+                            <label for="nama_ekspedisi" class="form-label">Nama Ekspedisi <span class="text-danger">*</span></label>
+                            <select class="form-select @error('ekspedisi') is-invalid @enderror"
+                                    id="ekspedisi"
+                                    name="ekspedisi"
                                     required>
+
                                 <option value="">-- Pilih Ekspedisi --</option>
+
                                 @foreach($ekspedisiList as $ekspedisi)
-                                <option value="{{ $ekspedisi->id }}" default: 
-                                    @selected(old('ekspedisi_id', $pengiriman->ekspedisi_id) == $ekspedisi->id)>
-                                    
+                                <option value="{{ $ekspedisi->nama_ekspedisi }}"
+                                    @selected(old('ekspedisi', $pengiriman->ekspedisi) == $ekspedisi->nama_ekspedisi)>
+
                                     {{ $ekspedisi->nama_ekspedisi }}
 
                                     @if($ekspedisi->nama_pic)
@@ -107,9 +109,6 @@
                                 </option>
                                 @endforeach
                             </select>
-                            @error('ekspedisi_id')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
                         </div>
 
                         <div class="col-md-6 mb-3">
