@@ -20,9 +20,12 @@ class Pengiriman extends Model
         'penerima_ekspedisi',
         'penerima_client',
         'ekspedisi',
+        'nama_kurir', 
         'no_resi',
         'tanggal_kirim',
         'tanggal_terima',
+        'bast_ekspedisi_file',
+        'bast_client_file',
         // 'catatan',
         'created_by'
     ];
@@ -39,6 +42,10 @@ class Pengiriman extends Model
 
     public function createdBy(){
         return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function detailPengiriman(){
+    return $this->hasMany(PengirimanDetail::class);
     }
 
     public function getStatusBadgeAttribute(){

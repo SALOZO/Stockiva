@@ -199,5 +199,11 @@ Route::prefix('admin')->middleware(['auth', 'role:Admin'])->group(function () {
         Route::get('/pengiriman/{pesanan}', [PengirimanController::class, 'index'])->name('pengiriman.index');
         Route::get('/pengiriman/{pesanan}/create', [PengirimanController::class, 'create'])->name('pengiriman.create');
         Route::post('/pengiriman/{pesanan}', [PengirimanController::class, 'store'])->name('pengiriman.store');
+        //===== UPDATE EKSPEDISI =====
+        Route::get('/pengiriman/{pengiriman}/edit-ekspedisi', [PengirimanController::class, 'editEkspedisi'])->name('pengiriman.edit-ekspedisi');
+        Route::put('/pengiriman/{pengiriman}/update-ekspedisi', [PengirimanController::class, 'updateEkspedisi'])->name('pengiriman.update-ekspedisi');
+        //===== UPDATE CLIENT =====
+        Route::get('/pengiriman/{pengiriman}/edit-client', [PengirimanController::class, 'editClient'])->name('pengiriman.edit-client');
+        Route::put('/pengiriman/{pengiriman}/update-client', [PengirimanController::class, 'updateClient'])->name('pengiriman.update-client');
     });
     

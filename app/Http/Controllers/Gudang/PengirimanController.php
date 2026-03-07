@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Gudang;
 
 use App\Http\Controllers\Controller;
+use App\Models\Ekspedisi;
 use App\Models\Pengiriman;
 use App\Models\Pesanan;
 use Illuminate\Http\Request;
@@ -84,6 +85,70 @@ class PengirimanController extends Controller
             DB::rollBack();
             return back()->with('error', 'Gagal membuat pengiriman: ' . $e->getMessage())->withInput();
         }
+    }
+
+    public function editEkspedisi(Pengiriman $pengiriman){
+        $pengiriman->load(['pesanan.client', 'detailPengiriman.detailPesanan.barang']);
+        $ekspedisiList = Ekspedisi::orderBy('nama_ekspedisi')->get();
+        
+        return view('gudang.pengiriman.edit-ekspedisi', compact('pengiriman','ekspedisiList'));
+    }
+
+    public function updateEkspedisi(Request $request, Pengiriman $pengiriman){
+        $request->validate([
+            'ekspedisi' => 'required|string',
+            'nama_kurir' => 'required|string',
+            'file_bast' => 'nullable|mimes:pdf|max:2048'
+        ]);
+
+        $data = [
+            'ekspedisi' => $request->ekspedisi,
+            'nama_kurir' => $request->nama_kurir,
+            'status' => 'dikirim',
+            'tanggal_kirim' => now()
+        ];
+
+        if ($request->hasFile('file_bast')) {
+            $file = $request->file('file_bast');
+            $filename = 'BAST-EKSPEDISI-' . $pengiriman->no_pengiriman . '-' . time() . '.pdf';
+            $path = $file->storeAs('public/bast-ekspedisi', $filename);
+            $data['bast_ekspedisi_file'] = str_replace('public/', '', $path);
+        }
+
+        $pengiriman->update($data);
+
+        return redirect()->route('gudang.pengiriman.index', $pengiriman->pesanan_id)->with('success', 'Data ekspedisi berhasil diperbarui.');
+    }
+
+    public function editClient(Pengiriman $pengiriman){
+        $pengiriman->load(['pesanan.client', 'detailPengiriman.detailPesanan.barang']);
+        
+        return view('gudang.pengiriman.edit-client', compact('pengiriman'));
+    }
+
+    public function updateClient(Request $request, Pengiriman $pengiriman){
+        $request->validate([
+            'penerima_client' => 'required|string',
+            'file_bast_client' => 'nullable|mimes:pdf|max:2048'
+        ]);
+
+        $data = [
+            'penerima_client' => $request->penerima_client,
+            'status' => 'selesai',
+            'tanggal_terima' => now()
+        ];
+
+        if ($request->hasFile('file_bast_client')) {
+            $file = $request->file('file_bast_client');
+            $filename = 'BAST-CLIENT-' . $pengiriman->no_pengiriman . '-' . time() . '.pdf';
+            $path = $file->storeAs('public/bast-client', $filename);
+            $data['bast_client_file'] = str_replace('public/', '', $path);
+        }
+
+        $pengiriman->update($data);
+
+        return redirect()->route('gudang.pengiriman.index', $pengiriman->pesanan_id)
+            ->with('success', 'Data penerima client berhasil diperbarui.');
     }
 
 }

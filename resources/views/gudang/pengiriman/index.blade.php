@@ -90,12 +90,14 @@
                                     <td>{{ $kirim->penerima_client ?? '-' }}</td>
                                     <td>
                                         <div class="btn-group" role="group">
-                                            <a href="" 
-                                               class="btn btn-sm btn-outline-warning"
-                                               data-bs-toggle="tooltip" 
-                                               title="Update Kiriman">
+                                            <button type="button" 
+                                                    class="btn btn-sm btn-outline-warning"
+                                                    data-bs-toggle="modal" 
+                                                    data-bs-target="#pilihUpdateModal{{ $kirim->id }}"
+                                                    data-bs-toggle="tooltip" 
+                                                    title="Update Kiriman">
                                                 <i class="bi bi-arrow-repeat"></i>
-                                            </a>
+                                            </button>
                                             <a href="#" 
                                                class="btn btn-sm btn-outline-primary"
                                                data-bs-toggle="tooltip" 
@@ -111,6 +113,44 @@
                                         </div>
                                     </td>
                                 </tr>
+                                <div class="modal fade" id="pilihUpdateModal{{ $kirim->id }}" tabindex="-1">
+                                    <div class="modal-dialog modal-dialog-centered">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">
+                                                    <i class="bi bi-pencil-square me-2 text-warning"></i>
+                                                    Pilih Jenis Update
+                                                </h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <p class="text-muted mb-3">
+                                                    Pengiriman: <strong>{{ $pesanan->no_sph_formatted }}</strong>
+                                                </p>
+                                                <div class="d-grid gap-3">
+                                                
+                                                <a href="{{ route('gudang.pengiriman.edit-ekspedisi', $kirim->id) }}" 
+                                                class="btn btn-outline-success btn-lg w-100">
+                                                    <i class="bi bi-truck me-2"></i>
+                                                    Update Ekspedisi
+                                                </a>
+                                                
+                                                    <a href="{{ route('gudang.pengiriman.edit-client', $kirim->id) }}" 
+                                                    class="btn btn-outline-primary btn-lg w-100">
+                                                        <i class="bi bi-person me-2"></i>
+                                                        Update Client
+                                                    </a>
+
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                                    <i class="bi bi-x-circle"></i> Tutup
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                                 @endforeach
                             </tbody>
                         </table>
