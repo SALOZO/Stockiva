@@ -103,21 +103,38 @@
                                                     title="Update Kiriman">
                                                 <i class="bi bi-arrow-repeat"></i>
                                             </button>
-                                            <a href="#" 
-                                               class="btn btn-sm btn-outline-primary"
-                                               data-bs-toggle="tooltip" 
-                                               title="Buat Document">
+
+                                            <button type="button" 
+                                                    class="btn btn-sm btn-outline-primary"
+                                                    data-bs-toggle="modal" 
+                                                    data-bs-target="#pilihDocumentModal{{ $kirim->id }}"
+                                                    data-bs-toggle="tooltip" 
+                                                    title="Buat Document">
                                                 <i class="bi bi-file-text"></i>
-                                            </a>
+                                            </button>
+
                                             <a href="" 
-                                               class="btn btn-sm btn-outline-info"
-                                               data-bs-toggle="tooltip" 
-                                               title="Detail">
+                                                class="btn btn-sm btn-outline-info"
+                                                data-bs-toggle="tooltip" 
+                                                title="Detail">
                                                 <i class="bi bi-eye"></i>
                                             </a>
-                                        </div>
-                                    </td>
-                                </tr>
+                                            <form action="{{ route('gudang.pengiriman.destroy', $kirim->id) }}" method="POST" 
+                                                onsubmit="return confirm('Yakin ingin menghapus pengiriman ini?')">
+                                                @csrf
+                                                @method('DELETE')
+                
+                                                <button type="submit"
+                                                    class="btn btn-sm btn-outline-danger"
+                                                    data-bs-toggle="tooltip"
+                                                    title="Hapus Pengiriman">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </form>
+                                    </div>
+                                </td>
+                            </tr>
+                            {{-- MODAL UPDATE --}}
                                 <div class="modal fade" id="pilihUpdateModal{{ $kirim->id }}" tabindex="-1">
                                     <div class="modal-dialog modal-dialog-centered">
                                         <div class="modal-content">
@@ -146,6 +163,55 @@
                                                         Update Client
                                                     </a>
 
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                                    <i class="bi bi-x-circle"></i> Tutup
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {{-- MODAL BUAT DOC --}}
+                                <div class="modal fade" id="pilihDocumentModal{{ $kirim->id }}" tabindex="-1">
+                                    <div class="modal-dialog modal-dialog-centered">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">
+                                                    <i class="bi bi-file-earmark-text me-2 text-primary"></i>
+                                                    Pilih Jenis Dokumen
+                                                </h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <p class="text-muted mb-3">
+                                                    Pengiriman:<strong>{{ $pesanan->no_sph_formatted }}</strong>
+                                                </p>
+                                                
+                                                <div class="d-grid gap-3">
+                                                    {{-- Tombol BAST Client --}}
+                                                    <button type="button" 
+                                                            class="btn btn-outline-primary btn-md text-start"
+                                                            onclick="alert('Fitur BAST Client akan segera hadir')">
+                                                        <i class="bi bi-person-badge me-2"></i>
+                                                        BAST Client
+                                                    </button>
+
+                                                    {{-- Tombol BAST Ekspedisi --}}
+                                                    <a href="{{ route('gudang.pengiriman.bast-ekspedisi', $kirim->id) }}" 
+                                                    class="btn btn-outline-success btn-md text-start w-100">
+                                                        <i class="bi bi-truck me-2"></i>
+                                                        BAST Ekspedisi
+                                                    </a>
+
+                                                    {{-- Tombol Surat Jalan --}}
+                                                    <button type="button" 
+                                                            class="btn btn-outline-info btn-md text-start"
+                                                            onclick="alert('Fitur Surat Jalan akan segera hadir')">
+                                                        <i class="bi bi-map me-2"></i>
+                                                        Surat Jalan
+                                                    </button>
                                                 </div>
                                             </div>
                                             <div class="modal-footer">

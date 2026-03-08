@@ -11,24 +11,45 @@ class Pengiriman extends Model
 
     protected $table = 'pengiriman';
 
+
     protected $fillable = [
         'pesanan_id',
         'no_pengiriman',
         'pengiriman_ke',
         'tanggal',
         'status',
-        // 'penerima_ekspedisi',
         'penerima_client',
         'ekspedisi',
-        'nama_kurir', 
-        // 'no_resi',
+        'ekspedisi_id',
+        'nama_kurir',
+        'kurir_no_telp',
+        'kurir_jenis_identitas',
+        'kurir_no_identitas',
+        'kurir_plat_nomor',
         'tanggal_kirim',
         'tanggal_terima',
         'bast_ekspedisi_file',
         'bast_client_file',
-        // 'catatan',
         'created_by'
     ];
+    // protected $fillable = [
+    //     'pesanan_id',
+    //     'no_pengiriman',
+    //     'pengiriman_ke',
+    //     'tanggal',
+    //     'status',
+    //     // 'penerima_ekspedisi',
+    //     'penerima_client',
+    //     'ekspedisi',
+    //     'nama_kurir', 
+    //     // 'no_resi',
+    //     'tanggal_kirim',
+    //     'tanggal_terima',
+    //     'bast_ekspedisi_file',
+    //     'bast_client_file',
+    //     // 'catatan',
+    //     'created_by'
+    // ];
 
     protected $casts = [
         'tanggal' => 'date',
@@ -45,7 +66,10 @@ class Pengiriman extends Model
     }
 
     public function detailPengiriman(){
-    return $this->hasMany(PengirimanDetail::class);
+        return $this->hasMany(PengirimanDetail::class);
+    }
+    public function ekspedisi(){
+        return $this->belongsTo(Ekspedisi::class);
     }
 
     public function getStatusBadgeAttribute(){

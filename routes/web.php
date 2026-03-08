@@ -11,6 +11,7 @@ use App\Http\Controllers\Gudang\PengirimanController;
 use App\Http\Controllers\Gudang\ProduksiController;
 use App\Http\Controllers\Gudang\SphControll;
 use App\Http\Controllers\Gudang\TugasGudangController;
+use App\Http\Controllers\HistoryBastController;
 use App\Http\Controllers\HistorySphController;
 use App\Http\Controllers\JenisController;
 use App\Http\Controllers\KategoryController;
@@ -180,6 +181,7 @@ Route::prefix('admin')->middleware(['auth', 'role:Admin'])->group(function () {
         Route::get('/sph/{pesanan}', [SphControll::class, 'show'])->name('sph.show');
         Route::get('/sph/{pesanan}/download', [SphControll::class, 'download'])->name('sph.download');
         Route::put('/sph/{pesanan}/update-status', [SphControll::class, 'updateStatus'])->name('sph.update-status');
+        Route::delete('/gudang/pengiriman/{pengiriman}', [PengirimanController::class, 'destroy'])->name('pengiriman.destroy');
 
         Route::prefix('ekspedisi')->group(function () {
             Route::get('/', [EkspedisiControll::class, 'index'])->name('ekspedisi.index');
@@ -205,5 +207,16 @@ Route::prefix('admin')->middleware(['auth', 'role:Admin'])->group(function () {
         //===== UPDATE CLIENT =====
         Route::get('/pengiriman/{pengiriman}/edit-client', [PengirimanController::class, 'editClient'])->name('pengiriman.edit-client');
         Route::put('/pengiriman/{pengiriman}/update-client', [PengirimanController::class, 'updateClient'])->name('pengiriman.update-client');
+        // ===== BUAT DOC =====
+
+        // BAST EKSPEDISI
+        Route::get('/pengiriman/{pengiriman}/bast-ekspedisi', [PengirimanController::class, 'bastEkspedisi'])->name('pengiriman.bast-ekspedisi');
+        Route::post('/pengiriman/{pengiriman}/cetak-bast-ekspedisi', [PengirimanController::class, 'cetakBastEkspedisi'])->name('pengiriman.cetak-bast-ekspedisi');
+    });
+
+    Route::middleware(['auth'])->prefix('history-bast')->name('history.bast.')->group(function () {
+        Route::get('/', [HistoryBastController::class, 'index'])->name('index');
+        Route::get('/{pengiriman}/{jenis}/preview', [HistoryBastController::class, 'preview'])->name('preview');
+        Route::get('/{pengiriman}/{jenis}/download', [HistoryBastController::class, 'download'])->name('download');
     });
     

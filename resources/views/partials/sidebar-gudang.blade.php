@@ -46,6 +46,17 @@
             </a>
         </li>
 
+        <li class="nav-item">
+            <a class="nav-link {{ request()->routeIs('history.bast.*') ? 'active' : '' }}" 
+            href="{{ route('history.bast.index') }}">
+                <i class="bi bi-file-earmark-text"></i>
+                <span>History BAST</span>
+                @if(request()->routeIs('history.bast.*'))
+                    <span class="active-indicator"></span>
+                @endif
+            </a>
+        </li>
+
         <li class="nav-divider"></li>
 
         <li class="nav-item">

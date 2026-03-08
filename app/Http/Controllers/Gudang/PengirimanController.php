@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Gudang;
 
 use App\Http\Controllers\Controller;
+use App\Models\CompanyProfile;
 use App\Models\Ekspedisi;
 use App\Models\Pengiriman;
 use App\Models\Pesanan;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -149,6 +151,99 @@ class PengirimanController extends Controller
 
         return redirect()->route('gudang.pengiriman.index', $pengiriman->pesanan_id)
             ->with('success', 'Data penerima client berhasil diperbarui.');
+    }
+    public function bastEkspedisi(Pengiriman $pengiriman){
+        $pengiriman->load(['pesanan.client', 'detailPengiriman.detailPesanan.barang','ekspedisi']);
+        $ekspedisiList = Ekspedisi::orderBy('nama_ekspedisi')->get();
+        
+        return view('gudang.pengiriman.bast-ekspedisi', compact('pengiriman','ekspedisiList'));
+    }
+
+    private function extractNomorUrut($noPesanan){
+        $parts = explode('-', $noPesanan);
+        return (int)end($parts);
+    }
+
+    public function cetakBastEkspedisi(Request $request, Pengiriman $pengiriman){
+        $request->validate([
+            'ekspedisi_id' => 'required|exists:ekspedisi,id',
+            'nama_kurir' => 'required|string',
+            'kurir_no_telp' => 'required|string',
+            'kurir_jenis_identitas' => 'required|in:SIM A,SIM C,SIM B1,SIM B2,KTP,Lainnya',
+            'kurir_no_identitas' => 'required|string',
+            'kurir_plat_nomor' => 'required|string'
+        ]);
+
+        $ekspedisi = Ekspedisi::findOrFail($request->ekspedisi_id);
+
+        $noUrutSPH = $this->extractNomorUrut($pengiriman->pesanan->no_pesanan);
+        $noUrutBAST = $noUrutSPH + 1;
+            
+        $bulan = now()->format('m');
+        $tahun = now()->format('Y');
+        
+        $noBAST = sprintf("%04d", $noUrutBAST) . ' / BAST / RP / ' . $bulan . ' / ' . $tahun;
+        $filename = 'BAST-' . sprintf("%04d", $noUrutBAST) . '-RP-' . $bulan . '-' . $tahun . '.pdf';
+
+        $pengiriman->update([
+            'ekspedisi' => $ekspedisi->nama_ekspedisi,
+            'nama_kurir' => $request->nama_kurir,
+            'kurir_no_telp' => $request->kurir_no_telp,
+            'kurir_jenis_identitas' => $request->kurir_jenis_identitas,
+            'kurir_no_identitas' => $request->kurir_no_identitas,
+            'kurir_plat_nomor' => $request->kurir_plat_nomor
+        ]);
+
+        $pengiriman->load([
+            'pesanan.client', 
+            'detailPengiriman.detailPesanan.barang',
+            'ekspedisi'
+        ]);
+
+        $company = CompanyProfile::first();
+        
+        // Generate PDF
+        $pdf = Pdf::loadView('pdf.bast-ekspedisi', [
+            'pengiriman' => $pengiriman,
+            'company' => $company,
+            'no_bast' => $noBAST
+        ]);
+        
+        $pdf->setPaper('A4', 'portrait');
+        
+        return $pdf->download ($filename);
+    }
+
+    public function destroy(Pengiriman $pengiriman){
+        DB::beginTransaction();
+
+        try {
+            $pesananId = $pengiriman->pesanan_id;
+            $noPengiriman = $pengiriman->no_pengiriman;
+
+            // hapus detail pengiriman dulu
+            DB::table('detail_pengiriman')
+                ->where('pengiriman_id', $pengiriman->id)
+                ->delete();
+
+            // hapus pengiriman
+            $pengiriman->delete();
+
+            DB::commit();
+
+            return redirect()
+                ->route('gudang.pengiriman.index', $pesananId)
+                ->with('success', 'Pengiriman "' . $noPengiriman . '" berhasil dihapus.');
+
+        } catch (\Exception $e) {
+
+            DB::rollBack();
+
+            return back()->with(
+                'error',
+                'Gagal menghapus pengiriman: ' . $e->getMessage()
+            );
+        }
     }
 
 }
