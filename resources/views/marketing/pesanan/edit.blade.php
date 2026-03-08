@@ -22,9 +22,6 @@
                     <i class="bi bi-person me-1"></i> {{ $pesanan->client->nama_pic }} ({{ $pesanan->client->jabatan_pic }})
                 </p>
             </div>
-            <div class="ms-auto">
-                <span class="badge bg-primary">{{ $pesanan->no_pesanan }}</span>
-            </div>
         </class>
         
 

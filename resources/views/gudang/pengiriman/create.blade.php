@@ -98,7 +98,7 @@
                                         <input type="number" 
                                                class="form-control form-control-sm kirim-input"
                                                name="kirim[{{ $detail->id }}]" 
-                                               value="0"
+                                               placeholder="0"
                                                min="0"
                                                max="{{ $detail->produced_qty }}"
                                                data-max="{{ $detail->produced_qty }}"

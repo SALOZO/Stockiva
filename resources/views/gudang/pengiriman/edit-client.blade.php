@@ -43,7 +43,7 @@
                             </tr>
                             <tr>
                                 <td><strong>Ekspedisi</strong></td>
-                                <td>: {{ $pengiriman->ekspedisi->nama_ekspedisi ?? '-' }} ({{ $pengiriman->nama_kurir ?? '-' }})</td>
+                                <td>: {{ $pengiriman->ekspedisi ?? '-' }} ({{ $pengiriman->nama_kurir ?? '-' }})</td>
                             </tr>
                         </table>
                     </div>

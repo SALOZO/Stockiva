@@ -18,10 +18,10 @@
             <div class="card-header">
                 <div class="d-flex justify-content-between align-items-center">
                     <h5 class="mb-0">Informasi Pesanan</h5>
-                    <div>
+                    {{-- <div>
                         <span class="badge bg-primary me-2">{{ $pesanan->no_pesanan }}</span>
                         {!! $pesanan->status_badge !!}
-                    </div>
+                    </div> --}}
                 </div>
             </div>
             <div class="card-body">
@@ -87,7 +87,7 @@
 
         {{-- Status SPH --}}
         @if($pesanan->sph_status != 'draft')
-            <div>
+            <div class="mb-3">
                 <strong>Status SPH:</strong> 
                 @switch($pesanan->sph_status)
                     @case('menunggu')
@@ -206,7 +206,7 @@
                 @endif
 
                 {{-- Edit (hanya jika draft/menunggu) --}}
-                @if(in_array($pesanan->sph_status, ['draft', 'menunggu']))
+                @if(in_array($pesanan->sph_status, ['draft']))
                 <a href="{{ route('marketing.pesanan.edit', $pesanan->id) }}" 
                    class="btn btn-warning">
                     <i class="bi bi-pencil"></i> Edit

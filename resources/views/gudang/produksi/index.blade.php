@@ -83,7 +83,7 @@
                                         <input type="number" 
                                             class="form-control form-control-sm" 
                                             name="tambah[{{ $detail->id }}]" 
-                                            value="0"
+                                            placeholder="0"
                                             min="0"
                                             max="{{ $detail->jumlah - $detail->produced_qty }}"
                                             placeholder="Tambah"

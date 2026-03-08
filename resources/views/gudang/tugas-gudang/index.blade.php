@@ -95,10 +95,46 @@
                                     <small class="text-muted">
                                         {{ $tugas->details->sum('produced_qty') }}/{{ $tugas->details->sum('jumlah') }} item
                                     </small>
-                                </td>
-                                <td>
-                                    <span class="text-muted">-</span>
-                                </td>
+                                    <td>
+                                        @php
+                                            $pengiriman = $tugas->pengiriman()->latest()->first();
+                                        @endphp
+                                        
+                                        @if($pengiriman)
+                                            @switch($pengiriman->status)
+                                                @case('pending')
+                                                    <span class="badge bg-secondary">
+                                                        <i class="bi bi-hourglass"></i> Pending
+                                                    </span>
+                                                    @break
+                                                    
+                                                @case('dikirim')
+                                                    <div class="text-info">
+                                                        <i class="bi bi-truck"></i>
+                                                        {{ $pengiriman->ekspedisi ?? 'Ekspedisi' }}
+                                                        <br>
+                                                        <small>{{ $pengiriman->nama_kurir ?? '-' }}</small>
+                                                    </div>
+                                                    @break
+                                                    
+                                                @case('selesai')
+                                                    <div class="text-success">
+                                                        <i class="bi bi-check-circle-fill"></i> Selesai
+                                                        <br>
+                                                        <small>
+                                                            <i class="bi bi-person"></i> 
+                                                            {{ $pengiriman->penerima_client ?? '-' }}
+                                                        </small>
+                                                    </div>
+                                                    @break
+                                                    
+                                                @default
+                                                    <span class="text-muted">-</span>
+                                            @endswitch
+                                        @else
+                                            <span class="text-muted">-</span>
+                                        @endif
+                                    </td>
                                 <td>
                                     <div class="btn-group" role="group">
                                         {{-- Tombol PRODUKSI --}}

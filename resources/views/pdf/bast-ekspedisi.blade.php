@@ -148,13 +148,31 @@
 <body>
 
 <div class="header">
-    <h1>{{ $company->nama_perusahaan }}</h1>
-    <div class="company-detail">
-        Head Office: Ruko Topaz Commercial TC16, Summarecon, Bandung<br>
-        Branch Office: Jl. Ramin 04 No.02 Komplek Bumi Panyawangan, Cileunyi – Bandung<br>
-        Telp. (022) 32093707 – HP: 0813 2498 2023<br>
-        E-mail: topasjaya.mandiri@gmail.com
-    </div>
+    <table width="100%" style="border: none;">
+        <tr>
+            <td width="15%" style="border:none;">
+                <img src="data:image/png;base64,{{ base64_encode(file_get_contents(public_path('storage/logo/'.$company->logo))) }}" style="height:70px;">
+            </td>
+            <td width="85%" style="border:none; text-align:center;">
+                <h1>{{ $company->nama_perusahaan }}</h1>
+                <div class="company-detail">
+                    {{ $company->alamat }}
+                    {{ $company->kelurahan ? ', '.$company->kelurahan : '' }}
+                    {{ $company->kecamatan ? ', '.$company->kecamatan : '' }}
+                    {{ $company->kota ? ', '.$company->kota : '' }}
+                    {{ $company->provinsi ? ', '.$company->provinsi : '' }}
+                    {{ $company->kode_pos ? ' - '.$company->kode_pos : '' }}
+                    <br>
+
+                    Telp. {{ $company->telepon }}
+                    {{ $company->website ? ' | Website: '.$company->website : '' }}
+                    <br>
+
+                    E-mail: {{ $company->email }}
+                </div>
+            </td>
+        </tr>
+    </table>
 </div>
 
 <div class="title">

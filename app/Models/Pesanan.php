@@ -57,6 +57,10 @@ class Pesanan extends Model
         return $this->belongsTo(User::class, 'approved_by');
     }
 
+    public function pengiriman(){
+        return $this->hasOne(Pengiriman::class, 'pesanan_id');
+    }
+
     // Generate nomor pesanan otomatis
     public static function generateNoPesanan(){
         $date = now()->format('Ymd');

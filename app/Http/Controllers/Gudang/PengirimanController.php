@@ -191,7 +191,8 @@ class PengirimanController extends Controller
             'kurir_no_telp' => $request->kurir_no_telp,
             'kurir_jenis_identitas' => $request->kurir_jenis_identitas,
             'kurir_no_identitas' => $request->kurir_no_identitas,
-            'kurir_plat_nomor' => $request->kurir_plat_nomor
+            'kurir_plat_nomor' => $request->kurir_plat_nomor,
+            'status' => 'dikirim',
         ]);
 
         $pengiriman->load([
