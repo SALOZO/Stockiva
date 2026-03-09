@@ -19,6 +19,7 @@ class Pengiriman extends Model
         'tanggal',
         'status',
         'penerima_client',
+        'penerima_ekspedisi',
         'ekspedisi',
         'ekspedisi_id',
         'nama_kurir',
@@ -30,6 +31,8 @@ class Pengiriman extends Model
         'tanggal_terima',
         'bast_ekspedisi_file',
         'bast_client_file',
+        'surat_jalan_file',
+        'surat_jalan_ke',
         'created_by'
     ];
     // protected $fillable = [

@@ -212,6 +212,10 @@ Route::prefix('admin')->middleware(['auth', 'role:Admin'])->group(function () {
         // BAST EKSPEDISI
         Route::get('/pengiriman/{pengiriman}/bast-ekspedisi', [PengirimanController::class, 'bastEkspedisi'])->name('pengiriman.bast-ekspedisi');
         Route::post('/pengiriman/{pengiriman}/cetak-bast-ekspedisi', [PengirimanController::class, 'cetakBastEkspedisi'])->name('pengiriman.cetak-bast-ekspedisi');
+
+        // SURAT JALAN
+        Route::get('/pengiriman/{pengiriman}/surat-jalan', [PengirimanController::class, 'suratJalan'])->name('pengiriman.surat-jalan');
+        Route::post('/pengiriman/{pengiriman}/cetak-surat-jalan', [PengirimanController::class, 'cetakSuratJalan'])->name('pengiriman.cetak-surat-jalan');
     });
 
     Route::middleware(['auth'])->prefix('history-bast')->name('history.bast.')->group(function () {

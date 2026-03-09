@@ -7,6 +7,7 @@ use App\Models\CompanyProfile;
 use App\Models\Ekspedisi;
 use App\Models\Pengiriman;
 use App\Models\Pesanan;
+use App\Models\SatuanKirim;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -21,25 +22,36 @@ class PengirimanController extends Controller
 
     public function create(Pesanan $pesanan){
         $pesanan->load(['client', 'details.barang', 'details.kategori', 'details.jenis']);
+
+        $ekspedisiList = Ekspedisi::orderBy('nama_ekspedisi')->get();
         
-        return view('gudang.pengiriman.create', compact('pesanan'));
+        $satuanKirimList = SatuanKirim::orderBy('nama_satuan')->get();
+        
+        return view('gudang.pengiriman.create', compact('pesanan', 'ekspedisiList', 'satuanKirimList'));
     }
 
-     public function store(Request $request, Pesanan $pesanan){
+    public function store(Request $request, Pesanan $pesanan){
         $request->validate([
+            'ekspedisi_id' => 'required|exists:ekspedisi,id',
             'tanggal' => 'required|date',
             'catatan' => 'nullable|string',
-            'kirim' => 'required|array',
-            'kirim.*' => 'required|integer|min:0'
+            'kirim' => 'nullable|array',
+            'kirim.*' => 'nullable|integer|min:0',
+            'satuan_kirim' => 'nullable|array',
+            'satuan_kirim.*' => 'nullable|exists:satuan_kirim,id'
         ]);
 
         DB::beginTransaction();
         try {
+            // Ambil data ekspedisi untuk mendapatkan nama_ekspedisi
+            $ekspedisi = Ekspedisi::findOrFail($request->ekspedisi_id);
+            
             $jumlahPengiriman = Pengiriman::where('pesanan_id', $pesanan->id)->count();
             $pengirimanKe = $jumlahPengiriman + 1;
 
             $noPengiriman = 'KIRIM/' . $pesanan->no_pesanan . '/' . $pengirimanKe;
 
+            // Simpan dengan mengisi kolom ekspedisi (string)
             $pengiriman = Pengiriman::create([
                 'pesanan_id' => $pesanan->id,
                 'no_pengiriman' => $noPengiriman,
@@ -47,6 +59,8 @@ class PengirimanController extends Controller
                 'tanggal' => $request->tanggal,
                 'status' => 'pending',
                 'catatan' => $request->catatan,
+                'ekspedisi_id' => $request->ekspedisi_id,
+                'ekspedisi' => $ekspedisi->nama_ekspedisi, // <-- INI YANG DITAMBAH
                 'created_by' => auth()->id()
             ]);
 
@@ -57,11 +71,18 @@ class PengirimanController extends Controller
                 
                 if (isset($request->kirim[$detailId]) && $request->kirim[$detailId] > 0) {
                     $jumlahKirim = $request->kirim[$detailId];
+                    $satuanKirimId = $request->satuan_kirim[$detailId] ?? null;
                     
                     if ($jumlahKirim > $detail->produced_qty) {
                         throw new \Exception(
                             "Jumlah kirim untuk {$detail->barang->nama_barang} " .
-                            "melebihi stok produksi ({$detail->produced_qty})"
+                            "melebihi stok ({$detail->produced_qty})"
+                        );
+                    }
+                    
+                    if (!$satuanKirimId) {
+                        throw new \Exception(
+                            "Satuan kirim untuk {$detail->barang->nama_barang} harus dipilih"
                         );
                     }
                     
@@ -69,6 +90,7 @@ class PengirimanController extends Controller
                         'pengiriman_id' => $pengiriman->id,
                         'detail_pesanan_id' => $detailId,
                         'jumlah_kirim' => $jumlahKirim,
+                        'satuan_kirim_id' => $satuanKirimId,
                         'created_at' => now(),
                         'updated_at' => now()
                     ]);
@@ -86,7 +108,7 @@ class PengirimanController extends Controller
 
             DB::commit();
             
-            return redirect()->route('gudang.pengiriman.index', $pesanan->id)->with('success', 'Pengiriman Ke-' . $pengirimanKe . ' berhasil dibuat. ' .'Stok produksi berkurang ' . $totalBarang . ' item.');
+            return redirect()->route('gudang.pengiriman.index', $pesanan->id)->with('success', 'Pengiriman Ke-' . $pengirimanKe . ' berhasil dibuat.');
                 
         } catch (\Exception $e) {
             DB::rollBack();
@@ -268,6 +290,75 @@ class PengirimanController extends Controller
                 'Gagal menghapus pengiriman: ' . $e->getMessage()
             );
         }
+    }
+
+    public function suratJalan(Pengiriman $pengiriman){
+        $pengiriman->load([
+            'pesanan.client',
+            'detailPengiriman.detailPesanan.barang',
+            'detailPengiriman.satuanKirim'
+        ]);
+        $suratJalanKe = 1;
+        if ($pengiriman->surat_jalan_file) {
+            $suratJalanKe = $pengiriman->surat_jalan_ke + 1;
+        } else {
+            $existingCount = Pengiriman::where('id', $pengiriman->id)->whereNotNull('surat_jalan_file')->count();
+            $suratJalanKe = $existingCount + 1;
+        }
+        
+        $bulan = now()->format('m');
+        $tahun = now()->format('Y');
+        
+        $noSJ = sprintf("%04d", $suratJalanKe) . ' / SJ / RP / ' . $bulan . ' / ' . $tahun;
+        
+        return view('gudang.pengiriman.surat-jalan', compact('pengiriman', 'noSJ', 'suratJalanKe'));
+    }
+
+    public function cetakSuratJalan(Request $request, Pengiriman $pengiriman){
+        $pengiriman->load([
+            'pesanan.client',
+            'detailPengiriman.detailPesanan.barang',
+            'detailPengiriman.satuanKirim'
+        ]);
+        
+        $suratJalanKe = 1;
+        
+        if ($pengiriman->surat_jalan_file) {
+            $suratJalanKe = $pengiriman->surat_jalan_ke + 1;
+        } else {
+            $existingCount = Pengiriman::where('id', $pengiriman->id)
+                                ->whereNotNull('surat_jalan_file')
+                                ->count();
+            $suratJalanKe = $existingCount + 1;
+        }
+        
+        $bulan = now()->format('m');
+        $tahun = now()->format('Y');
+        
+        $noSJ = sprintf("%04d", $suratJalanKe) . ' / SJ / RP / ' . $bulan . ' / ' . $tahun;
+        $filename = 'SJ-' . sprintf("%04d", $suratJalanKe) . '-RP-' . $bulan . '-' . $tahun . '.pdf';
+        $path = 'surat-jalan/' . $filename;
+
+        $company = CompanyProfile::first();
+
+
+        $pdf = Pdf::loadView('pdf.surat-jalan', [
+            'pengiriman' => $pengiriman,
+            'company' => $company,
+            'no_sj' => $noSJ,
+            'suratJalanKe' => $suratJalanKe
+        ]);
+        
+        $pdf->setPaper('A4', 'portrait');
+
+        $pengiriman->update([
+            'surat_jalan_file' => $path,
+            'surat_jalan_ke' => $suratJalanKe
+        ]);
+
+        Storage::disk('public')->put($path, $pdf->output());
+        
+        return $pdf->download($filename);
     }
 
 }

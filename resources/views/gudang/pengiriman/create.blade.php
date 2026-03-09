@@ -56,6 +56,29 @@
                 <form action="{{ route('gudang.pengiriman.store', $pesanan->id) }}" method="POST">
                     @csrf
                     
+                    {{-- PILIH EKSPEDISI --}}
+                    <div class="mb-3">
+                        <label for="ekspedisi_id" class="form-label">Pilih Ekspedisi <span class="text-danger">*</span></label>
+                        <select class="form-select @error('ekspedisi_id') is-invalid @enderror" 
+                                id="ekspedisi_id" 
+                                name="ekspedisi_id" 
+                                required>
+                            <option value="">-- Pilih Ekspedisi --</option>
+                            @foreach($ekspedisiList as $ekspedisi)
+                                <option value="{{ $ekspedisi->id }}" 
+                                    {{ old('ekspedisi_id') == $ekspedisi->id ? 'selected' : '' }}>
+                                    {{ $ekspedisi->nama_ekspedisi }}
+                                    @if($ekspedisi->nama_pic)
+                                        ({{ $ekspedisi->nama_pic }})
+                                    @endif
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('ekspedisi_id')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+
                     <div class="mb-3">
                         <label for="tanggal" class="form-label">Tanggal Pengiriman <span class="text-danger">*</span></label>
                         <input type="date" 
@@ -78,10 +101,11 @@
                                     <th>Nama Barang</th>
                                     <th>Kategori</th>
                                     <th>Jenis</th>
-                                    <th>Satuan</th>
+                                    <th>Satuan Barang</th>
                                     <th>Jumlah Pesanan</th>
-                                    <th>Sudah Produksi</th>
+                                    <th>Stok</th>
                                     <th>Jumlah Kirim</th>
+                                    <th>Satuan Kirim</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -103,8 +127,16 @@
                                                max="{{ $detail->produced_qty }}"
                                                data-max="{{ $detail->produced_qty }}"
                                                data-nama="{{ $detail->barang->nama_barang }}"
-                                               style="width: 100px; margin: 0 auto;">
-                                        <small class="text-muted">Maks: {{ $detail->produced_qty }}</small>
+                                               style="width: 80px; margin: 0 auto;">
+                                    </td>
+                                    <td>
+                                        <select class="form-select form-select-sm" 
+                                                name="satuan_kirim[{{ $detail->id }}]">
+                                            <option value="">-- Pilih --</option>
+                                            @foreach($satuanKirimList as $satuan)
+                                                <option value="{{ $satuan->id }}">{{ $satuan->nama_satuan }}</option>
+                                            @endforeach
+                                        </select>
                                     </td>
                                 </tr>
                                 @endforeach
@@ -152,12 +184,14 @@
                 let nama = $(this).data('nama');
                 
                 if (val > max) {
-                    alert('Jumlah kirim ' + nama + ' melebihi stok produksi (' + max + ')');
+                    alert('Jumlah kirim ' + nama + ' melebihi stok (' + max + ')');
                     valid = false;
                     return false;
                 }
                 
-                totalKirim += val;
+                if (val > 0) {
+                    totalKirim += val;
+                }
             });
             
             if (totalKirim === 0) {

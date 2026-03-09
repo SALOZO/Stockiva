@@ -20,4 +20,15 @@ class PengirimanDetail extends Model
         return $this->belongsTo(DetailPesanan::class, 'detail_pesanan_id');
     }
 
+    public function satuanKirim(){
+        return $this->belongsTo(SatuanKirim::class);
+    }
+    public function ekspedisiRelasi(){
+    return $this->belongsTo(Ekspedisi::class, 'ekspedisi_id');
+    }
+
+    public function getNamaEkspedisiAttribute(){
+        return $this->ekspedisi ?? $this->ekspedisiRelasi->nama_ekspedisi ?? '-';
+    }
+
 }

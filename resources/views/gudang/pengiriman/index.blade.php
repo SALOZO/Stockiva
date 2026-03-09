@@ -206,12 +206,10 @@
                                                     </a>
 
                                                     {{-- Tombol Surat Jalan --}}
-                                                    <button type="button" 
-                                                            class="btn btn-outline-info btn-md text-start"
-                                                            onclick="alert('Fitur Surat Jalan akan segera hadir')">
-                                                        <i class="bi bi-map me-2"></i>
-                                                        Surat Jalan
-                                                    </button>
+                                                    <a href="{{ route('gudang.pengiriman.surat-jalan', $kirim->id) }}" 
+                                                    class="btn btn-outline-info btn-lg w-100">
+                                                        <i class="bi bi-map"></i> Surat Jalan
+                                                    </a>
                                                 </div>
                                             </div>
                                             <div class="modal-footer">
