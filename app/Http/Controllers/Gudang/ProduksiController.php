@@ -16,8 +16,8 @@ class ProduksiController extends Controller
 
     public function update(Request $request, Pesanan $pesanan){
         $request->validate([
-            'tambah' => 'required|array',
-            'tambah.*' => 'required|integer|min:0'
+            'tambah' => 'nullable|array',
+            'tambah.*' => 'nullable|integer|min:0'
         ]);
 
         $updated = false;
@@ -38,7 +38,10 @@ class ProduksiController extends Controller
                     $bisaDitambah = $maxQty - $currentQty;
                     $warnings[] = "{$detail->barang->nama_barang} hanya bisa ditambah {$bisaDitambah} dari {$currentQty} (maksimal {$maxQty})";
                 } elseif ($tambah > 0) {
-                    $detail->update(['produced_qty' => $totalBaru]);
+                    $detail->update([
+                        'produced_qty' => $totalBaru,
+                        'shipped_qty' => $totalBaru
+                    ]);
                     $updated = true;
                 }
             }

@@ -73,7 +73,7 @@ class PengirimanController extends Controller
                         'updated_at' => now()
                     ]);
                     
-                    $detail->produced_qty -= $jumlahKirim;
+                    $detail->shipped_qty -= $jumlahKirim;
                     $detail->save();
                     
                     $totalBarang++;
