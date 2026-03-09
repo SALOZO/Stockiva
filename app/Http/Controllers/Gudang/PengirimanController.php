@@ -298,13 +298,10 @@ class PengirimanController extends Controller
             'detailPengiriman.detailPesanan.barang',
             'detailPengiriman.satuanKirim'
         ]);
-        $suratJalanKe = 1;
-        if ($pengiriman->surat_jalan_file) {
-            $suratJalanKe = $pengiriman->surat_jalan_ke + 1;
-        } else {
-            $existingCount = Pengiriman::where('id', $pengiriman->id)->whereNotNull('surat_jalan_file')->count();
-            $suratJalanKe = $existingCount + 1;
-        }
+        
+         $lastSuratJalan = Pengiriman::whereNotNull('surat_jalan_ke')->max('surat_jalan_ke');
+    
+        $suratJalanKe = $lastSuratJalan ? $lastSuratJalan + 1 : 1;
         
         $bulan = now()->format('m');
         $tahun = now()->format('Y');
@@ -315,50 +312,44 @@ class PengirimanController extends Controller
     }
 
     public function cetakSuratJalan(Request $request, Pengiriman $pengiriman){
-        $pengiriman->load([
-            'pesanan.client',
-            'detailPengiriman.detailPesanan.barang',
-            'detailPengiriman.satuanKirim'
-        ]);
-        
-        $suratJalanKe = 1;
-        
-        if ($pengiriman->surat_jalan_file) {
-            $suratJalanKe = $pengiriman->surat_jalan_ke + 1;
-        } else {
-            $existingCount = Pengiriman::where('id', $pengiriman->id)
-                                ->whereNotNull('surat_jalan_file')
-                                ->count();
-            $suratJalanKe = $existingCount + 1;
-        }
-        
-        $bulan = now()->format('m');
-        $tahun = now()->format('Y');
-        
-        $noSJ = sprintf("%04d", $suratJalanKe) . ' / SJ / RP / ' . $bulan . ' / ' . $tahun;
-        $filename = 'SJ-' . sprintf("%04d", $suratJalanKe) . '-RP-' . $bulan . '-' . $tahun . '.pdf';
-        $path = 'surat-jalan/' . $filename;
+    $pengiriman->load([
+        'pesanan.client',
+        'detailPengiriman.detailPesanan.barang',
+        'detailPengiriman.satuanKirim'
+    ]);
+    
+    // Ambil nomor surat jalan TERAKHIR dari SEMUA pengiriman
+    $lastSuratJalan = Pengiriman::whereNotNull('surat_jalan_ke')
+                        ->max('surat_jalan_ke');
+    
+    $suratJalanKe = $lastSuratJalan ? $lastSuratJalan + 1 : 1;
+    
+    $bulan = now()->format('m');
+    $tahun = now()->format('Y');
+    
+    $noSJ = sprintf("%04d", $suratJalanKe) . ' / SJ / RP / ' . $bulan . ' / ' . $tahun;
+    $filename = 'SJ-' . sprintf("%04d", $suratJalanKe) . '-RP-' . $bulan . '-' . $tahun . '.pdf';
+    $path = 'surat-jalan/' . $filename;
 
-        $company = CompanyProfile::first();
+    $company = CompanyProfile::first();
 
+    $pdf = Pdf::loadView('pdf.surat-jalan', [
+        'pengiriman' => $pengiriman,
+        'company' => $company,
+        'no_sj' => $noSJ,
+        'suratJalanKe' => $suratJalanKe
+    ]);
+    
+    $pdf->setPaper('A4', 'portrait');
 
-        $pdf = Pdf::loadView('pdf.surat-jalan', [
-            'pengiriman' => $pengiriman,
-            'company' => $company,
-            'no_sj' => $noSJ,
-            'suratJalanKe' => $suratJalanKe
-        ]);
-        
-        $pdf->setPaper('A4', 'portrait');
+    // Update dengan nomor yang baru
+    $pengiriman->update([
+        'surat_jalan_file' => $path,
+        'surat_jalan_ke' => $suratJalanKe
+    ]);
 
-        $pengiriman->update([
-            'surat_jalan_file' => $path,
-            'surat_jalan_ke' => $suratJalanKe
-        ]);
-
-        Storage::disk('public')->put($path, $pdf->output());
-        
-        return $pdf->download($filename);
-    }
-
+    Storage::disk('public')->put($path, $pdf->output());
+    
+    return $pdf->download($filename);
+}
 }
