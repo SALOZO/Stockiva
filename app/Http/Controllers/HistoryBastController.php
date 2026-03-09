@@ -32,7 +32,8 @@ class HistoryBastController extends Controller
                     'no_pengiriman' => $p->no_pengiriman,
                     'pengiriman_ke' => $p->pengiriman_ke,
                     'file' => $p->bast_ekspedisi_file,
-                    'jenis_file' => 'ekspedisi'
+                    'jenis_file' => 'ekspedisi',
+                    'no_sph' => $p->pesanan->no_sph_formatted ?? '-'
                 ]);
             }
             
@@ -47,7 +48,7 @@ class HistoryBastController extends Controller
                     'no_pengiriman' => $p->no_pengiriman,
                     'pengiriman_ke' => $p->pengiriman_ke,
                     'file' => $p->bast_client_file,
-                    'jenis_file' => 'client'
+                    'jenis_file' => 'client',
                 ]);
             }
         }
@@ -103,19 +104,42 @@ class HistoryBastController extends Controller
         
         return Storage::download($file);
     }
+    private function generateNoBast($pengiriman, $jenis){
 
-    private function generateNoBast($pengiriman, $jenis)
-    {
+        $file = $jenis == 'ekspedisi' 
+            ? $pengiriman->bast_ekspedisi_file 
+            : $pengiriman->bast_client_file;
+        
+        if (!$file) {
+            return '-';
+        }
+        
+        $filename = basename($file);
+        
+        $parts = explode('-', $filename);
+        
+        if (isset($parts[1])) {
+            $noUrut = $parts[1];
+            $bulan = $parts[3] ?? $pengiriman->created_at->format('m');
+            $tahun = str_replace('.pdf', '', $parts[4] ?? $pengiriman->created_at->format('Y'));
+            
+            return sprintf("%04d", $noUrut) . ' / BAST / RP / ' . $bulan . ' / ' . $tahun;
+        }
+        
         $noPesanan = $pengiriman->pesanan->no_pesanan;
         $parts = explode('-', $noPesanan);
         $noUrut = (int)end($parts);
+
+        $bastCount = Pengiriman::where('pesanan_id', $pengiriman->pesanan_id)
+                    ->whereNotNull($jenis == 'ekspedisi' ? 'bast_ekspedisi_file' : 'bast_client_file')
+                    ->count();
         
-        $offset = $jenis == 'ekspedisi' ? 1 : 2;
-        $noUrutBAST = $noUrut + $offset;
+        $noUrutBAST = $noUrut + $bastCount;
         
         $bulan = $pengiriman->created_at->format('m');
         $tahun = $pengiriman->created_at->format('Y');
         
         return sprintf("%04d", $noUrutBAST) . ' / BAST / RP / ' . $bulan . ' / ' . $tahun;
     }
+
 }

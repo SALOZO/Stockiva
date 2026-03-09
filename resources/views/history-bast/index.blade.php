@@ -44,8 +44,9 @@
                             <tr>
                                 <th>No</th>
                                 <th>No. BAST</th>
-                                <th>Pengiriman</th>
+                                <th>No. SPH</th>
                                 <th>Client</th>
+                                <th>Pengiriman</th>
                                 <th>Jenis</th>
                                 <th>Tanggal</th>
                                 <th>Aksi</th>
@@ -59,11 +60,12 @@
                                     <strong>{{ $bast['no_bast'] }}</strong>
                                 </td>
                                 <td>
-                                    {{ $bast['no_pengiriman'] }}
-                                    <br>
-                                    <small class="text-muted">Ke-{{ $bast['pengiriman_ke'] }}</small>
+                                    <strong>{{ $bast['no_sph'] }}</strong>
                                 </td>
                                 <td>{{ $bast['client'] }}</td>
+                                <td>
+                                    Pengiriman Ke : {{ $bast['pengiriman_ke'] }}
+                                </td>
                                 <td>
                                     @if($bast['jenis'] == 'Ekspedisi')
                                         <span class="badge bg-info">Ekspedisi</span>

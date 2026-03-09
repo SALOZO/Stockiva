@@ -46,7 +46,7 @@
             </a>
         </li>
 
-        {{-- <li class="nav-item">
+        <li class="nav-item">
             <a class="nav-link {{ request()->routeIs('history.bast.*') ? 'active' : '' }}" 
             href="{{ route('history.bast.index') }}">
                 <i class="bi bi-file-earmark-text"></i>
@@ -55,7 +55,7 @@
                     <span class="active-indicator"></span>
                 @endif
             </a>
-        </li> --}}
+        </li>
 
         <li class="nav-divider"></li>
 

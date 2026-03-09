@@ -10,6 +10,7 @@ use App\Models\Pesanan;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class PengirimanController extends Controller
 {
@@ -24,7 +25,7 @@ class PengirimanController extends Controller
         return view('gudang.pengiriman.create', compact('pesanan'));
     }
 
-    public function store(Request $request, Pesanan $pesanan){
+     public function store(Request $request, Pesanan $pesanan){
         $request->validate([
             'tanggal' => 'required|date',
             'catatan' => 'nullable|string',
@@ -34,11 +35,9 @@ class PengirimanController extends Controller
 
         DB::beginTransaction();
         try {
-            // Hitung pengiriman ke berapa
             $jumlahPengiriman = Pengiriman::where('pesanan_id', $pesanan->id)->count();
             $pengirimanKe = $jumlahPengiriman + 1;
 
-            // Generate no pengiriman
             $noPengiriman = 'KIRIM/' . $pesanan->no_pesanan . '/' . $pengirimanKe;
 
             $pengiriman = Pengiriman::create([
@@ -51,19 +50,21 @@ class PengirimanController extends Controller
                 'created_by' => auth()->id()
             ]);
 
-            // Simpan detail pengiriman (barang yang dikirim)
             $totalBarang = 0;
+            
             foreach ($pesanan->details as $detail) {
                 $detailId = $detail->id;
+                
                 if (isset($request->kirim[$detailId]) && $request->kirim[$detailId] > 0) {
                     $jumlahKirim = $request->kirim[$detailId];
                     
-                    // Validasi: tidak boleh melebihi produced_qty
                     if ($jumlahKirim > $detail->produced_qty) {
-                        throw new \Exception("Jumlah kirim untuk {$detail->barang->nama_barang} melebihi stok produksi ({$detail->produced_qty})");
+                        throw new \Exception(
+                            "Jumlah kirim untuk {$detail->barang->nama_barang} " .
+                            "melebihi stok produksi ({$detail->produced_qty})"
+                        );
                     }
                     
-                    // Simpan detail pengiriman
                     DB::table('detail_pengiriman')->insert([
                         'pengiriman_id' => $pengiriman->id,
                         'detail_pesanan_id' => $detailId,
@@ -71,6 +72,9 @@ class PengirimanController extends Controller
                         'created_at' => now(),
                         'updated_at' => now()
                     ]);
+                    
+                    $detail->produced_qty -= $jumlahKirim;
+                    $detail->save();
                     
                     $totalBarang++;
                 }
@@ -81,7 +85,8 @@ class PengirimanController extends Controller
             }
 
             DB::commit();
-            return redirect()->route('gudang.pengiriman.index', $pesanan->id)->with('success', 'Pengiriman Ke-' . $pengirimanKe . ' berhasil dibuat.');
+            
+            return redirect()->route('gudang.pengiriman.index', $pesanan->id)->with('success', 'Pengiriman Ke-' . $pengirimanKe . ' berhasil dibuat. ' .'Stok produksi berkurang ' . $totalBarang . ' item.');
                 
         } catch (\Exception $e) {
             DB::rollBack();
@@ -176,15 +181,22 @@ class PengirimanController extends Controller
 
         $ekspedisi = Ekspedisi::findOrFail($request->ekspedisi_id);
 
-        $noUrutSPH = $this->extractNomorUrut($pengiriman->pesanan->no_pesanan);
-        $noUrutBAST = $noUrutSPH + 1;
-            
+        // Hitung urutan BAST untuk SPH ini
+        $urutanBAST = Pengiriman::where('pesanan_id', $pengiriman->pesanan_id)
+                        ->whereNotNull('bast_ekspedisi_file')
+                        ->count() + 1;
+        
         $bulan = now()->format('m');
         $tahun = now()->format('Y');
         
-        $noBAST = sprintf("%04d", $noUrutBAST) . ' / BAST / RP / ' . $bulan . ' / ' . $tahun;
-        $filename = 'BAST-' . sprintf("%04d", $noUrutBAST) . '-RP-' . $bulan . '-' . $tahun . '.pdf';
+        // Format nomor BAST (reset per SPH)
+        $noBAST = sprintf("%04d", $urutanBAST) . ' / BAST / RP / ' . $bulan . ' / ' . $tahun;
+        $filename = 'BAST-' . sprintf("%04d", $urutanBAST) . '-RP-' . $bulan . '-' . $tahun . '.pdf';
+        $path = 'bast/' . $filename;
 
+        $company = CompanyProfile::first();
+
+        // Update data pengiriman
         $pengiriman->update([
             'ekspedisi' => $ekspedisi->nama_ekspedisi,
             'nama_kurir' => $request->nama_kurir,
@@ -193,16 +205,16 @@ class PengirimanController extends Controller
             'kurir_no_identitas' => $request->kurir_no_identitas,
             'kurir_plat_nomor' => $request->kurir_plat_nomor,
             'status' => 'dikirim',
+            'bast_ekspedisi_file' => $path
         ]);
 
+        // Load relasi untuk PDF
         $pengiriman->load([
             'pesanan.client', 
             'detailPengiriman.detailPesanan.barang',
             'ekspedisi'
         ]);
 
-        $company = CompanyProfile::first();
-        
         // Generate PDF
         $pdf = Pdf::loadView('pdf.bast-ekspedisi', [
             'pengiriman' => $pengiriman,
@@ -211,8 +223,10 @@ class PengirimanController extends Controller
         ]);
         
         $pdf->setPaper('A4', 'portrait');
+
+        Storage::disk('public')->put($path, $pdf->output());
         
-        return $pdf->download ($filename);
+        return $pdf->download($filename);
     }
 
     public function destroy(Pengiriman $pengiriman){
@@ -220,9 +234,18 @@ class PengirimanController extends Controller
 
         try {
             $pesananId = $pengiriman->pesanan_id;
-            $noPengiriman = $pengiriman->no_pengiriman;
 
-            // hapus detail pengiriman dulu
+            // hapus file BAST ekspedisi
+            if ($pengiriman->bast_ekspedisi_file && Storage::disk('public')->exists($pengiriman->bast_ekspedisi_file)) {
+                Storage::disk('public')->delete($pengiriman->bast_ekspedisi_file);
+            }
+
+            // hapus file BAST client
+            if ($pengiriman->bast_client_file && Storage::disk('public')->exists($pengiriman->bast_client_file)) {
+                Storage::disk('public')->delete($pengiriman->bast_client_file);
+            }
+
+            // hapus detail pengiriman
             DB::table('detail_pengiriman')
                 ->where('pengiriman_id', $pengiriman->id)
                 ->delete();
@@ -234,7 +257,7 @@ class PengirimanController extends Controller
 
             return redirect()
                 ->route('gudang.pengiriman.index', $pesananId)
-                ->with('success', 'Pengiriman "' . $noPengiriman . '" berhasil dihapus.');
+                ->with('success', 'Pengiriman berhasil dihapus.');
 
         } catch (\Exception $e) {
 

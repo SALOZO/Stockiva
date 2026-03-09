@@ -52,7 +52,7 @@
                             @forelse($sphList as $sph)
                             <tr>
                                 <td>
-                                    <strong>SPH/{{ $sph->no_pesanan }}</strong>
+                                    <strong>{{ $sph->no_sph_formatted }}</strong>
                                 </td>
                                 <td>
                                     {{ $sph->client->nama_client ?? '-' }}
