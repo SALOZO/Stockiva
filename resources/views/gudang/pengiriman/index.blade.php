@@ -92,17 +92,29 @@
                                             <i class="bi bi-person"></i> {{ $kirim->nama_kurir }}
                                         </small>
                                     </td>
-                                    <td>{{ $kirim->penerima_client ?? '-' }}</td>
+                                    <td>{{ $kirim->penerima_ekspedisi ?? '-' }}
+                                    <br>
+                                    <small class="text-muted">
+                                        <i class="bi bi-person-badge"></i> {{ $kirim->nama_kurir }}
+                                    </small>
+                                    </td>
                                     <td>
                                         <div class="btn-group" role="group">
-                                            <button type="button" 
+                                            {{-- <button type="button" 
                                                     class="btn btn-sm btn-outline-warning"
                                                     data-bs-toggle="modal" 
                                                     data-bs-target="#pilihUpdateModal{{ $kirim->id }}"
                                                     data-bs-toggle="tooltip" 
                                                     title="Update Kiriman">
                                                 <i class="bi bi-arrow-repeat"></i>
-                                            </button>
+                                            </button> --}}
+
+                                            <a href="" 
+                                                class="btn btn-sm btn-outline-info"
+                                                data-bs-toggle="tooltip" 
+                                                title="Detail">
+                                                <i class="bi bi-eye"></i>
+                                            </a>
 
                                             <button type="button" 
                                                     class="btn btn-sm btn-outline-primary"
@@ -113,11 +125,12 @@
                                                 <i class="bi bi-file-text"></i>
                                             </button>
 
-                                            <a href="" 
-                                                class="btn btn-sm btn-outline-info"
-                                                data-bs-toggle="tooltip" 
-                                                title="Detail">
-                                                <i class="bi bi-eye"></i>
+                                            {{-- Tombol UPLOAD --}}
+                                            <a href="{{ route('gudang.upload.index', $kirim->id) }}" 
+                                            class="btn btn-sm btn-outline-info"
+                                            data-bs-toggle="tooltip" 
+                                            title="Upload Dokumen">
+                                                <i class="bi bi-cloud-upload"></i> 
                                             </a>
                                             <form action="{{ route('gudang.pengiriman.destroy', $kirim->id) }}" method="POST" 
                                                 onsubmit="return confirm('Yakin ingin menghapus pengiriman ini?')">
@@ -207,7 +220,7 @@
 
                                                     {{-- Tombol Surat Jalan --}}
                                                     <a href="{{ route('gudang.pengiriman.surat-jalan', $kirim->id) }}" 
-                                                    class="btn btn-outline-info btn-lg w-100">
+                                                    class="btn btn-outline-info btn-md text-start w-100">
                                                         <i class="bi bi-map"></i> Surat Jalan
                                                     </a>
                                                 </div>

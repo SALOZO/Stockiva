@@ -153,13 +153,6 @@
                                             <i class="bi bi-truck"></i> K
                                         </a>
                                         
-                                        {{-- Tombol UPLOAD --}}
-                                        <a href="#" 
-                                           class="btn btn-sm btn-outline-info"
-                                           data-bs-toggle="tooltip" 
-                                           title="Upload">
-                                            <i class="bi bi-cloud-upload"></i> U
-                                        </a>
                                     </div>
                                 </td>
                             </tr>

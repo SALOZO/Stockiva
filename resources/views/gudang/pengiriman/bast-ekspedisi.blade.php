@@ -93,7 +93,7 @@
                                     <td>{{ $index + 1 }}</td>
                                     <td>{{ $detail->detailPesanan->barang->nama_barang ?? '-' }}</td>
                                     <td>{{ $detail->jumlah_kirim }}</td>
-                                    <td>{{ $detail->detailPesanan->barang->satuan->nama_satuan ?? '-' }}</td>
+                                    <td>{{ $detail->satuanKirim->nama_satuan ?? '-' }}</td>
                                 </tr>
                                 @endforeach
                             </tbody>

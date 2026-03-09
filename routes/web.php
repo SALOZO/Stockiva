@@ -11,6 +11,7 @@ use App\Http\Controllers\Gudang\PengirimanController;
 use App\Http\Controllers\Gudang\ProduksiController;
 use App\Http\Controllers\Gudang\SphControll;
 use App\Http\Controllers\Gudang\TugasGudangController;
+use App\Http\Controllers\Gudang\UploadDokumenController;
 use App\Http\Controllers\HistoryBastController;
 use App\Http\Controllers\HistorySphController;
 use App\Http\Controllers\JenisController;
@@ -216,6 +217,13 @@ Route::prefix('admin')->middleware(['auth', 'role:Admin'])->group(function () {
         // SURAT JALAN
         Route::get('/pengiriman/{pengiriman}/surat-jalan', [PengirimanController::class, 'suratJalan'])->name('pengiriman.surat-jalan');
         Route::post('/pengiriman/{pengiriman}/cetak-surat-jalan', [PengirimanController::class, 'cetakSuratJalan'])->name('pengiriman.cetak-surat-jalan');
+
+        // ===== UPLOAD DOKUMEN =====
+        Route::get('/upload/{pengiriman}', [UploadDokumenController::class, 'index'])->name('upload.index');
+        Route::get('/upload/{pengiriman}/{jenis}/create', [UploadDokumenController::class, 'create'])->name('upload.create');
+        Route::post('/upload/{pengiriman}/{jenis}', [UploadDokumenController::class, 'store'])->name('upload.store');
+        Route::get('/download/{dokumen}', [UploadDokumenController::class, 'download'])->name('upload.download');
+        Route::delete('/upload/{dokumen}', [UploadDokumenController::class, 'destroy'])->name('upload.destroy');
     });
 
     Route::middleware(['auth'])->prefix('history-bast')->name('history.bast.')->group(function () {
