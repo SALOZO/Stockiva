@@ -19,7 +19,8 @@ class DetailPesanan extends Model
         'jumlah',
         'harga_satuan',
         'subtotal',
-        'produced_qty'
+        'produced_qty',
+        'shipped_qty'
     ];
 
     protected $casts = [
