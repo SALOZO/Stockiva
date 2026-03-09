@@ -194,6 +194,7 @@ class PengirimanController extends Controller
     public function cetakBastEkspedisi(Request $request, Pengiriman $pengiriman){
         $request->validate([
             'ekspedisi_id' => 'required|exists:ekspedisi,id',
+            'penerima_ekspedisi' => 'required|string', 
             'nama_kurir' => 'required|string',
             'kurir_no_telp' => 'required|string',
             'kurir_jenis_identitas' => 'required|in:SIM A,SIM C,SIM B1,SIM B2,KTP,Lainnya',
@@ -203,24 +204,30 @@ class PengirimanController extends Controller
 
         $ekspedisi = Ekspedisi::findOrFail($request->ekspedisi_id);
 
-        // Hitung urutan BAST untuk SPH ini
         $urutanBAST = Pengiriman::where('pesanan_id', $pengiriman->pesanan_id)
                         ->whereNotNull('bast_ekspedisi_file')
                         ->count() + 1;
         
         $bulan = now()->format('m');
         $tahun = now()->format('Y');
+        $hariTanggal = now()->format('l, d F Y'); 
         
-        // Format nomor BAST (reset per SPH)
-        $noBAST = sprintf("%04d", $urutanBAST) . ' / BAST / RP / ' . $bulan . ' / ' . $tahun;
+        $noBAST = sprintf("%04d", $urutanBAST) . ' / BAST-Ekspedisi / RP / ' . $bulan . ' / ' . $tahun;
         $filename = 'BAST-' . sprintf("%04d", $urutanBAST) . '-RP-' . $bulan . '-' . $tahun . '.pdf';
         $path = 'bast/' . $filename;
 
         $company = CompanyProfile::first();
 
-        // Update data pengiriman
+        $pengiriman->load([
+            'pesanan.client', 
+            'detailPengiriman.detailPesanan.barang',
+            'detailPengiriman.satuanKirim'
+        ]);
+
         $pengiriman->update([
             'ekspedisi' => $ekspedisi->nama_ekspedisi,
+            'ekspedisi_id' => $request->ekspedisi_id,
+            'penerima_ekspedisi' => $request->penerima_ekspedisi, 
             'nama_kurir' => $request->nama_kurir,
             'kurir_no_telp' => $request->kurir_no_telp,
             'kurir_jenis_identitas' => $request->kurir_jenis_identitas,
@@ -230,27 +237,21 @@ class PengirimanController extends Controller
             'bast_ekspedisi_file' => $path
         ]);
 
-        // Load relasi untuk PDF
-        $pengiriman->load([
-            'pesanan.client', 
-            'detailPengiriman.detailPesanan.barang',
-            'ekspedisi'
-        ]);
-
-        // Generate PDF
         $pdf = Pdf::loadView('pdf.bast-ekspedisi', [
             'pengiriman' => $pengiriman,
             'company' => $company,
-            'no_bast' => $noBAST
+            'no_bast' => $noBAST,
+            'hari_tanggal' => now()->format('l, d F Y'),
+            'nama_penerima' => $request->penerima_ekspedisi,
+            'ekspedisi' => $ekspedisi,
+            'staff_gudang' => auth()->user()->name
         ]);
         
         $pdf->setPaper('A4', 'portrait');
-
         Storage::disk('public')->put($path, $pdf->output());
         
         return $pdf->download($filename);
     }
-
     public function destroy(Pengiriman $pengiriman){
         DB::beginTransaction();
 

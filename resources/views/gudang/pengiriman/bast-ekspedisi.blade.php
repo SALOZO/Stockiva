@@ -113,7 +113,7 @@
                                 <select class="form-select @error('ekspedisi_id') is-invalid @enderror" 
                                         id="ekspedisi_id" 
                                         name="ekspedisi_id" 
-                                        required>
+                                        disabled>
                                     <option value="">-- Pilih Ekspedisi --</option>
                                     @foreach($ekspedisiList as $ekspedisi)
                                         <option value="{{ $ekspedisi->id }}" 
@@ -125,6 +125,7 @@
                                         </option>
                                     @endforeach
                                 </select>
+                                <input type="hidden" name="ekspedisi_id" value="{{ $pengiriman->ekspedisi_id }}">
                                 @error('ekspedisi_id')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -197,6 +198,23 @@
                                     value="{{ old('kurir_plat_nomor', $pengiriman->kurir_plat_nomor ?? '') }}"
                                     required>
                                 @error('kurir_plat_nomor')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <div class="col-md-12 mb-3">
+                                <label for="penerima_ekspedisi" class="form-label">
+                                    Penerima Ekspedisi <span class="text-danger">*</span>
+                                </label>
+
+                                <input type="text" 
+                                    class="form-control @error('penerima_ekspedisi') is-invalid @enderror" 
+                                    id="penerima_ekspedisi" 
+                                    name="penerima_ekspedisi" 
+                                    value="{{ old('penerima_ekspedisi', $pengiriman->penerima_ekspedisi ?? '') }}"
+                                    required>
+
+                                @error('penerima_ekspedisi')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
