@@ -1,4 +1,3 @@
-<!-- resources/views/pdf/surat-jalan.blade.php -->
 <!DOCTYPE html>
 <html>
 <head>
@@ -6,128 +5,141 @@
     <title>Surat Jalan - {{ $no_sj }}</title>
     <style>
         @page {
-            margin: 1.5cm;
+            margin: 2cm 2.5cm;
         }
         body {
             font-family: 'Helvetica', 'Arial', sans-serif;
             font-size: 11pt;
-            line-height: 1.4;
-        }
-        .header {
-            text-align: center;
-            margin-bottom: 20px;
-            border-bottom: 2px solid #333;
-            padding-bottom: 10px;
-        }
-        .header h1 {
-            font-size: 16pt;
-            margin: 0;
-            color: #0b2b4f;
-            text-transform: uppercase;
+            line-height: 1.6;
         }
         .title {
             text-align: center;
             font-size: 14pt;
             font-weight: bold;
-            margin: 20px 0;
+            margin: 30px 0 5px 0;
             text-decoration: underline;
+            text-transform: uppercase;
+        }
+        .no-sj {
+            text-align: center;
+            font-size: 11pt;
+            margin-bottom: 30px;
         }
         .info-section {
-            margin: 15px 0;
+            margin: 15px 0 20px 0;
         }
         .info-table {
             width: 100%;
             border-collapse: collapse;
         }
         .info-table td {
-            padding: 4px 0;
+            padding: 5px 0;
             border: none;
+            vertical-align: top;
         }
         .info-table td:first-child {
-            width: 120px;
+            width: 130px;
+        }
+        .info-table td:nth-child(2) {
+            width: 10px;
+        }
+        .info-table .field-value {
+            border-bottom: 1px solid #000;
+            width: 100%;
+            display: inline-block;
+            min-height: 18px;
+        }
+        .info-table .field-value-multiline {
+            border-bottom: 1px solid #000;
+            display: block;
+            min-height: 18px;
+            margin-bottom: 4px;
+        }
+        .detail-label {
+            margin: 15px 0 5px 0;
         }
         table.items {
             width: 100%;
             border-collapse: collapse;
-            margin: 15px 0;
+            margin: 5px 0 30px 0;
         }
         table.items th {
-            background: #f0f0f0;
-            padding: 8px;
+            font-weight: bold;
+            padding: 6px 8px;
             border: 1px solid #333;
+            text-align: center;
+            background: #fff;
         }
         table.items td {
-            padding: 6px;
+            padding: 6px 8px;
             border: 1px solid #333;
+            height: 22px;
         }
         .text-center {
             text-align: center;
         }
+        .date-section {
+            text-align: right;
+            margin: 20px 0;
+        }
         .signature {
-            margin-top: 50px;
-            width: 100%;
-        }
-        .signature-left {
-            float: left;
-            width: 50%;
-        }
-        .signature-right {
-            float: right;
-            width: 50%;
+            margin-top: 40px;
             text-align: right;
         }
-        .signature-line {
-            width: 200px;
-            border-top: 1px solid #000;
-            margin: 40px 0 5px 0;
+        .signature-name {
+            text-decoration: underline;
         }
-        .signature-right .signature-line {
-            margin-left: auto;
-        }
-        .clear {
-            clear: both;
+        .signature-company {
+            font-weight: bold;
         }
     </style>
 </head>
 <body>
 
-<div class="header">
-    <h1>{{ $company->nama_perusahaan ?? 'PT. CATUR NIAGA SAGARA' }}</h1>
-    <p>{{ $company->alamat ?? '' }}, {{ $company->kota ?? '' }}, {{ $company->provinsi ?? '' }}</p>
-    <p>Telp: {{ $company->telepon ?? '-' }} | Email: {{ $company->email ?? '-' }}</p>
-</div>
-
-<div class="title">
-    SURAT JALAN
-</div>
-
-<div style="text-align: center; margin-bottom: 15px;">
-    <strong>{{ $no_sj }}</strong>
-</div>
+<div class="title">SURAT JALAN</div>
+<div class="no-sj">{{ $no_sj }}</div>
 
 <div class="info-section">
     <table class="info-table">
         <tr>
             <td>Nama Penerima</td>
-            <td>: <strong>{{ $pengiriman->pesanan->client->nama_pic ?? '..........................' }}</strong></td>
+            <td>:</td>
+            <td>
+                <span class="field-value">{{ $pengiriman->pesanan->client->nama_pic ?? '' }}</span>
+            </td>
         </tr>
         <tr>
             <td>Alamat Penerima</td>
-            <td>: {{ $pengiriman->pesanan->client->alamat ?? '' }}, 
-                      {{ $pengiriman->pesanan->client->desa ?? '' }}, 
-                      {{ $pengiriman->pesanan->client->kecamatan ?? '' }}, 
-                      {{ $pengiriman->pesanan->client->kabupaten_kota ?? '' }}, 
-                      {{ $pengiriman->pesanan->client->provinsi ?? '' }}</td>
+            <td>:</td>
+            <td>
+                @php
+                    $alamat = trim(implode(', ', array_filter([
+                        $pengiriman->pesanan->client->alamat ?? '',
+                        $pengiriman->pesanan->client->desa ?? '',
+                        $pengiriman->pesanan->client->kecamatan ?? '',
+                        $pengiriman->pesanan->client->kabupaten_kota ?? '',
+                        $pengiriman->pesanan->client->provinsi ?? '',
+                    ])));
+                @endphp
+
+                <span class="field-value-multiline">{{ $alamat ? substr($alamat, 0, 60) : '' }}</span>
+                <span class="field-value-multiline">{{ $alamat && strlen($alamat) > 60 ? substr($alamat, 60, 60) : '' }}</span>
+                <span class="field-value-multiline">{{ $alamat && strlen($alamat) > 120 ? substr($alamat, 120) : '' }}</span>
+            </td>
         </tr>
         <tr>
             <td>Ekspedisi</td>
-            <td>: <strong>{{ $pengiriman->ekspedisi ?? $pengiriman->ekspedisiRelasi->nama_ekspedisi ?? '..........................' }}</strong></td>
+            <td>:</td>
+            <td>
+                <span class="field-value">{{ $pengiriman->ekspedisi ?? $pengiriman->ekspedisiRelasi->nama_ekspedisi ?? '' }}</span>
+            </td>
+        </tr>
+        <tr>
+            <td>Detail Barang</td>
+            <td>:</td>
+            <td></td>
         </tr>
     </table>
-</div>
-
-<div style="margin: 20px 0;">
-    <strong>Detail Barang:</strong>
 </div>
 
 <table class="items">
@@ -148,27 +160,17 @@
             <td class="text-center">{{ $detail->satuanKirim->nama_satuan ?? 'Koli' }}</td>
         </tr>
         @endforeach
+
     </tbody>
 </table>
 
-<div style="margin-top: 20px;">
-    <p>Bandung, {{ now()->format('d F Y') }}</p>
+<div class="date-section">
+    Bandung, {{ now()->format('d F Y') }}
 </div>
 
 <div class="signature">
-    <div class="signature-left">
-        <p>Mengetahui,</p>
-        <div class="signature-line"></div>
-        <p><strong>{{ $company->nama_direktur ?? '..........................' }}</strong></p>
-        <p>Direktur</p>
-    </div>
-    <div class="signature-right">
-        <p>Hormat kami,</p>
-        <div class="signature-line"></div>
-        <p><strong>{{ auth()->user()->nama ?? '..........................' }}</strong></p>
-        <p>Staff Gudang</p>
-    </div>
-    <div class="clear"></div>
+    <p class="signature-name">{{ auth()->user()->nama ?? 'Nama Pegawai Gudang' }}</p>
+    <p class="signature-company">{{ $company->nama_perusahaan ?? 'PT. Catur Niaga Sagara' }}</p>
 </div>
 
 </body>

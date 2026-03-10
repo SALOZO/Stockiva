@@ -5,167 +5,236 @@
     <title>BAST Client - {{ $no_bast }}</title>
     <style>
         @page {
-            margin: 1.5cm;
+            margin: 1.5cm 2cm;
         }
         body {
             font-family: 'Helvetica', 'Arial', sans-serif;
-            font-size: 11pt;
-            line-height: 1.4;
+            font-size: 10pt;
+            line-height: 1.45;
         }
-        .header {
-            text-align: center;
-            margin-bottom: 15px;
-            border-bottom: 2px solid #333;
-            padding-bottom: 8px;
-        }
-        .header h1 {
-            font-size: 16pt;
-            margin: 0;
-            color: #0b2b4f;
-            text-transform: uppercase;
-        }
+
         .doc-info {
             width: 100%;
-            margin: 10px 0;
+            border-collapse: collapse;
+            margin-bottom: 10px;
         }
         .doc-info td {
             border: none;
             padding: 2px 0;
+            vertical-align: top;
         }
-        .title {
-            font-size: 13pt;
-            font-weight: bold;
-            margin: 15px 0;
-        }
+
         .content {
-            margin: 10px 0;
-            line-height: 1.5;
+            margin: 8px 0;
         }
-        .signature-box {
-            margin-top: 40px;
-            width: 100%;
-            overflow: hidden;
+        .content p {
+            margin: 6px 0;
         }
-        .signature-left {
-            float: left;
-            width: 45%;
+
+        .info-table {
+            border-collapse: collapse;
+            margin-left: 20px;
+            width: calc(100% - 20px);
         }
-        .signature-right {
-            float: right;
-            width: 45%;
-            text-align: right;
+        .info-table td {
+            padding: 2px 0;
+            vertical-align: top;
+            border: none;
         }
-        .signature-line {
-            width: 200px;
-            border-top: 1px solid #000;
-            margin: 40px 0 5px 0;
+        .info-table td.lbl {
+            width: 145px;
+            white-space: nowrap;
         }
-        .signature-right .signature-line {
-            margin-left: auto;
+        .info-table td.sep {
+            width: 12px;
         }
-        .clear {
-            clear: both;
+
+        .sebanyak-row {
+            margin: 2px 0 2px 20px;
         }
+
         table.items {
             width: 100%;
             border-collapse: collapse;
-            margin: 15px 0;
+            margin: 8px 0;
         }
         table.items th {
-            background: #f0f0f0;
-            padding: 8px;
+            padding: 5px 6px;
             border: 1px solid #333;
+            text-align: center;
+            font-size: 10pt;
         }
         table.items td {
-            padding: 6px;
+            padding: 4px 6px;
             border: 1px solid #333;
+            font-size: 10pt;
         }
-        .text-center {
-            text-align: center;
+        .text-center { text-align: center; }
+
+
+        .sig-section {
+            margin-top: 20px;
+            width: 100%;
         }
-        .underline {
+
+        .sig-top {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .sig-top td {
+            width: 50%;
+            vertical-align: top;
+            padding-bottom: 35px; 
+        }
+        .sig-top td.right {
+            text-align: right;
+        }
+
+        .sig-bottom {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .sig-bottom td {
+            width: 50%;
+            vertical-align: top;
+        }
+        .sig-bottom td.right {
+            text-align: right;
+        }
+        .sig-name {
             text-decoration: underline;
+            font-weight: bold;
         }
-        .dotted-line {
-            border-bottom: 1px dotted #000;
-            min-width: 150px;
-            display: inline-block;
+        .sig-role {
+            font-size: 9.5pt;
+        }
+
+        .sig-divider {
+            border-top: 1px solid #ccc;
+            margin: 8px 0;
         }
     </style>
 </head>
 <body>
+
 <table class="doc-info">
     <tr>
-        <td style="width: 50%;">
+        <td style="width:55%;">
             <strong>No.</strong> : {{ $no_bast }}
         </td>
-        <td style="width: 50%; text-align: right;">
-            <strong>{{ $company->kota ?? 'Bandung' }},</strong> {{ now()->format('d F Y') }}
+        <td style="width:45%; text-align:right;">
+            {{ $company->kota ?? 'Bandung' }}, {{ now()->format('d F Y') }}
         </td>
     </tr>
     <tr>
-        <td>
-            <strong>Perihal</strong> : {{ $perihal }}
-        </td>
+        <td><strong>Perihal</strong> : {{ $perihal }}</td>
         <td></td>
     </tr>
     <tr>
-        <td>
-            <strong>Lampiran</strong> : -
-        </td>
+        <td><strong>Lampiran</strong> : -</td>
         <td></td>
     </tr>
 </table>
 
 <div class="content">
+
     <p>Berdasarkan pesanan yang kami terima melalui Surat Perintah Kerja / Purchase Order (PO) / Surat Pesanan Nomor : <strong>{{ $no_po }}</strong> tertanggal : <strong>{{ $tanggal_po->format('d/m/Y') }}</strong>, dengan ini kami serahkan barang pesanan pada :</p>
-    
-    <p style="margin-left: 20px;">
-        <strong>Hari</strong> : {{ $pengiriman->hari_penyerahan }}<br>
-        <strong>Tanggal</strong> : {{ \Carbon\Carbon::parse($pengiriman->tanggal_penyerahan)->format('d/m/Y') }}
-    </p>
-    
+
+    <table class="info-table">
+        <tr>
+            <td class="lbl">Hari</td>
+            <td class="sep">:</td>
+            <td>{{ $pengiriman->hari_penyerahan }}</td>
+        </tr>
+        <tr>
+            <td class="lbl">Tanggal</td>
+            <td class="sep">:</td>
+            <td>{{ \Carbon\Carbon::parse($pengiriman->tanggal_penyerahan)->format('d') }}</td>
+        </tr>
+    </table>
+
     <p><strong>Untuk tujuan :</strong></p>
-    <p style="margin-left: 20px;">
-        <strong>Nama Instansi</strong> : {{ $pengiriman->pesanan->client->nama_client ?? '..........................' }}<br>
-        <strong>Nama Pemesan</strong> : {{ $pengiriman->pesanan->client->nama_pic ?? '..........................' }}<br>
-        <strong>Nama Penerima</strong> : {{ $pengiriman->penerima_client ?? '..........................' }}<br>
-        <strong>Jabatan Penerima</strong> : {{ $pengiriman->jabatan_penerima ?? '..........................' }}<br>
-        <strong>Alamat Tujuan</strong> : 
-            {{ $pengiriman->pesanan->client->alamat ?? '' }}, 
-            {{ $pengiriman->pesanan->client->desa ?? '' }}, 
-            {{ $pengiriman->pesanan->client->kecamatan ?? '' }}, 
-            {{ $pengiriman->pesanan->client->kabupaten_kota ?? '' }}, 
-            {{ $pengiriman->pesanan->client->provinsi ?? '' }}
-    </p>
-    
+    <table class="info-table">
+        <tr>
+            <td class="lbl">Nama Instansi</td>
+            <td class="sep">:</td>
+            <td>{{ $pengiriman->pesanan->client->nama_client ?? '' }}</td>
+        </tr>
+        <tr>
+            <td class="lbl">Nama Pemesan</td>
+            <td class="sep">:</td>
+            <td>{{ $pengiriman->pesanan->client->nama_pic ?? '' }}</td>
+        </tr>
+        <tr>
+            <td class="lbl">Nama Penerima</td>
+            <td class="sep">:</td>
+            <td>{{ $pengiriman->penerima_client ?? '' }}</td>
+        </tr>
+        <tr>
+            <td class="lbl">Jabatan Penerima</td>
+            <td class="sep">:</td>
+            <td>{{ $pengiriman->jabatan_penerima ?? '' }}</td>
+        </tr>
+        <tr>
+            <td class="lbl">Alamat Tujuan</td>
+            <td class="sep">:</td>
+            <td>{{ trim(implode(', ', array_filter([
+                $pengiriman->pesanan->client->alamat ?? '',
+                $pengiriman->pesanan->client->desa ?? '',
+                $pengiriman->pesanan->client->kecamatan ?? '',
+                $pengiriman->pesanan->client->kabupaten_kota ?? '',
+                $pengiriman->pesanan->client->provinsi ?? '',
+            ]))) }}</td>
+        </tr>
+    </table>
+
     <p><strong>Sebanyak :</strong></p>
-    <p style="margin-left: 20px;">
-        @foreach($pengiriman->detailPengiriman as $detail)
-            <div>
-                {{ $detail->detailPesanan->barang->nama_barang ?? '-' }}: 
-                {{ $detail->jumlah_kirim }} {{ $detail->satuanKirim->nama_satuan ?? 'Koli' }}
-            </div>
-        @endforeach
-    </p>
-    
+    @foreach($pengiriman->detailPengiriman as $detail)
+    <div class="sebanyak-row">
+        {{ $detail->jumlah_kirim }} {{ $detail->satuanKirim->nama_satuan ?? 'Koli/Karung/Dus/Plastik' }} - {{ $detail->detailPesanan->barang->nama_barang ?? '-' }}
+    </div>
+    @endforeach
+
     <p><strong>Melalui :</strong></p>
-    <p style="margin-left: 20px;">
-        <strong>Nama Ekspedisi</strong> : {{ $pengiriman->ekspedisi ?? '..........................' }}<br>
-        <strong>Nama Kurir</strong> : {{ $pengiriman->nama_kurir ?? '..........................' }}<br>
-        <strong>No Telp Kurir</strong> : {{ $pengiriman->kurir_no_telp ?? '..........................' }}<br>
-        <strong>Identitas Kurir</strong> : {{ $pengiriman->kurir_jenis_identitas ?? '..........................' }}<br>
-        <strong>No. Identitas</strong> : {{ $pengiriman->kurir_no_identitas ?? '..........................' }}<br>
-        <strong>Plat Nomer Kurir</strong> : {{ $pengiriman->kurir_plat_nomor ?? '..........................' }}
-    </p>
-    
+    <table class="info-table">
+        <tr>
+            <td class="lbl">Nama Ekspedisi</td>
+            <td class="sep">:</td>
+            <td>{{ $pengiriman->ekspedisi ?? '' }}</td>
+        </tr>
+        <tr>
+            <td class="lbl">Nama Kurir</td>
+            <td class="sep">:</td>
+            <td>{{ $pengiriman->nama_kurir ?? '' }}</td>
+        </tr>
+        <tr>
+            <td class="lbl">No Telp Kurir</td>
+            <td class="sep">:</td>
+            <td>{{ $pengiriman->kurir_no_telp ?? '' }}</td>
+        </tr>
+        <tr>
+            <td class="lbl">Identitas Kurir</td>
+            <td class="sep">:</td>
+            <td>{{ $pengiriman->kurir_jenis_identitas }}</td>
+        </tr>
+        <tr>
+            <td class="lbl">No. Identitas</td>
+            <td class="sep">:</td>
+            <td>{{ $pengiriman->kurir_no_identitas ?? '' }}</td>
+        </tr>
+        <tr>
+            <td class="lbl">Plat Nomer Kurir</td>
+            <td class="sep">:</td>
+            <td>{{ $pengiriman->kurir_plat_nomor ?? '' }}</td>
+        </tr>
+    </table>
+
     <p><strong>Dengan rincian barang :</strong></p>
-    
     <table class="items">
         <thead>
             <tr>
-                <th width="10%">No.</th>
-                <th width="50%">Nama Barang</th>
+                <th width="8%">No.</th>
+                <th width="52%">Nama Barang</th>
                 <th width="20%">Jumlah</th>
                 <th width="20%">Satuan</th>
             </tr>
@@ -181,25 +250,38 @@
             @endforeach
         </tbody>
     </table>
-    
-    <p>Demikian Berita Acara Serah Terima Barang Pengiriman untuk Pelanggan ini dibuat untuk digunakan sebagai bukti telah diserahkannya barang sesuai pesanan untuk selanjutnya dapat ditindaklanjuti oleh Pihak Pemesan/Klien. Atas perhatian dan kerjasamanya kami ucapkan terima kasih.</p>
+
+    <p style="text-align: justify;">Demikian Berita Acara Serah Terima Barang Pengiriman untuk Pelanggan ini dibuat untuk digunakan sebagai bukti telah diserahkannya barang sesuai pesanan untuk selanjutnya dapat ditindaklanjuti oleh Pihak Pemesan/Klien. Atas perhatian dan kerjasamanya kami ucapkan terima kasih.</p>
+
 </div>
 
-<div class="signature-box">
-    <div class="signature-left">
-        <p><strong>{{ $pengiriman->pesanan->client->nama_client }}</strong></p>
-        <div class="signature-line"></div>
-        <p><strong>{{ $pengiriman->pesanan->client->nama_pic }}</strong></p>
-        <p><strong>{{ $pengiriman->pesanan->client->jabatan_pic }}</strong></p>
-    </div>
-    
-    <div class="signature-right">
-        <p><strong>{{ $company->nama_perusahaan ?? 'PT. CATUR NIAGA SAGARA' }}</strong></p>
-        <div class="signature-line"></div>
-        <p><strong>{{ $company->nama_direktur ?? '..........................' }}</strong></p>
-        <p>Direktur</p>
-    </div>
-    <div class="clear"></div>
+
+<div class="sig-section">
+
+    <table class="sig-top">
+        <tr>
+            <td>
+                <div>{{ $pengiriman->pesanan->client->nama_client ?? 'Nama Klien' }}</div>
+            </td>
+            <td class="right">
+                <div>{{ $company->nama_perusahaan ?? 'PT.Catur Niaga Sagara' }}</div>
+            </td>
+        </tr>
+    </table>
+
+    <table class="sig-bottom">
+        <tr>
+            <td>
+                <div class="sig-name">{{ $pengiriman->pesanan->client->nama_pic ?? 'Nama Pemesan' }}</div>
+                <div class="sig-role">{{ $pengiriman->pesanan->client->jabatan_pic ?? 'Jabatan Pemesan' }}</div>
+            </td>
+            <td class="right">
+                <div class="sig-name">{{ $company->nama_direktur ?? 'Nama Direktur' }}</div>
+                <div class="sig-role"><strong>Direktur</strong></div>
+            </td>
+        </tr>
+    </table>
+
 </div>
 
 </body>
