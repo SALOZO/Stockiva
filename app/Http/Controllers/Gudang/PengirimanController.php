@@ -313,44 +313,127 @@ class PengirimanController extends Controller
     }
 
     public function cetakSuratJalan(Request $request, Pengiriman $pengiriman){
-    $pengiriman->load([
-        'pesanan.client',
-        'detailPengiriman.detailPesanan.barang',
-        'detailPengiriman.satuanKirim'
-    ]);
-    
-    // Ambil nomor surat jalan TERAKHIR dari SEMUA pengiriman
-    $lastSuratJalan = Pengiriman::whereNotNull('surat_jalan_ke')
-                        ->max('surat_jalan_ke');
-    
-    $suratJalanKe = $lastSuratJalan ? $lastSuratJalan + 1 : 1;
-    
-    $bulan = now()->format('m');
-    $tahun = now()->format('Y');
-    
-    $noSJ = sprintf("%04d", $suratJalanKe) . ' / SJ / RP / ' . $bulan . ' / ' . $tahun;
-    $filename = 'SJ-' . sprintf("%04d", $suratJalanKe) . '-RP-' . $bulan . '-' . $tahun . '.pdf';
-    $path = 'surat-jalan/' . $filename;
+        $pengiriman->load([
+            'pesanan.client',
+            'detailPengiriman.detailPesanan.barang',
+            'detailPengiriman.satuanKirim'
+        ]);
+        
+        // Ambil nomor surat jalan TERAKHIR dari SEMUA pengiriman
+        $lastSuratJalan = Pengiriman::whereNotNull('surat_jalan_ke')
+                            ->max('surat_jalan_ke');
+        
+        $suratJalanKe = $lastSuratJalan ? $lastSuratJalan + 1 : 1;
+        
+        $bulan = now()->format('m');
+        $tahun = now()->format('Y');
+        
+        $noSJ = sprintf("%04d", $suratJalanKe) . ' / SJ / RP / ' . $bulan . ' / ' . $tahun;
+        $filename = 'SJ-' . sprintf("%04d", $suratJalanKe) . '-RP-' . $bulan . '-' . $tahun . '.pdf';
+        $path = 'surat-jalan/' . $filename;
 
-    $company = CompanyProfile::first();
+        $company = CompanyProfile::first();
 
-    $pdf = Pdf::loadView('pdf.surat-jalan', [
-        'pengiriman' => $pengiriman,
-        'company' => $company,
-        'no_sj' => $noSJ,
-        'suratJalanKe' => $suratJalanKe
-    ]);
-    
-    $pdf->setPaper('A4', 'portrait');
+        $pdf = Pdf::loadView('pdf.surat-jalan', [
+            'pengiriman' => $pengiriman,
+            'company' => $company,
+            'no_sj' => $noSJ,
+            'suratJalanKe' => $suratJalanKe
+        ]);
+        
+        $pdf->setPaper('A4', 'portrait');
 
-    // Update dengan nomor yang baru
-    $pengiriman->update([
-        'surat_jalan_file' => $path,
-        'surat_jalan_ke' => $suratJalanKe
-    ]);
+        // Update dengan nomor yang baru
+        $pengiriman->update([
+            'surat_jalan_file' => $path,
+            'surat_jalan_ke' => $suratJalanKe
+        ]);
 
-    Storage::disk('public')->put($path, $pdf->output());
-    
-    return $pdf->download($filename);
-}
+        Storage::disk('public')->put($path, $pdf->output());
+        
+        return $pdf->download($filename);
+    }
+
+    public function bastClient(Pengiriman $pengiriman){
+        $pengiriman->load([
+            'pesanan.client',
+            'detailPengiriman.detailPesanan.barang',
+            'detailPengiriman.satuanKirim'
+        ]);
+        
+        $satuanKirimList = SatuanKirim::orderBy('nama_satuan')->get();
+        
+        return view('gudang.pengiriman.bast-client', compact('pengiriman', 'satuanKirimList'));
+    }
+
+    public function cetakBastClient(Request $request, Pengiriman $pengiriman){
+        $request->validate([
+            'hari_penyerahan' => 'required|string',
+            'tanggal_penyerahan' => 'required|date',
+            'jabatan_penerima' => 'required|string',
+            'penerima_client' =>'required|string'
+        ]);
+
+        $pengiriman->update([
+            'hari_penyerahan' => $request->hari_penyerahan,
+            'tanggal_penyerahan' => $request->tanggal_penyerahan,
+            'jabatan_penerima' => $request->jabatan_penerima,
+            'penerima_client' => $request->penerima_client
+        ]);
+
+        $noUrutSPH = $this->extractNomorUrut($pengiriman->pesanan->no_pesanan);
+        
+        $jumlahBastEkspedisi = Pengiriman::where('pesanan_id', $pengiriman->pesanan_id)
+                                ->whereNotNull('bast_ekspedisi_file')
+                                ->count();
+        
+        $jumlahBastClient = Pengiriman::where('pesanan_id', $pengiriman->pesanan_id)
+                                ->whereNotNull('bast_client_file')
+                                ->where('id', '<=', $pengiriman->id)
+                                ->count();
+        
+        $totalBast = $jumlahBastEkspedisi + $jumlahBastClient;
+        $noUrutBAST = $noUrutSPH + $totalBast + 1;
+        
+        $bulan = now()->format('m');
+        $tahun = now()->format('Y');
+        
+        $noBAST = sprintf("%04d", $noUrutBAST) . ' / BAST / RP / ' . $bulan . ' / ' . $tahun;
+        $filename = 'BAST-CLIENT-' . sprintf("%04d", $noUrutBAST) . '-RP-' . $bulan . '-' . $tahun . '.pdf';
+        $path = 'bast-client/' . $filename;
+
+        $pengiriman->load([
+            'pesanan.client',
+            'detailPengiriman.detailPesanan.barang',
+            'detailPengiriman.satuanKirim'
+        ]);
+
+        $company = CompanyProfile::first();
+        $noPO = sprintf("%04d", $noUrutBAST);  
+
+        $pdf = Pdf::loadView('pdf.bast-client', [
+            'pengiriman' => $pengiriman,
+            'company' => $company,
+            'no_bast' => $noBAST,
+            'no_po' => $noPO,
+            'tanggal_po' => now(),
+            'perihal' => 'Berita Acara Serah Terima Barang Pengiriman untuk Pelanggan'
+        ]);
+        
+        $pdf->setPaper('A4', 'portrait');
+        $pdf->setOptions([
+            'isRemoteEnabled' => true,
+            'isHtml5ParserEnabled' => true,
+            'defaultFont' => 'Helvetica'
+        ]);
+
+        $pengiriman->update([
+            'bast_client_file' => $path
+        ]);
+
+        Storage::disk('public')->put($path, $pdf->output());
+
+        return $pdf->download($filename);
+    }
+
 }

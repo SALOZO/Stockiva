@@ -203,14 +203,27 @@
                                                 </p>
                                                 
                                                 <div class="d-grid gap-3">
-                                                    {{-- Tombol BAST Client --}}
-                                                    <button type="button" 
-                                                            class="btn btn-outline-primary btn-md text-start"
-                                                            onclick="alert('Fitur BAST Client akan segera hadir')">
-                                                        <i class="bi bi-person-badge me-2"></i>
-                                                        BAST Client
-                                                    </button>
-
+                                                    @php
+                                                        $bastEkspedisiAda = \App\Models\DokumenPengiriman::where('pengiriman_id', $kirim->id)->where('jenis', 'bast_ekspedisi')->exists();
+                                                    @endphp
+                                                    @if($bastEkspedisiAda)
+                                                        <a href="{{ route('gudang.pengiriman.bast-client', $kirim->id) }}" 
+                                                        class="btn btn-outline-primary btn-md text-start w-100">
+                                                            <i class="bi bi-person-badge me-2"></i>
+                                                            BAST Client
+                                                        </a>
+                                                    @else
+                                                        {{-- Tombol disabled dengan tooltip --}}
+                                                        <button type="button" 
+                                                                class="btn btn-outline-secondary btn-md text-start w-100"
+                                                                disabled
+                                                                data-bs-toggle="tooltip" 
+                                                                title="Upload BAST Ekspedisi terlebih dahulu">
+                                                            <i class="bi bi-person-badge me-2"></i>
+                                                            BAST Client
+                                                            <small class="d-block text-muted">(Upload BAST Ekspedisi dulu)</small>
+                                                        </button>
+                                                    @endif
                                                     {{-- Tombol BAST Ekspedisi --}}
                                                     <a href="{{ route('gudang.pengiriman.bast-ekspedisi', $kirim->id) }}" 
                                                     class="btn btn-outline-success btn-md text-start w-100">

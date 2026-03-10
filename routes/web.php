@@ -217,6 +217,10 @@ Route::prefix('admin')->middleware(['auth', 'role:Admin'])->group(function () {
         // SURAT JALAN
         Route::get('/pengiriman/{pengiriman}/surat-jalan', [PengirimanController::class, 'suratJalan'])->name('pengiriman.surat-jalan');
         Route::post('/pengiriman/{pengiriman}/cetak-surat-jalan', [PengirimanController::class, 'cetakSuratJalan'])->name('pengiriman.cetak-surat-jalan');
+        
+        // BAST CLIENT
+        Route::get('/pengiriman/{pengiriman}/bast-client', [PengirimanController::class, 'bastClient'])->name('pengiriman.bast-client');
+        Route::post('/pengiriman/{pengiriman}/cetak-bast-client', [PengirimanController::class, 'cetakBastClient'])->name('pengiriman.cetak-bast-client');
 
         // ===== UPLOAD DOKUMEN =====
         Route::get('/upload/{pengiriman}', [UploadDokumenController::class, 'index'])->name('upload.index');
