@@ -105,7 +105,7 @@
                                     <th>Jumlah Pesanan</th>
                                     <th>Stok</th>
                                     <th>Jumlah Kirim</th>
-                                    <th>Satuan Kirim</th>
+                                    {{-- <th>Satuan Kirim</th> --}}
                                 </tr>
                             </thead>
                             <tbody>
@@ -129,7 +129,7 @@
                                                data-nama="{{ $detail->barang->nama_barang }}"
                                                style="width: 80px; margin: 0 auto;">
                                     </td>
-                                    <td>
+                                    {{-- <td>
                                         <select class="form-select form-select-sm" 
                                                 name="satuan_kirim[{{ $detail->id }}]">
                                             <option value="">-- Pilih --</option>
@@ -137,7 +137,7 @@
                                                 <option value="{{ $satuan->id }}">{{ $satuan->nama_satuan }}</option>
                                             @endforeach
                                         </select>
-                                    </td>
+                                    </td> --}}
                                 </tr>
                                 @endforeach
                             </tbody>

@@ -110,7 +110,8 @@
                                             <td class="text-center">{{ $index + 1 }}</td>
                                             <td>{{ $detail->detailPesanan->barang->nama_barang ?? '-' }}</td>
                                             <td class="text-center">{{ $detail->jumlah_kirim }}</td>
-                                            <td class="text-center">{{ $detail->satuanKirim->nama_satuan ?? 'Koli' }}</td>
+                                            {{-- <td class="text-center">{{$detail->detailPesanan->produced_qty}}</td> --}}
+                                            <td class="text-center">{{ $detail->detailPesanan->barang->satuan->nama_satuan }}</td>
                                         </tr>
                                         @endforeach
                                     </tbody>

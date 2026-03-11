@@ -157,8 +157,8 @@
             <td class="text-center">{{ $index + 1 }}</td>
             <td>{{ $detail->detailPesanan->barang->nama_barang ?? '-' }}</td>
             <td class="text-center">{{ $detail->jumlah_kirim }}</td>
-            <td class="text-center">{{ $detail->satuanKirim->nama_satuan ?? 'Koli' }}</td>
-        </tr>
+            {{-- <td class="text-center">{{$detail->detailPesanan->produced_qty}}</td> --}}
+            <td class="text-center">{{ $detail->detailPesanan->barang->satuan->nama_satuan }}</td>
         @endforeach
 
     </tbody>
@@ -169,7 +169,7 @@
 </div>
 
 <div class="signature">
-    <p class="signature-name">{{ auth()->user()->nama ?? 'Nama Pegawai Gudang' }}</p>
+    <p class="signature-name">{{ auth()->user()->name ?? 'Nama Pegawai Gudang' }}</p>
     <p class="signature-company">{{ $company->nama_perusahaan ?? 'PT. Catur Niaga Sagara' }}</p>
 </div>
 

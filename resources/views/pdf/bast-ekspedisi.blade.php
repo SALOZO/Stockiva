@@ -148,7 +148,7 @@
         </table>
     </div>
     <div class="top-right">
-        Bandung, {{ now()->format('d F Y') }}
+        Bandung, {{ \Carbon\Carbon::now()->locale('id')->isoFormat('D MMMM Y') }}
     </div>
     <div class="clear"></div>
 </div>
@@ -161,13 +161,13 @@
         <td class="lbl"></td>
         <td class="field-lbl">Hari</td>
         <td class="sep">:</td>
-        <td><span class="field-line">{{ now()->isoFormat('dddd') }}</span></td>
+        <td><span class="field-line">{{ \Carbon\Carbon::now()->locale('id')->isoFormat('dddd') }}</span></td>
     </tr>
     <tr>
         <td class="lbl"></td>
         <td class="field-lbl">Tanggal</td>
         <td class="sep">:</td>
-        <td><span class="field-line">{{ now()->format('d F Y') }}</span></td>
+        <td><span class="field-line">{{ \Carbon\Carbon::now()->locale('id')->isoFormat('D MMMM Y') }}</span></td>
     </tr>
 </table>
 
@@ -213,7 +213,7 @@
 <div class="sebanyak-row">
     &nbsp;&nbsp;&nbsp;&nbsp;
     <span class="sebanyak-qty">{{ $detail->jumlah_kirim }}</span>
-    {{ $detail->satuanKirim->nama_satuan ?? 'Koli/Karung/Dus/Plastik' }} - {{ $detail->detailPesanan->barang->nama_barang ?? '' }}
+    {{ $detail->satuanKirim->nama_satuan ?? 'Koli/Karung/Dus/Plastik' }} 
 </div>
 @endforeach
 

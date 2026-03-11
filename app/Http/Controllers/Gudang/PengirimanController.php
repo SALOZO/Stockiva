@@ -37,8 +37,8 @@ class PengirimanController extends Controller
             'catatan' => 'nullable|string',
             'kirim' => 'nullable|array',
             'kirim.*' => 'nullable|integer|min:0',
-            'satuan_kirim' => 'nullable|array',
-            'satuan_kirim.*' => 'nullable|exists:satuan_kirim,id'
+            // 'satuan_kirim' => 'nullable|array',
+            // 'satuan_kirim.*' => 'nullable|exists:satuan_kirim,id'
         ]);
 
         DB::beginTransaction();
@@ -51,7 +51,6 @@ class PengirimanController extends Controller
 
             $noPengiriman = 'KIRIM/' . $pesanan->no_pesanan . '/' . $pengirimanKe;
 
-            // Simpan dengan mengisi kolom ekspedisi (string)
             $pengiriman = Pengiriman::create([
                 'pesanan_id' => $pesanan->id,
                 'no_pengiriman' => $noPengiriman,
@@ -60,7 +59,7 @@ class PengirimanController extends Controller
                 'status' => 'pending',
                 'catatan' => $request->catatan,
                 'ekspedisi_id' => $request->ekspedisi_id,
-                'ekspedisi' => $ekspedisi->nama_ekspedisi, // <-- INI YANG DITAMBAH
+                'ekspedisi' => $ekspedisi->nama_ekspedisi, 
                 'created_by' => auth()->id()
             ]);
 
@@ -71,7 +70,7 @@ class PengirimanController extends Controller
                 
                 if (isset($request->kirim[$detailId]) && $request->kirim[$detailId] > 0) {
                     $jumlahKirim = $request->kirim[$detailId];
-                    $satuanKirimId = $request->satuan_kirim[$detailId] ?? null;
+                    // $satuanKirimId = $request->satuan_kirim[$detailId] ?? null;
                     
                     if ($jumlahKirim > $detail->produced_qty) {
                         throw new \Exception(
@@ -80,17 +79,17 @@ class PengirimanController extends Controller
                         );
                     }
                     
-                    if (!$satuanKirimId) {
-                        throw new \Exception(
-                            "Satuan kirim untuk {$detail->barang->nama_barang} harus dipilih"
-                        );
-                    }
+                    // if (!$satuanKirimId) {
+                    //     throw new \Exception(
+                    //         "Satuan kirim untuk {$detail->barang->nama_barang} harus dipilih"
+                    //     );
+                    // }
                     
                     DB::table('detail_pengiriman')->insert([
                         'pengiriman_id' => $pengiriman->id,
                         'detail_pesanan_id' => $detailId,
                         'jumlah_kirim' => $jumlahKirim,
-                        'satuan_kirim_id' => $satuanKirimId,
+                        // 'satuan_kirim_id' => $satuanKirimId,
                         'created_at' => now(),
                         'updated_at' => now()
                     ]);
@@ -182,8 +181,9 @@ class PengirimanController extends Controller
     public function bastEkspedisi(Pengiriman $pengiriman){
         $pengiriman->load(['pesanan.client', 'detailPengiriman.detailPesanan.barang','ekspedisi']);
         $ekspedisiList = Ekspedisi::orderBy('nama_ekspedisi')->get();
+        $satuanKirimList = SatuanKirim::orderBy('nama_satuan')->get();
         
-        return view('gudang.pengiriman.bast-ekspedisi', compact('pengiriman','ekspedisiList'));
+        return view('gudang.pengiriman.bast-ekspedisi', compact('pengiriman','ekspedisiList','satuanKirimList'));
     }
 
     private function extractNomorUrut($noPesanan){
@@ -199,7 +199,9 @@ class PengirimanController extends Controller
             'kurir_no_telp' => 'required|string',
             'kurir_jenis_identitas' => 'required|in:SIM A,SIM C,SIM B1,SIM B2,KTP,Lainnya',
             'kurir_no_identitas' => 'required|string',
-            'kurir_plat_nomor' => 'required|string'
+            'kurir_plat_nomor' => 'required|string',
+            'satuan_kirim' => 'required|array',
+            'satuan_kirim.*' => 'required|exists:satuan_kirim,id'
         ]);
 
         $ekspedisi = Ekspedisi::findOrFail($request->ekspedisi_id);
@@ -223,6 +225,14 @@ class PengirimanController extends Controller
             'detailPengiriman.detailPesanan.barang',
             'detailPengiriman.satuanKirim'
         ]);
+        foreach ($pengiriman->detailPengiriman as $detail) {
+            $detailId = $detail->id;
+            if (isset($request->satuan_kirim[$detailId])) {
+                DB::table('detail_pengiriman')
+                    ->where('id', $detailId)
+                    ->update(['satuan_kirim_id' => $request->satuan_kirim[$detailId]]);
+            }
+        }
 
         $pengiriman->update([
             'ekspedisi' => $ekspedisi->nama_ekspedisi,
@@ -236,6 +246,13 @@ class PengirimanController extends Controller
             'status' => 'dikirim',
             'bast_ekspedisi_file' => $path
         ]);
+
+        $pengiriman->load([
+            'pesanan.client', 
+            'detailPengiriman.detailPesanan.barang',
+            'detailPengiriman.satuanKirim'
+        ]);
+
 
         $pdf = Pdf::loadView('pdf.bast-ekspedisi', [
             'pengiriman' => $pengiriman,
