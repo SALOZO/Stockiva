@@ -136,11 +136,33 @@
     </tr>
 </table>
 
-@php
-    $kontrak = \App\Models\DokumenKontrak::where('pesanan_id', $pengiriman->pesanan_id)->latest()->first();
-@endphp
+    @php
+        $kontrak = \App\Models\DokumenKontrak::where('pesanan_id', $pengiriman->pesanan_id)->latest()->first();
+    @endphp
 
-<div class="content">
+    <div class="content">
+
+    {{-- @php
+        $kontrakList = \App\Models\DokumenKontrak::where('pesanan_id', $pengiriman->pesanan_id)
+                        ->orderBy('created_at')
+                        ->get();
+    @endphp
+
+    @if($kontrakList->count() > 0)
+        <p>
+            Berdasarkan pesanan yang kami terima melalui:
+        </p>
+        <ul>
+            @foreach($kontrakList as $kontrak)
+                <li>
+                    <strong>{{ $kontrak->jenis }}</strong> 
+                    Nomor: <strong>{{ $kontrak->nomor_kontrak }}</strong> 
+                    tanggal: <strong>{{ $kontrak->tanggal_kontrak->format('d/m/Y') }}</strong>
+                </li>
+            @endforeach
+        </ul>
+        <p>dengan ini kami serahkan barang pesanan pada :</p>
+    @endif --}}
 
     <p>Berdasarkan pesanan yang kami terima melalui  <strong>{{ $kontrak->jenis }}</strong>  Nomor :  <strong>{{  $kontrak->nomor_kontrak }}</strong> tertanggal : <strong>{{ $kontrak->tanggal_kontrak->format('d/m/Y') }}</strong>, dengan ini kami serahkan barang pesanan pada :</p>
 
@@ -196,7 +218,7 @@
     @foreach($pengiriman->detailPengiriman as $detail)
     <div class="sebanyak-row">
         {{ $detail->jumlah_kirim }} {{ $detail->satuanKirim->nama_satuan }} 
-        - {{-- {{ $detail->detailPesanan->barang->nama_barang ?? '-' }} --}}
+         {{-- {{ $detail->detailPesanan->barang->nama_barang ?? '-' }} --}}
     </div>
     @endforeach
 

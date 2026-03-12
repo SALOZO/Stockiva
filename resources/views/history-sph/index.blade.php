@@ -101,16 +101,17 @@
                                 </td>
                                 <td>{{ $sph->approvedBy->name ?? '-' }}</td>
                                 <td>
-                                    
-                                        <div class="btn-group btn-group-sm">
+                                    <div class="btn-group btn-group-sm">
+                                        <button type="button" 
+                                            class="btn btn-sm btn-info"
+                                            onclick="showPreview('{{ $sph->id }}')">
+                                            <i class="bi bi-eye"></i> Detail
+                                        </button>
+                                    @auth
+                                        @if (auth()->user()->jabatan == 'Marketing')
                                             <button type="button" 
-                                                    class="btn btn-sm btn-info"
-                                                    onclick="showPreview('{{ $sph->id }}')">
-                                                <i class="bi bi-eye"></i> Detail
-                                            </button>
-                                            <button type="button" 
-                                                    class="btn btn-sm btn-primary dropdown-toggle" 
-                                                    data-bs-toggle="dropdown">
+                                                class="btn btn-primary dropdown-toggle" 
+                                                data-bs-toggle="dropdown">
                                                 <i class="bi bi-upload"></i> Upload
                                             </button>
                                             <ul class="dropdown-menu">
@@ -127,22 +128,22 @@
                                                     data-bs-toggle="modal" 
                                                     data-bs-target="#modalKontrak{{ $sph->id }}"
                                                     data-jenis="PO">
-                                                        PO
-                                                    </a>
-                                                </li>
+                                                    PO
+                                                </a>
+                                            </li>
                                                 <li>
                                                     <a class="dropdown-item" href="#" 
                                                     data-bs-toggle="modal" 
                                                     data-bs-target="#modalKontrak{{ $sph->id }}"
                                                     data-jenis="SP">
-                                                        SP
+                                                    SP
                                                     </a>
                                                 </li>
                                             </ul>
                                         </div>
-                                    
-
-                                    {{-- MODAL INPUT KONTRAK --}}
+                                        @endif
+                                    @endauth
+                                        {{-- MODAL INPUT KONTRAK --}}
                                     <div class="modal fade" id="modalKontrak{{ $sph->id }}" tabindex="-1">
                                         <div class="modal-dialog">
                                             <div class="modal-content">

@@ -165,7 +165,7 @@
 </table>
 
 <div class="date-section">
-    Bandung, {{ now()->format('d F Y') }}
+    Bandung, {{ now()->locale('id')->translatedFormat('d F Y') }}
 </div>
 
 <div class="signature">
