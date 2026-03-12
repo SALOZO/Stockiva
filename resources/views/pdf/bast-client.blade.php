@@ -150,9 +150,9 @@
 
     @if($kontrakList->count() > 0)
         <p>
-            Berdasarkan pesanan yang kami terima melalui:
-        </p>
-        <ul>
+            Berdasarkan pesanan yang kami terima melalui:  @foreach($kontrakList as $kontrak) <strong>{{ $kontrak->jenis }}</strong>  Nomor: <strong>{{ $kontrak->nomor_kontrak }}</strong>  @endforeach tanggal: <strong>{{ $kontrak->tanggal_kontrak->format('d/m/Y') }}</strong>
+        </p> --}}
+        {{-- <ul>
             @foreach($kontrakList as $kontrak)
                 <li>
                     <strong>{{ $kontrak->jenis }}</strong> 
@@ -160,8 +160,8 @@
                     tanggal: <strong>{{ $kontrak->tanggal_kontrak->format('d/m/Y') }}</strong>
                 </li>
             @endforeach
-        </ul>
-        <p>dengan ini kami serahkan barang pesanan pada :</p>
+        </ul> --}}
+        {{-- <p>dengan ini kami serahkan barang pesanan pada :</p>
     @endif --}}
 
     <p>Berdasarkan pesanan yang kami terima melalui  <strong>{{ $kontrak->jenis }}</strong>  Nomor :  <strong>{{  $kontrak->nomor_kontrak }}</strong> tertanggal : <strong>{{ $kontrak->tanggal_kontrak->format('d/m/Y') }}</strong>, dengan ini kami serahkan barang pesanan pada :</p>
