@@ -86,7 +86,7 @@
                                             <thead class="bg-light text-center">
                                                 <tr>
                                                     <th>No</th>
-                                                    <th>Nama Barang</th>
+                                                    {{-- <th>Nama Barang</th> --}}
                                                     <th>Jumlah</th>
                                                     <th>Satuan Kirim</th>
                                                 </tr>
@@ -95,7 +95,7 @@
                                                 @foreach($pengiriman->detailPengiriman as $index => $detail)
                                                 <tr>
                                                     <td>{{ $index + 1 }}</td>
-                                                    <td>{{ $detail->detailPesanan->barang->nama_barang ?? '-' }}</td>
+                                                    {{-- <td>{{ $detail->detailPesanan->barang->nama_barang ?? '-' }}</td> --}}
                                                     <td>{{ $detail->jumlah_kirim }}</td>
                                                     <td>
                                                         <select class="form-select form-select-sm @error('satuan_kirim.' . $detail->id) is-invalid @enderror" 
@@ -120,7 +120,7 @@
                                     </div>
                                 </div>
                             </div>
-                                            {{-- Form Input Data Tambahan --}}
+            {{-- Form Input Data Tambahan --}}
                 <form action="{{ route('gudang.pengiriman.cetak-bast-ekspedisi', $pengiriman->id) }}" 
                       method="POST">
                     @csrf

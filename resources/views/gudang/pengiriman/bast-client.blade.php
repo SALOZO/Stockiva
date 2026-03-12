@@ -173,7 +173,7 @@
 
                     <div class="card bg-light mb-3">
                         <div class="card-body">
-                            <h6 class="fw-bold mb-3">Ringkasan Pengiriman</h6>
+                            <h6 class="fw-bold mb-3">Sebanyak</h6>
                             @php
                                 $grouped = $pengiriman->detailPengiriman->groupBy('satuan_kirim_id');
                             @endphp

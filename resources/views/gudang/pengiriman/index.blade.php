@@ -205,7 +205,7 @@
                                                 <div class="d-grid gap-3">
                                                     @php
                                                         $bastEkspedisiAda = \App\Models\DokumenPengiriman::where('pengiriman_id', $kirim->id)->where('jenis', 'bast_ekspedisi')->exists();
-                                                        $kontrakAda = \App\Models\DokumenKontrak::where('pesanan_id', $pengiriman->pesanan_id)->exists();
+                                                        $kontrakAda = \App\Models\DokumenKontrak::where('pesanan_id', $kirim->pesanan_id)->exists();
                                                     @endphp
                                                     @if($bastEkspedisiAda && $kontrakAda)
                                                         <a href="{{ route('gudang.pengiriman.bast-client', $kirim->id) }}" 

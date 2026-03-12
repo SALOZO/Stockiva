@@ -231,7 +231,8 @@ class PesananController extends Controller
         return $pdf->stream('preview-' . $pesanan->no_pesanan . '.pdf');
     }
 
-    public function uploadKontrak(Request $request, Pesanan $pesanan, $jenis){
+    public function uploadKontrak(Request $request, Pesanan $pesanan){
+        $jenis = $request->jenis_kontrak;
         $request->validate([
             'nomor_kontrak' => 'required|string',
             'tanggal_kontrak' => 'required|date',
@@ -255,5 +256,5 @@ class PesananController extends Controller
         DokumenKontrak::create($data);
 
         return redirect()->route('history.sph.index')->with('success', 'Dokumen ' . strtoupper($jenis) . ' berhasil disimpan.');
-    }
+    }   
 }

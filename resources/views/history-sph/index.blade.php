@@ -153,12 +153,12 @@
                                                     </h5>
                                                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                                 </div>
-                                                <form action="{{ route('marketing.pesanan.upload-kontrak', [$sph->id, 'JENIS']) }}" 
+                                                <form action="{{ route('marketing.pesanan.upload-kontrak', $sph->id) }}" 
                                                     method="POST" 
                                                     enctype="multipart/form-data"
                                                     id="formKontrak{{ $sph->id }}">
                                                     @csrf
-                                                    <input type="hidden" name="jenis_kontrak" id="jenis_kontrak{{ $sph->id }}" value="">
+                                                    <input type="hidden" name="jenis_kontrak" id="jenis_kontrak{{ $sph->id }}">
                                                     
                                                     <div class="modal-body">
                                                         <div class="mb-3">
@@ -280,6 +280,25 @@
         let action = "{{ route('marketing.pesanan.upload-kontrak', ['pesanan' => ':id', 'jenis' => ':jenis']) }}";
         action = action.replace(':id', sphId).replace(':jenis', jenis);
         $('#formKontrak' + sphId).attr('action', action);
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const modals = document.querySelectorAll('[id^="modalKontrak"]');
+        
+        modals.forEach(modal => {
+            modal.addEventListener('show.bs.modal', function (event) {
+                const button = event.relatedTarget;
+                
+                const jenis = button.getAttribute('data-jenis');
+                const sphId = modal.id.replace('modalKontrak', '');
+                
+                const inputJenis = modal.querySelector('#jenis_kontrak' + sphId);
+                const labelJenis = modal.querySelector('.jenis-label');
+                
+                if (inputJenis) inputJenis.value = jenis;
+                if (labelJenis) labelJenis.innerText = jenis;
+            });
+        });
     });
 </script>
 @endpush

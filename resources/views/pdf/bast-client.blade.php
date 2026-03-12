@@ -142,7 +142,7 @@
 
 <div class="content">
 
-    <p>Berdasarkan pesanan yang kami terima melalui  <strong>{{ $kontrak->jenis }}</strong>  : <strong>{{  $kontrak->nomor_kontrak }}</strong> tertanggal : <strong>{{ $kontrak->tanggal_kontrak->format('d/m/Y') }}</strong>, dengan ini kami serahkan barang pesanan pada :</p>
+    <p>Berdasarkan pesanan yang kami terima melalui  <strong>{{ $kontrak->jenis }}</strong>  Nomor :  <strong>{{  $kontrak->nomor_kontrak }}</strong> tertanggal : <strong>{{ $kontrak->tanggal_kontrak->format('d/m/Y') }}</strong>, dengan ini kami serahkan barang pesanan pada :</p>
 
     <table class="info-table">
         <tr>
@@ -195,7 +195,8 @@
     <p><strong>Sebanyak :</strong></p>
     @foreach($pengiriman->detailPengiriman as $detail)
     <div class="sebanyak-row">
-        {{ $detail->jumlah_kirim }} {{ $detail->satuanKirim->nama_satuan }}
+        {{ $detail->jumlah_kirim }} {{ $detail->satuanKirim->nama_satuan }} 
+        - {{-- {{ $detail->detailPesanan->barang->nama_barang ?? '-' }} --}}
     </div>
     @endforeach
 

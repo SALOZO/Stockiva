@@ -115,7 +115,7 @@ Route::prefix('admin')->middleware(['auth', 'role:Admin'])->group(function () {
         Route::get('/get-barang-by-jenis/{jenisId}', [PesananController::class, 'getBarangByJenis'])->name('get.barang.jenis');
         Route::get('/semua-pesanan', [PesananController::class, 'semuaPesanan'])->name('semua-pesanan');
         // ===== test =====
-        Route::post('/pesanan/{pesanan}/upload-kontrak/{jenis}', [PesananController::class, 'uploadKontrak'])->name('pesanan.upload-kontrak');
+        Route::post('/pesanan/{pesanan}/upload-kontrak', [PesananController::class, 'uploadKontrak'])->name('pesanan.upload-kontrak');
 
         // ========== CLIENTS ==========
         Route::get('/clients', [\App\Http\Controllers\Marketing\ClientController::class, 'index'])->name('clients.index');

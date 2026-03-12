@@ -285,8 +285,8 @@
                 <div class="sig-role">Kurir/Pengemudi</div>
             </td>
             <td class="right">
-                <div class="sig-name">{{ auth()->user()->name ?? 'Nama Pegawai Gudang' }}</div>
-                <div class="sig-role"><strong>Staff Gudang</strong></div>
+                <div class="sig-name">{{ auth()->user()->name }}</div>
+                <div class="sig-role"><strong>Stuff {{ auth()->user()->jabatan }}</strong></div>
             </td>
         </tr>
     </table>
