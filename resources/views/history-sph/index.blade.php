@@ -61,6 +61,7 @@
                                 <th>Total Nilai</th>
                                 <th>Disetujui Oleh</th>
                                 <th>Aksi</th>
+                                {{-- <th>Detail</th> --}}
                             </tr>
                         </thead>
                         <tbody class="text-center">
@@ -100,12 +101,101 @@
                                 </td>
                                 <td>{{ $sph->approvedBy->name ?? '-' }}</td>
                                 <td>
+                                    
+                                        <div class="btn-group btn-group-sm">
+                                            <button type="button" 
+                                                    class="btn btn-sm btn-info"
+                                                    onclick="showPreview('{{ $sph->id }}')">
+                                                <i class="bi bi-eye"></i> Detail
+                                            </button>
+                                            <button type="button" 
+                                                    class="btn btn-sm btn-primary dropdown-toggle" 
+                                                    data-bs-toggle="dropdown">
+                                                <i class="bi bi-upload"></i> Upload
+                                            </button>
+                                            <ul class="dropdown-menu">
+                                                <li>
+                                                    <a class="dropdown-item" href="#" 
+                                                    data-bs-toggle="modal" 
+                                                    data-bs-target="#modalKontrak{{ $sph->id }}"
+                                                    data-jenis="SPK">
+                                                        SPK
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a class="dropdown-item" href="#" 
+                                                    data-bs-toggle="modal" 
+                                                    data-bs-target="#modalKontrak{{ $sph->id }}"
+                                                    data-jenis="PO">
+                                                        PO
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a class="dropdown-item" href="#" 
+                                                    data-bs-toggle="modal" 
+                                                    data-bs-target="#modalKontrak{{ $sph->id }}"
+                                                    data-jenis="SP">
+                                                        SP
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    
+
+                                    {{-- MODAL INPUT KONTRAK --}}
+                                    <div class="modal fade" id="modalKontrak{{ $sph->id }}" tabindex="-1">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title">
+                                                        <i class="bi bi-file-text me-2"></i>
+                                                        Input <span class="jenis-label"></span>
+                                                    </h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                </div>
+                                                <form action="{{ route('marketing.pesanan.upload-kontrak', [$sph->id, 'JENIS']) }}" 
+                                                    method="POST" 
+                                                    enctype="multipart/form-data"
+                                                    id="formKontrak{{ $sph->id }}">
+                                                    @csrf
+                                                    <input type="hidden" name="jenis_kontrak" id="jenis_kontrak{{ $sph->id }}" value="">
+                                                    
+                                                    <div class="modal-body">
+                                                        <div class="mb-3">
+                                                            <label class="form-label">Nomor Kontrak <span class="text-danger">*</span></label>
+                                                            <input type="text" class="form-control" name="nomor_kontrak" required>
+                                                        </div>
+                                                        
+                                                        <div class="mb-3">
+                                                            <label class="form-label">Tanggal Kontrak <span class="text-danger">*</span></label>
+                                                            <input type="date" class="form-control" name="tanggal_kontrak" value="{{ date('Y-m-d') }}" required>
+                                                        </div>
+                                                        
+                                                        <div class="mb-3">
+                                                            <label class="form-label">Upload File </label>
+                                                            <input type="file" class="form-control" name="file" accept=".pdf,.jpg,.jpeg,.png">
+                                                            <small class="text-muted">Format: PDF, JPG, PNG. Maks: 2MB</small>
+                                                        </div>
+                                                    </div>
+                                                    
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Batal</button>
+                                                        <button type="submit" class="btn btn-primary">
+                                                            <i class="bi bi-save"></i> Simpan
+                                                        </button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                {{-- <td>
                                     <button type="button" 
                                             class="btn btn-sm btn-info"
                                             onclick="showPreview('{{ $sph->id }}')">
                                         <i class="bi bi-eye"></i> Detail
                                     </button>
-                                </td>
+                                </td> --}}
                             </tr>
                             @empty
                             <tr>
@@ -179,5 +269,17 @@
         $('#downloadLink').attr('href', downloadUrl);
         $('#previewModal').modal('show');
     }
+    $('.dropdown-item').click(function() {
+        let jenis = $(this).data('jenis');
+        let sphId = $(this).closest('.modal').attr('id').replace('modalKontrak', '');
+        
+        $('#jenis_kontrak' + sphId).val(jenis);
+        $('.jenis-label').text(jenis);
+        
+        // Update action form
+        let action = "{{ route('marketing.pesanan.upload-kontrak', ['pesanan' => ':id', 'jenis' => ':jenis']) }}";
+        action = action.replace(':id', sphId).replace(':jenis', jenis);
+        $('#formKontrak' + sphId).attr('action', action);
+    });
 </script>
 @endpush

@@ -136,9 +136,13 @@
     </tr>
 </table>
 
+@php
+    $kontrak = \App\Models\DokumenKontrak::where('pesanan_id', $pengiriman->pesanan_id)->latest()->first();
+@endphp
+
 <div class="content">
 
-    <p>Berdasarkan pesanan yang kami terima melalui Surat Perintah Kerja / Purchase Order (PO) / Surat Pesanan Nomor : <strong>{{ $no_po }}</strong> tertanggal : <strong>{{ $tanggal_po->format('d/m/Y') }}</strong>, dengan ini kami serahkan barang pesanan pada :</p>
+    <p>Berdasarkan pesanan yang kami terima melalui  <strong>{{ $kontrak->jenis }}</strong>  : <strong>{{  $kontrak->nomor_kontrak }}</strong> tertanggal : <strong>{{ $kontrak->tanggal_kontrak->format('d/m/Y') }}</strong>, dengan ini kami serahkan barang pesanan pada :</p>
 
     <table class="info-table">
         <tr>

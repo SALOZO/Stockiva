@@ -4,10 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Barang;
 use App\Models\Client;
+use App\Models\DokumenKontrak;
 use App\Models\Kategori;
 use App\Models\Pesanan;
-use Illuminate\Http\Request;
 use App\Services\SPHGenerator;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
 class PesananController extends Controller
@@ -228,5 +229,31 @@ class PesananController extends Controller
         $pdf = $generator->generatePreview($pesanan);
         
         return $pdf->stream('preview-' . $pesanan->no_pesanan . '.pdf');
+    }
+
+    public function uploadKontrak(Request $request, Pesanan $pesanan, $jenis){
+        $request->validate([
+            'nomor_kontrak' => 'required|string',
+            'tanggal_kontrak' => 'required|date',
+            'file' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048'
+        ]);
+
+        $data = [
+            'pesanan_id' => $pesanan->id,
+            'jenis' => strtoupper($jenis),
+            'nomor_kontrak' => $request->nomor_kontrak,
+            'tanggal_kontrak' => $request->tanggal_kontrak,
+            'input_by' => auth()->id()
+        ];
+        if ($request->hasFile('file')) {
+            $file = $request->file('file');
+            $filename = time() . '_' . $jenis . '_' . $file->getClientOriginalName();
+            $path = $file->storeAs('kontrak/' . $pesanan->id, $filename, 'public');
+            $data['file_path'] = $path;
+        }
+
+        DokumenKontrak::create($data);
+
+        return redirect()->route('history.sph.index')->with('success', 'Dokumen ' . strtoupper($jenis) . ' berhasil disimpan.');
     }
 }
