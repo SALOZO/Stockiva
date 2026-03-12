@@ -152,7 +152,7 @@
                                         <th>No</th>
                                         <th>Nama Barang</th>
                                         <th>Jumlah</th>
-                                        <th>Satuan Kirim</th>
+                                        {{-- <th>Satuan Kirim</th> --}}
                                         <th>Satuan Barang</th>
                                     </tr>
                                 </thead>
@@ -162,7 +162,7 @@
                                         <td class="text-center">{{ $index + 1 }}</td>
                                         <td>{{ $detail->detailPesanan->barang->nama_barang ?? '-' }}</td>
                                         <td class="text-center">{{ $detail->jumlah_kirim }}</td>
-                                        <td class="text-center">{{ $detail->satuanKirim->nama_satuan ?? 'Koli' }}</td>
+                                        {{-- <td class="text-center">{{ $detail->satuanKirim->nama_satuan ?? 'Koli' }}</td> --}}
                                         <td class="text-center">{{ $detail->detailPesanan->barang->satuan->nama_satuan ?? '-' }}</td>
                                     </tr>
                                     @endforeach
@@ -171,7 +171,7 @@
                         </div>
                     </div>
 
-                    {{-- <div class="card bg-light mb-3">
+                    <div class="card bg-light mb-3">
                         <div class="card-body">
                             <h6 class="fw-bold mb-3">Ringkasan Pengiriman</h6>
                             @php
@@ -180,14 +180,14 @@
                             
                             @foreach($pengiriman->detailPengiriman as $detail)
                                 <div>
-                                    {{ $detail->detailPesanan->barang->nama_barang ?? '-' }}: 
+                                    {{-- {{ $detail->detailPesanan->barang->nama_barang ?? '-' }}:  --}}
                                     {{ $detail->jumlah_kirim }} {{ $detail->satuanKirim->nama_satuan ?? 'Koli' }}
                                 </div>
                             @endforeach
         
                             
                         </div>
-                    </div> --}}
+                    </div>
 
                     <div class="d-flex justify-content-end gap-2">
                         <a href="{{ route('gudang.pengiriman.index', $pengiriman->pesanan_id) }}" class="btn btn-secondary">

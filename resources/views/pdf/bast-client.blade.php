@@ -123,7 +123,7 @@
             <strong>No.</strong> : {{ $no_bast }}
         </td>
         <td style="width:45%; text-align:right;">
-            {{ $company->kota ?? 'Bandung' }}, {{ now()->format('d F Y') }}
+            {{ $company->kota }}, {{ \Carbon\Carbon::now()->locale('id')->translatedFormat('d F Y') }}
         </td>
     </tr>
     <tr>
@@ -153,7 +153,7 @@
         <tr>
             <td class="lbl">Tanggal</td>
             <td class="sep">:</td>
-            <td>{{ \Carbon\Carbon::parse($pengiriman->tanggal_penyerahan)->format('d') }}</td>
+            <td>{{ \Carbon\Carbon::parse($pengiriman->tanggal_penyerahan)->locale('id')->translatedFormat('d F Y') }}</td>
         </tr>
     </table>
 
@@ -195,7 +195,7 @@
     <p><strong>Sebanyak :</strong></p>
     @foreach($pengiriman->detailPengiriman as $detail)
     <div class="sebanyak-row">
-        {{ $detail->jumlah_kirim }} {{ $detail->satuanKirim->nama_satuan ?? 'Koli/Karung/Dus/Plastik' }} - {{ $detail->detailPesanan->barang->nama_barang ?? '-' }}
+        {{ $detail->jumlah_kirim }} {{ $detail->satuanKirim->nama_satuan }}
     </div>
     @endforeach
 
@@ -249,6 +249,7 @@
                 <td class="text-center">{{ $index + 1 }}</td>
                 <td>{{ $detail->detailPesanan->barang->nama_barang ?? '-' }}</td>
                 <td class="text-center">{{ $detail->jumlah_kirim }}</td>
+                {{-- <td class="text-center">{{ $detail->satuanKirim->nama_satuan ?? '-' }}</td> --}}
                 <td class="text-center">{{ $detail->detailPesanan->barang->satuan->nama_satuan ?? '-' }}</td>
             </tr>
             @endforeach
