@@ -212,7 +212,7 @@
 @foreach($pengiriman->detailPengiriman as $detail)
 <div class="sebanyak-row">
     &nbsp;&nbsp;&nbsp;&nbsp;
-    <span class="sebanyak-qty">{{ $detail->jumlah_kirim }}</span>
+    <span class="sebanyak-qty">{{ $detail->jumlah_packing }}</span>
     {{ $detail->satuanKirim->nama_satuan ?? 'Koli/Karung/Dus/Plastik' }} 
 </div>
 @endforeach

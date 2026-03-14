@@ -200,6 +200,8 @@ class PengirimanController extends Controller
             'kurir_jenis_identitas' => 'required|in:SIM A,SIM C,SIM B1,SIM B2,KTP,Lainnya',
             'kurir_no_identitas' => 'required|string',
             'kurir_plat_nomor' => 'required|string',
+            'jumlah_packing' => 'required|array',
+            'jumlah_packing.*' => 'required|integer|min:1',
             'satuan_kirim' => 'required|array',
             'satuan_kirim.*' => 'required|exists:satuan_kirim,id'
         ]);
@@ -225,14 +227,29 @@ class PengirimanController extends Controller
             'detailPengiriman.detailPesanan.barang',
             'detailPengiriman.satuanKirim'
         ]);
-        foreach ($pengiriman->detailPengiriman as $detail) {
-            $detailId = $detail->id;
-            if (isset($request->satuan_kirim[$detailId])) {
-                DB::table('detail_pengiriman')
-                    ->where('id', $detailId)
-                    ->update(['satuan_kirim_id' => $request->satuan_kirim[$detailId]]);
+    foreach ($pengiriman->detailPengiriman as $detail) {
+        $detailId = $detail->id;
+        
+        if (isset($request->jumlah_packing[$detailId]) && isset($request->satuan_kirim[$detailId])) {
+
+            DB::table('detail_pengiriman')
+                ->where('id', $detailId)
+                ->update([
+                    'jumlah_packing' => $request->jumlah_packing[$detailId],
+                    'satuan_kirim_id' => $request->satuan_kirim[$detailId]
+                ]);
+
+            $detailPesanan = $detail->detailPesanan;
+            $jumlahKirim = $detail->jumlah_kirim;
+            
+            if ($detailPesanan->produced_qty >= $jumlahKirim) {
+                $detailPesanan->produced_qty -= $jumlahKirim;
+                $detailPesanan->save();
+            } else {
+                throw new \Exception("Stok produksi {$detailPesanan->barang->nama_barang} tidak mencukupi. Tersedia: {$detailPesanan->produced_qty}, Diminta: {$jumlahKirim}");
             }
         }
+    }
 
         $pengiriman->update([
             'ekspedisi' => $ekspedisi->nama_ekspedisi,

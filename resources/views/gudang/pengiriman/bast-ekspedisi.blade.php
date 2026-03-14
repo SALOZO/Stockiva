@@ -76,50 +76,60 @@
                 method="POST">
                 @csrf
                     {{-- Daftar Barang --}}
-                            <div class="card mb-4">
-                                <div class="card-header bg-light">
-                                    <h6 class="mb-0">Barang Kiriman</h6>
-                                </div>
-                                <div class="card-body">
-                                    <div class="table-responsive">
-                                        <table class="table table-bordered">
-                                            <thead class="bg-light text-center">
-                                                <tr>
-                                                    <th>No</th>
-                                                    {{-- <th>Nama Barang</th> --}}
-                                                    <th>Jumlah</th>
-                                                    <th>Satuan Kirim</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody class="text-center">
-                                                @foreach($pengiriman->detailPengiriman as $index => $detail)
-                                                <tr>
-                                                    <td>{{ $index + 1 }}</td>
-                                                    {{-- <td>{{ $detail->detailPesanan->barang->nama_barang ?? '-' }}</td> --}}
-                                                    <td>{{ $detail->jumlah_kirim }}</td>
-                                                    <td>
-                                                        <select class="form-select form-select-sm @error('satuan_kirim.' . $detail->id) is-invalid @enderror" 
-                                                                name="satuan_kirim[{{ $detail->id }}]" 
-                                                                required>
-                                                            <option value="">-- Pilih Satuan Kirim --</option>
-                                                            @foreach($satuanKirimList as $satuan)
-                                                                <option value="{{ $satuan->id }}" 
-                                                                    {{ old('satuan_kirim.' . $detail->id, $detail->satuanKirim->id ?? '') == $satuan->id ? 'selected' : '' }}>
-                                                                    {{ $satuan->nama_satuan }}
-                                                                </option>
-                                                            @endforeach
-                                                        </select>
-                                                        @error('satuan_kirim.' . $detail->id)
-                                                            <div class="invalid-feedback">{{ $message }}</div>
-                                                        @enderror
-                                                    </td>
-                                                </tr>
-                                                @endforeach
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
+                    <div class="card mb-4">
+                        <div class="card-header bg-light">
+                            <h6 class="mb-0">Barang Kiriman</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered">
+                                    <thead class="bg-light text-center">
+                                        <tr>
+                                            <th>No</th>
+                                            <th>Nama Barang</th>
+                                            <th>Stok ({{ $detail->detailPesanan->barang->satuan->nama_satuan ?? 'pcs' }})</th>
+                                            <th>Jumlah Packing</th>
+                                            <th>Satuan Packing</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="text-center">
+                                        @foreach($pengiriman->detailPengiriman as $index => $detail)
+                                        <tr>
+                                            <td>{{ $index + 1 }}</td>
+                                            <td>{{ $detail->detailPesanan->barang->nama_barang ?? '-' }}</td>
+                                            <td>
+                                                {{ $detail->jumlah_kirim }} 
+                                                <small class="text-muted">({{ $detail->detailPesanan->barang->satuan->nama_satuan  }})</small>
+                                            </td>
+                                            <td>
+                                                <input type="number" 
+                                                    class="form-control form-control-sm @error('jumlah_packing.' . $detail->id) is-invalid @enderror" 
+                                                    name="jumlah_packing[{{ $detail->id }}]" 
+                                                    value="{{ old('jumlah_packing.' . $detail->id, $detail->jumlah_packing ?? '') }}"
+                                                    min="1"
+                                                    required
+                                                    style="width: 100px; margin: 0 auto;">
+                                            </td>
+                                            <td>
+                                                <select class="form-select form-select-sm @error('satuan_kirim.' . $detail->id) is-invalid @enderror" 
+                                                        name="satuan_kirim[{{ $detail->id }}]" 
+                                                        required>
+                                                    <option value="">-- Pilih --</option>
+                                                    @foreach($satuanKirimList as $satuan)
+                                                        <option value="{{ $satuan->id }}" 
+                                                            {{ old('satuan_kirim.' . $detail->id, $detail->satuanKirim->id ?? '') == $satuan->id ? 'selected' : '' }}>
+                                                            {{ $satuan->nama_satuan }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            </td>
+                                        </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
                             </div>
+                        </div>
+                    </div>
             {{-- Form Input Data Tambahan --}}
                 <form action="{{ route('gudang.pengiriman.cetak-bast-ekspedisi', $pengiriman->id) }}" 
                       method="POST">
@@ -128,7 +138,6 @@
                             <div class="row">
                                     <div class="col-md-12 mb-3">
                                         <label for="ekspedisi_id" class="form-label">Ekspedisi</label>
-
                                         <select class="form-select" disabled>
                                             <option value="">-- Pilih Ekspedisi --</option>
                                             @foreach($ekspedisiList as $ekspedisi)
@@ -198,7 +207,7 @@
                                         @enderror
                                     </div>
                                 
-                                    <div class="col-md-6 mb-3">
+                                    <div class="col-md-12 mb-3">
                                         <label for="kurir_plat_nomor" class="form-label">Plat Nomor Kendaraan <span class="text-danger">*</span></label>
                                         <input type="text" 
                                         class="form-control @error('kurir_plat_nomor') is-invalid @enderror" 
@@ -212,11 +221,11 @@
                                     </div>
                                 
                                     <div class="col-md-6 mb-3">
-                                    <label for="penerima_ekspedisi" class="form-label">
+                                    {{-- <label for="penerima_ekspedisi" class="form-label">
                                         Penerima Ekspedisi <span class="text-danger">*</span>
-                                    </label>
+                                    </label> --}}
                                     
-                                    <input type="text" 
+                                    <input type="hidden" 
                                     class="form-control @error('penerima_ekspedisi') is-invalid @enderror" 
                                     id="penerima_ekspedisi" 
                                     name="penerima_ekspedisi" 

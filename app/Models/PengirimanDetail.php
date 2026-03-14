@@ -11,7 +11,7 @@ class PengirimanDetail extends Model
 
     protected $table  = "detail_pengiriman";
 
-    protected $fillable = ["pengiriman_id","detail_pesanan_id","jumlah_kirim"];
+    protected $fillable = ["pengiriman_id","detail_pesanan_id","jumlah_kirim","jumlah_packing"];
 
     public function pengiriman(){
         return $this->belongsTo(Pengiriman::class);
