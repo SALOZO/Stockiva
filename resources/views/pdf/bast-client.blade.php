@@ -166,11 +166,22 @@
 
     <p>Berdasarkan pesanan yang kami terima melalui  <strong>{{ $kontrak->jenis }}</strong>  Nomor :  <strong>{{  $kontrak->nomor_kontrak }}</strong> tertanggal : <strong>{{ $kontrak->tanggal_kontrak->format('d/m/Y') }}</strong>, dengan ini kami serahkan barang pesanan pada :</p>
 
+    @php
+        $tanggalPenyerahan = $pengiriman->tanggal_penyerahan;
+        if ($tanggalPenyerahan) {
+            $hari = \Carbon\Carbon::parse($tanggalPenyerahan)->locale('id')->dayName;
+            $tanggal = \Carbon\Carbon::parse($tanggalPenyerahan)->format('d/m/Y');
+        } else {
+            $hari = '-';
+            $tanggal = '-';
+        }
+    @endphp
+
     <table class="info-table">
         <tr>
             <td class="lbl">Hari</td>
             <td class="sep">:</td>
-            <td>{{ $pengiriman->hari_penyerahan }}</td>
+            <td>{{ $hari }}</td>
         </tr>
         <tr>
             <td class="lbl">Tanggal</td>
@@ -217,7 +228,7 @@
     <p><strong>Sebanyak :</strong></p>
     @foreach($pengiriman->detailPengiriman as $detail)
     <div class="sebanyak-row">
-        {{ $detail->jumlah_kirim }} {{ $detail->satuanKirim->nama_satuan }} 
+        {{ $detail->jumlah_packing }} {{ $detail->satuanKirim->nama_satuan }} 
          {{-- {{ $detail->detailPesanan->barang->nama_barang ?? '-' }} --}}
     </div>
     @endforeach

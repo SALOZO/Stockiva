@@ -214,7 +214,7 @@ class PengirimanController extends Controller
         
         $bulan = now()->format('m');
         $tahun = now()->format('Y');
-        $hariTanggal = now()->format('l, d F Y'); 
+        $hariTanggal = now()->format('l, d F Y');
         
         $noBAST = sprintf("%04d", $urutanBAST) . ' / BAST-Ekspedisi / RP / ' . $bulan . ' / ' . $tahun;
         $filename = 'BAST-' . sprintf("%04d", $urutanBAST) . '-RP-' . $bulan . '-' . $tahun . '.pdf';
@@ -402,14 +402,14 @@ class PengirimanController extends Controller
 
     public function cetakBastClient(Request $request, Pengiriman $pengiriman){
         $request->validate([
-            'hari_penyerahan' => 'required|string',
+            // 'hari_penyerahan' => 'required|string',
             'tanggal_penyerahan' => 'required|date',
             'jabatan_penerima' => 'required|string',
             'penerima_client' =>'required|string'
         ]);
 
         $pengiriman->update([
-            'hari_penyerahan' => $request->hari_penyerahan,
+            // 'hari_penyerahan' => $request->hari_penyerahan,
             'tanggal_penyerahan' => $request->tanggal_penyerahan,
             'jabatan_penerima' => $request->jabatan_penerima,
             'penerima_client' => $request->penerima_client

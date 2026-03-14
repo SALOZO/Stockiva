@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('pengiriman_id')->constrained('pengiriman')->onDelete('cascade');
             $table->foreignId('detail_pesanan_id')->constrained('detail_pesanans');
             $table->integer('jumlah_kirim');
+            $table->integer('jumlah_packing')->nullable();
             $table->timestamps();
         });
     }
