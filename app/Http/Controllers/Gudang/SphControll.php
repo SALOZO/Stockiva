@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Storage;
 class SphControll extends Controller
 {
     public function index(){
-        $sphList = Pesanan::where('sph_status', 'disetujui')->with(['client', 'createdBy', 'approvedBy'])->latest('approved_at')->paginate(5);
+        $sphList = Pesanan::where('sph_status', 'disetujui')->where('is_ready_for_gudang', true)->with(['client', 'createdBy', 'approvedBy'])->latest('approved_at')->paginate(5);
         
         return view('gudang.sph.index', compact('sphList'));
     }

@@ -11,6 +11,7 @@ class TugasGudangController extends Controller
     public function index(Request $request){
         $query = Pesanan::with(['client', 'details'])
                         ->where('sph_status', 'disetujui')
+                        ->where('is_ready_for_gudang', true)
                         ->orderBy('approved_at', 'desc');
         
         if ($request->filled('search')) {

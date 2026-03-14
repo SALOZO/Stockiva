@@ -61,7 +61,6 @@
                                 <th>Total Nilai</th>
                                 <th>Disetujui Oleh</th>
                                 <th>Aksi</th>
-                                {{-- <th>Detail</th> --}}
                             </tr>
                         </thead>
                         <tbody class="text-center">
@@ -78,22 +77,15 @@
                                 <td>{{ $sph->created_at->format('d/m/Y') }}</td>
                                 <td>{{ $sph->createdBy->name ?? '-' }}</td>
                                 <td>
-                                    @switch($sph->sph_status)
-                                        @case('draft')
-                                            <span class="badge bg-secondary">Draft</span>
-                                            @break
-                                        @case('menunggu')
-                                            <span class="badge bg-warning">Menunggu</span>
-                                            @break
-                                        @case('disetujui')
-                                            <span class="badge bg-success">Disetujui</span>
-                                            @break
-                                        @case('ditolak')
-                                            <span class="badge bg-danger">Ditolak</span>
-                                            @break
-                                        @default
-                                            <span class="badge bg-dark">-</span>
-                                    @endswitch
+                                    @if($sph->sph_status == 'disetujui')
+                                        @if($sph->is_ready_for_gudang)
+                                            <span class="badge bg-success">Siap Gudang</span>
+                                        @else
+                                            <span class="badge bg-warning">Menunggu Kontrak</span>
+                                        @endif
+                                    @else
+                                        {!! $sph->status_badge !!}
+                                    @endif
                                 </td>
                                 <td>{{ $sph->details->count() }} item</td>
                                 <td class="fw-bold">
@@ -101,49 +93,73 @@
                                 </td>
                                 <td>{{ $sph->approvedBy->name ?? '-' }}</td>
                                 <td>
-                                    <div class="btn-group btn-group-sm">
-                                        <button type="button" 
+                                    <div class="d-flex align-items-center justify-content-center gap-1 flex-nowrap">
+                                        {{-- Tombol Detail --}}
+                                        <button type="button"
                                             class="btn btn-sm btn-info"
-                                            onclick="showPreview('{{ $sph->id }}')">
-                                            <i class="bi bi-eye"></i> Detail
+                                            style="white-space:nowrap;"
+                                            onclick="showPreview('{{ $sph->id }}')"
+                                            title="Detail">
+                                            <i class="bi bi-eye"></i>
                                         </button>
-                                    @auth
-                                        @if (auth()->user()->jabatan == 'Marketing')
-                                            <button type="button" 
-                                                class="btn btn-primary dropdown-toggle" 
-                                                data-bs-toggle="dropdown">
-                                                <i class="bi bi-upload"></i> Upload
-                                            </button>
-                                            <ul class="dropdown-menu">
-                                                <li>
-                                                    <a class="dropdown-item" href="#" 
-                                                    data-bs-toggle="modal" 
-                                                    data-bs-target="#modalKontrak{{ $sph->id }}"
-                                                    data-jenis="SPK">
-                                                        SPK
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a class="dropdown-item" href="#" 
-                                                    data-bs-toggle="modal" 
-                                                    data-bs-target="#modalKontrak{{ $sph->id }}"
-                                                    data-jenis="PO">
-                                                    PO
-                                                </a>
-                                            </li>
-                                                <li>
-                                                    <a class="dropdown-item" href="#" 
-                                                    data-bs-toggle="modal" 
-                                                    data-bs-target="#modalKontrak{{ $sph->id }}"
-                                                    data-jenis="SP">
-                                                    SP
-                                                    </a>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                        @endif
-                                    @endauth
-                                        {{-- MODAL INPUT KONTRAK --}}
+
+                                        {{-- Tombol Upload (khusus Marketing) --}}
+                                        @auth
+                                            @if (auth()->user()->jabatan == 'Marketing')
+                                            <div class="dropdown">
+                                                <button type="button"
+                                                    class="btn btn-sm btn-success dropdown-toggle"
+                                                    style="white-space:nowrap;"
+                                                    data-bs-toggle="dropdown"
+                                                    title="Upload">
+                                                    <i class="bi bi-upload"></i>
+                                                </button>
+                                                <ul class="dropdown-menu dropdown-menu-end">
+                                                    <li>
+                                                        <a class="dropdown-item" href="#"
+                                                            data-bs-toggle="modal"
+                                                            data-bs-target="#modalKontrak{{ $sph->id }}"
+                                                            data-jenis="SPK">
+                                                            <i class="bi bi-file-earmark-text me-1"></i> SPK
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <a class="dropdown-item" href="#"
+                                                            data-bs-toggle="modal"
+                                                            data-bs-target="#modalKontrak{{ $sph->id }}"
+                                                            data-jenis="PO">
+                                                            <i class="bi bi-file-earmark-text me-1"></i> PO
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <a class="dropdown-item" href="#"
+                                                            data-bs-toggle="modal"
+                                                            data-bs-target="#modalKontrak{{ $sph->id }}"
+                                                            data-jenis="SP">
+                                                            <i class="bi bi-file-earmark-text me-1"></i> SP
+                                                        </a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                            @endif
+                                        @endauth
+
+                                        {{-- Tombol Edit --}}
+                                        {{-- <button class="btn btn-sm btn-warning"
+                                                title="Edit"
+                                                onclick="editKontrak({{ $sph->id }})">
+                                            <i class="bi bi-pencil"></i>
+                                        </button> --}}
+
+                                        {{-- Tombol Hapus --}}
+                                        {{-- <button class="btn btn-sm btn-danger"
+                                                title="Hapus"
+                                                onclick="hapusKontrak({{ $sph->id }})">
+                                            <i class="bi bi-trash"></i>
+                                        </button> --}}
+                                    </div>
+
+                                    {{-- MODAL INPUT KONTRAK --}}
                                     <div class="modal fade" id="modalKontrak{{ $sph->id }}" tabindex="-1">
                                         <div class="modal-dialog">
                                             <div class="modal-content">
@@ -190,13 +206,6 @@
                                         </div>
                                     </div>
                                 </td>
-                                {{-- <td>
-                                    <button type="button" 
-                                            class="btn btn-sm btn-info"
-                                            onclick="showPreview('{{ $sph->id }}')">
-                                        <i class="bi bi-eye"></i> Detail
-                                    </button>
-                                </td> --}}
                             </tr>
                             @empty
                             <tr>

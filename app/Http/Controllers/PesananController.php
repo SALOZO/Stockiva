@@ -232,12 +232,13 @@ class PesananController extends Controller
     }
 
     public function uploadKontrak(Request $request, Pesanan $pesanan){
-        $jenis = $request->jenis_kontrak;
         $request->validate([
             'nomor_kontrak' => 'required|string',
             'tanggal_kontrak' => 'required|date',
             'file' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048'
         ]);
+
+        $jenis = $request->jenis_kontrak;
 
         $data = [
             'pesanan_id' => $pesanan->id,
@@ -246,6 +247,7 @@ class PesananController extends Controller
             'tanggal_kontrak' => $request->tanggal_kontrak,
             'input_by' => auth()->id()
         ];
+
         if ($request->hasFile('file')) {
             $file = $request->file('file');
             $filename = time() . '_' . $jenis . '_' . $file->getClientOriginalName();
@@ -255,6 +257,20 @@ class PesananController extends Controller
 
         DokumenKontrak::create($data);
 
-        return redirect()->route('history.sph.index')->with('success', 'Dokumen ' . strtoupper($jenis) . ' berhasil disimpan.');
-    }   
+        if ($pesanan->sph_status == 'disetujui') {
+            $pesanan->update([
+                'is_ready_for_gudang' => true,
+                'ready_for_gudang_at' => now()
+            ]);
+            
+            $message = 'Dokumen ' . strtoupper($jenis) . ' berhasil disimpan. SPH siap diproses gudang.';
+        } else {
+            $message = 'Dokumen ' . strtoupper($jenis) . ' berhasil disimpan.';
+        }
+
+        return redirect()->route('history.sph.index')
+            ->with('success', $message);
+    }
+
+    
 }

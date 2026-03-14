@@ -222,7 +222,7 @@
                                                                 title="Upload BAST Ekspedisi terlebih dahulu">
                                                             <i class="bi bi-person-badge me-2"></i>
                                                             BAST Client
-                                                            <small class="d-block text-muted">(Upload BAST Ekspedisi dulu dan Buat SPK/PO/SP)</small>
+                                                            <small class="d-block text-muted">(Upload BAST Ekspedisi dulu)</small>
                                                         </button>
                                                     @endif
                                                     {{-- Tombol BAST Ekspedisi --}}

@@ -18,6 +18,8 @@ return new class extends Migration
             $table->date('tanggal_pesanan');
             $table->enum('status', ['baru', 'diproses', 'selesai', 'dibatalkan'])->default('baru');
             $table->decimal('total_keseluruhan', 15, 2)->default(0);
+            $table->timestamp('ready_for_gudang_at')->nullable();
+            $table->boolean('is_ready_for_gudang')->default(false);
             $table->text('keterangan')->nullable();
             $table->foreignId('created_by')->constrained('users');
             $table->timestamps();

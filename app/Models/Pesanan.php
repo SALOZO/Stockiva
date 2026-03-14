@@ -20,6 +20,8 @@ class Pesanan extends Model
         'total_keseluruhan',
         'keterangan',
         'sph_status',
+        'ready_for_gudang_at',
+        'is_ready_for_gudang',
         'gudang_status',
         'sph_file',
         'sph_approved_file',
@@ -109,5 +111,14 @@ class Pesanan extends Model
     {
         $parts = explode('-', $this->no_pesanan);
         return end($parts);
+    }
+    public function scopeReadyForGudang($query)
+    {
+    return $query->where('sph_status', 'disetujui')->where('is_ready_for_gudang', true);
+    }
+
+    public function getIsReadyForGudangAttribute()
+    {
+    return $this->sph_status == 'disetujui' && $this->ready_for_gudang_at != null;
     }
 }
