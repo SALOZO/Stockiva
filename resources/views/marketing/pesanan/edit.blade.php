@@ -12,18 +12,7 @@
 
 @section('content')
 <div class="row">
-    <class class="col-12">
-        {{-- INFO CLIENT --}}
-        
-            <div>
-                <h5 class="mb-1">Mengedit pesanan untuk:</h5>
-                <h4 class="fw-bold mb-1">{{ $pesanan->client->nama_client }}</h4>
-                <p class="mb-0">
-                    <i class="bi bi-person me-1"></i> {{ $pesanan->client->nama_pic }} ({{ $pesanan->client->jabatan_pic }})
-                </p>
-            </div>
-        </class>
-        
+    <div class="col-12">
 
         {{-- FORM EDIT PESANAN --}}
         <div class="card">
@@ -85,7 +74,7 @@
                                     <th width="10%">Satuan</th>
                                     <th width="10%">Jumlah</th>
                                     <th width="15%">Subtotal</th>
-                                    <th width="7%">Delete</th>
+                                    <th width="7%">Hapus</th>
                                 </tr>
                             </thead>
                             <tbody id="itemsContainer">
@@ -93,8 +82,9 @@
                             </tbody>
                             <tfoot>
                                 <tr>
-                                    <td colspan="5" class="text-start fw-bold">TOTAL</td>
-                                    <td class="fw-bold text-primary text-center" id="totalKeseluruhan">Rp 0</td>
+                                    <td colspan="5" class="text-end fw-bold">TOTAL</td>
+                                    <td class="fw-bold text-primary text-end" id="totalKeseluruhan">Rp 0</td>
+                                    <td></td>
                                 </tr>
                             </tfoot>
                         </table>
@@ -106,15 +96,24 @@
                         Tambah Item
                     </button>
 
-                    {{-- Tombol Submit --}}
+                    {{-- Tombol Aksi --}}
                     <div class="d-flex justify-content-end gap-2">
                         <a href="{{ route('marketing.pesanan.show', $pesanan->id) }}" class="btn btn-light">
-                            Batal
+                            <i class="bi bi-x-circle"></i> Batal
                         </a>
+                        
+                        {{-- Tombol Update Pesanan --}}
                         <button type="submit" class="btn btn-primary" id="btnSubmit">
-                            <i class="bi bi-save me-1"></i>
-                            Update Pesanan
+                            <i class="bi bi-save"></i> Update Pesanan
                         </button>
+                        
+                        {{-- TOMBOL CETAK SPH (langsung dari halaman edit) --}}
+                        {{-- @if(!$pesanan->sudah_upload_kontrak)
+                            <a href="{{ route('marketing.pesanan.show', $pesanan->id) }}?cetak=1" 
+                               class="btn btn-success">
+                                <i class="bi bi-file-pdf"></i> Cetak SPH Baru
+                            </a>
+                        @endif --}}
                     </div>
                 </form>
             </div>
@@ -147,7 +146,7 @@
         <td>
             <input type="number" class="form-control form-control-sm jumlah-item" name="items[INDEX][jumlah]" min="1" value="1" required>
         </td>
-        <td class="subtotal-cell text-center">Rp 0</td>
+        <td class="subtotal-cell text-end">Rp 0</td>
         <td class="text-center">
             <button type="button" class="btn btn-sm btn-outline-danger hapus-item">
                 <i class="bi bi-trash"></i>

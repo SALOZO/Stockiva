@@ -186,29 +186,32 @@ class PesananController extends Controller
     }
 
     public function generateSPH(Pesanan $pesanan){
-    // Validasi: hanya bisa generate jika status draft
-    if ($pesanan->sph_status !== 'draft') {
-        return back()->with('error', 'SPH sudah pernah dibuat atau sedang dalam proses approval.');
+        if ($pesanan->sudah_upload_kontrak) {
+            return back()->with('error', 'Tidak dapat generate SPH karena kontrak sudah diupload.');
+        }
+
+        if ($pesanan->sph_file && Storage::exists($pesanan->sph_file)) {
+            Storage::delete($pesanan->sph_file);
+        }
+
+        $generator = new SPHGenerator();
+        $pdf = $generator->generate($pesanan);
+
+        $filename = 'SPH-' . $pesanan->no_pesanan . '-' . date('Ymd') . '.pdf';
+        $path = 'sph/' . $filename;
+        Storage::put($path, $pdf->output());
+
+        $pesanan->update([
+            'sph_status' => 'menunggu',
+            'sph_file' => $path,
+            'approved_by' => null,
+            'approved_at' => null,
+            'is_ready_for_gudang' => false  
+        ]);
+        
+        return redirect()->route('marketing.pesanan.show', $pesanan->id)->with('success', 'SPH berhasil diperbarui dan menunggu approval direktur.');
     }
 
-    // Generate PDF
-    $generator = new SPHGenerator();
-    $pdf = $generator->generate($pesanan);
-    
-    // Simpan file
-    $filename = 'SPH-' . $pesanan->no_pesanan . '-' . date('Ymd') . '.pdf';
-    $path = 'sph/' . $filename;
-    Storage::put($path, $pdf->output());
-    
-    // Update status pesanan
-    $pesanan->update([
-        'sph_status' => 'menunggu',
-        'sph_file' => $path
-    ]);
-    
-    return redirect()->route('marketing.pesanan.show', $pesanan->id)
-        ->with('success', 'SPH berhasil dibuat dan menunggu approval direktur.');
-}
 
     public function downloadSPH(Pesanan $pesanan){
         // Tentukan file mana yang akan didownload
@@ -233,6 +236,7 @@ class PesananController extends Controller
 
     public function uploadKontrak(Request $request, Pesanan $pesanan){
         $request->validate([
+            'jenis_kontrak' => 'required|in:SPK,PO,SP',
             'nomor_kontrak' => 'required|string',
             'tanggal_kontrak' => 'required|date',
             'file' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048'

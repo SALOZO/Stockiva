@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Pesanan;
+use App\Services\SPHGenerator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -32,14 +33,26 @@ class HistorySphController extends Controller
         return view('history-sph.index', compact('sphList', 'layout'));
     }
 
-    public function preview(Pesanan $pesanan)    {
-        $file = $pesanan->sph_approved_file ?? $pesanan->sph_file;
-
-        if (!$file || !Storage::exists($file)) {
-            abort(404, 'File tidak ditemukan');
+    public function preview($id){
+        $pesanan = Pesanan::findOrFail($id);
+        
+        // CEK STATUS
+        if ($pesanan->sph_status == 'disetujui' && $pesanan->sph_approved_file) {
+            // Tampilkan file approved
+            $file = $pesanan->sph_approved_file;
+            $path = storage_path('app/private/' . $file);
+        } else {
+            // Untuk status lain (draft, menunggu, ditolak), generate preview real-time
+            $generator = new SPHGenerator();
+            $pdf = $generator->generatePreview($pesanan);
+            return $pdf->stream('preview-' . $pesanan->no_pesanan . '.pdf');
         }
-
-        return response()->file(Storage::path($file), [
+        
+        if (!file_exists($path)) {
+            abort(404);
+        }
+        
+        return response()->file($path, [
             'Content-Type' => 'application/pdf',
             'Content-Disposition' => 'inline; filename="' . basename($file) . '"'
         ]);

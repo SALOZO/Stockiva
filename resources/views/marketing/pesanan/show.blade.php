@@ -182,8 +182,7 @@
                     </button>
                 </div>
 
-                {{-- Cetak SPH (draft) --}}
-                @if($pesanan->sph_status == 'draft')
+                {{-- @if($pesanan->sph_status == 'draft')
                 <form action="{{ route('marketing.pesanan.generate-sph', $pesanan->id) }}" 
                       method="POST" 
                       class="d-inline">
@@ -194,6 +193,16 @@
                         <i class="bi bi-file-pdf"></i> Cetak SPH
                     </button>
                 </form>
+                @endif --}}
+
+                @if(!$pesanan->sudah_upload_kontrak)
+                    <form action="{{ route('marketing.pesanan.generate-sph', $pesanan->id) }}" method="POST" class="d-inline">
+                        @csrf
+                        <button type="submit" class="btn btn-success" 
+                                onclick="return confirm('Cetak SPH baru ?')">
+                            <i class="bi bi-file-pdf"></i> Cetak SPH
+                        </button>
+                    </form>
                 @endif
 
                 {{-- Download SPH (jika sudah ada file) --}}

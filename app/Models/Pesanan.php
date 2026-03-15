@@ -63,6 +63,14 @@ class Pesanan extends Model
         return $this->hasOne(Pengiriman::class, 'pesanan_id');
     }
 
+    public function dokumenKontrak(){
+        return $this->hasMany(DokumenKontrak::class);
+    }
+    public function getSudahUploadKontrakAttribute()
+    {
+        return $this->dokumenKontrak()->exists();
+    }
+    
     // Generate nomor pesanan otomatis
     public static function generateNoPesanan(){
         $date = now()->format('Ymd');
