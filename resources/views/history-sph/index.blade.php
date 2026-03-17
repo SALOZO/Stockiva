@@ -127,15 +127,16 @@
                                                 title="Detail">
                                             <i class="bi bi-eye"></i>
                                         </button>
-                                        
+                                    @if (auth()->user()->jabatan == 'Marketing')                         
                                         @if(!$sph->sudah_upload_kontrak )
                                         {{-- @if(!$sph->sudah_upload_kontrak && $sph->sph_status == 'disetujui') --}}
-                                            <a href="{{ route('marketing.pesanan.edit', $sph->id) }}" 
-                                               class="btn btn-sm btn-warning"
-                                               title="Edit SPH">
-                                                <i class="bi bi-pencil"></i>
-                                            </a>
+                                        <a href="{{ route('marketing.pesanan.edit', $sph->id) }}" 
+                                            class="btn btn-sm btn-warning"
+                                            title="Edit SPH">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
                                         @endif
+                                       
                                         
                                         @if(!$sph->sudah_upload_kontrak)
                                         <div class="btn-group">
@@ -173,6 +174,7 @@
                                             </ul>
                                         </div>
                                         @endif
+                                    @endif 
                                         {{-- Modal Upload Kontrak --}}
                                         <div class="modal fade" id="modalKontrak{{ $sph->id }}" tabindex="-1">
                                             <div class="modal-dialog">
@@ -202,8 +204,8 @@
                                                             </div>
                                                             
                                                             <div class="mb-3">
-                                                                <label class="form-label">Upload File (Opsional)</label>
-                                                                <input type="file" class="form-control" name="file" accept=".pdf,.jpg,.jpeg,.png">
+                                                                <label class="form-label">Upload File <span class="text-danger">*</span></label>
+                                                                <input type="file" class="form-control" name="file" accept=".pdf,.jpg,.jpeg,.png" required>
                                                                 <small class="text-muted">Format: PDF, JPG, PNG. Maks: 2MB</small>
                                                             </div>
                                                         </div>
