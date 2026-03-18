@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Gudang;
 
 use App\Http\Controllers\Controller;
 use App\Models\CompanyProfile;
+use App\Models\DocumentCounter;
 use App\Models\Ekspedisi;
 use App\Models\Pengiriman;
 use App\Models\Pesanan;
@@ -208,16 +209,16 @@ class PengirimanController extends Controller
 
         $ekspedisi = Ekspedisi::findOrFail($request->ekspedisi_id);
 
-        $urutanBAST = Pengiriman::where('pesanan_id', $pengiriman->pesanan_id)
-                        ->whereNotNull('bast_ekspedisi_file')
-                        ->count() + 1;
+        $tahunBulan = now()->format('Y-m');
+        $nomor = DocumentCounter::getNextNumber($tahunBulan);
         
         $bulan = now()->format('m');
         $tahun = now()->format('Y');
         $hariTanggal = now()->format('l, d F Y');
         
-        $noBAST = sprintf("%04d", $urutanBAST) . ' / BAST-Ekspedisi / RP / ' . $bulan . ' / ' . $tahun;
-        $filename = 'BAST-' . sprintf("%04d", $urutanBAST) . '-RP-' . $bulan . '-' . $tahun . '.pdf';
+        $noBAST = sprintf("%04d", $nomor) . ' / BAST-Ekspedisi / RP / ' . $bulan . ' / ' . $tahun;
+        $filename = 'BAST-' . sprintf("%04d", $nomor) . '-RP-' . $bulan . '-' . $tahun . '.pdf';
+
         $path = 'bast/' . $filename;
 
         $company = CompanyProfile::first();
@@ -334,14 +335,17 @@ class PengirimanController extends Controller
             'detailPengiriman.satuanKirim'
         ]);
         
-         $lastSuratJalan = Pengiriman::whereNotNull('surat_jalan_ke')->max('surat_jalan_ke');
+        // $lastSuratJalan = Pengiriman::whereNotNull('surat_jalan_ke')->max('surat_jalan_ke');
     
-        $suratJalanKe = $lastSuratJalan ? $lastSuratJalan + 1 : 1;
+        // $suratJalanKe = $lastSuratJalan ? $lastSuratJalan + 1 : 1;
+
+        $tahunBulan = now()->format('Y-m');
+        $nomor = DocumentCounter::getNextNumber($tahunBulan);
         
         $bulan = now()->format('m');
         $tahun = now()->format('Y');
         
-        $noSJ = sprintf("%04d", $suratJalanKe) . ' / SJ / RP / ' . $bulan . ' / ' . $tahun;
+        $noSJ = sprintf("%04d", $nomor) . ' / SJ / RP / ' . $bulan . ' / ' . $tahun;
         
         return view('gudang.pengiriman.surat-jalan', compact('pengiriman', 'noSJ', 'suratJalanKe'));
     }
@@ -354,16 +358,18 @@ class PengirimanController extends Controller
         ]);
         
         // Ambil nomor surat jalan TERAKHIR dari SEMUA pengiriman
-        $lastSuratJalan = Pengiriman::whereNotNull('surat_jalan_ke')
-                            ->max('surat_jalan_ke');
+        // $lastSuratJalan = Pengiriman::whereNotNull('surat_jalan_ke')
+        //                     ->max('surat_jalan_ke');
         
-        $suratJalanKe = $lastSuratJalan ? $lastSuratJalan + 1 : 1;
+        // $suratJalanKe = $lastSuratJalan ? $lastSuratJalan + 1 : 1;
+        $tahunBulan = now()->format('Y-m');
+        $nomor = DocumentCounter::getNextNumber($tahunBulan);
         
         $bulan = now()->format('m');
         $tahun = now()->format('Y');
         
-        $noSJ = sprintf("%04d", $suratJalanKe) . ' / SJ / RP / ' . $bulan . ' / ' . $tahun;
-        $filename = 'SJ-' . sprintf("%04d", $suratJalanKe) . '-RP-' . $bulan . '-' . $tahun . '.pdf';
+        $noSJ = sprintf("%04d", $nomor) . ' / SJ / RP / ' . $bulan . ' / ' . $tahun;
+        $filename = 'SJ-' . sprintf("%04d", $nomor) . '-RP-' . $bulan . '-' . $tahun . '.pdf';
         $path = 'surat-jalan/' . $filename;
 
         $company = CompanyProfile::first();
@@ -372,7 +378,7 @@ class PengirimanController extends Controller
             'pengiriman' => $pengiriman,
             'company' => $company,
             'no_sj' => $noSJ,
-            'suratJalanKe' => $suratJalanKe
+            'suratJalanKe' => $nomor
         ]);
         
         $pdf->setPaper('A4', 'portrait');
@@ -380,7 +386,7 @@ class PengirimanController extends Controller
         // Update dengan nomor yang baru
         $pengiriman->update([
             'surat_jalan_file' => $path,
-            'surat_jalan_ke' => $suratJalanKe
+            'surat_jalan_ke' => $nomor
         ]);
 
         Storage::disk('public')->put($path, $pdf->output());
@@ -415,25 +421,28 @@ class PengirimanController extends Controller
             'penerima_client' => $request->penerima_client
         ]);
 
-        $noUrutSPH = $this->extractNomorUrut($pengiriman->pesanan->no_pesanan);
+        // $noUrutSPH = $this->extractNomorUrut($pengiriman->pesanan->no_pesanan);
         
-        $jumlahBastEkspedisi = Pengiriman::where('pesanan_id', $pengiriman->pesanan_id)
-                                ->whereNotNull('bast_ekspedisi_file')
-                                ->count();
+        // $jumlahBastEkspedisi = Pengiriman::where('pesanan_id', $pengiriman->pesanan_id)
+        //                         ->whereNotNull('bast_ekspedisi_file')
+        //                         ->count();
         
-        $jumlahBastClient = Pengiriman::where('pesanan_id', $pengiriman->pesanan_id)
-                                ->whereNotNull('bast_client_file')
-                                ->where('id', '<=', $pengiriman->id)
-                                ->count();
+        // $jumlahBastClient = Pengiriman::where('pesanan_id', $pengiriman->pesanan_id)
+        //                         ->whereNotNull('bast_client_file')
+        //                         ->where('id', '<=', $pengiriman->id)
+        //                         ->count();
         
-        $totalBast = $jumlahBastEkspedisi + $jumlahBastClient;
-        $noUrutBAST = $noUrutSPH + $totalBast + 1;
+        // $totalBast = $jumlahBastEkspedisi + $jumlahBastClient;
+        // $noUrutBAST = $noUrutSPH + $totalBast + 1;
+
+        $tahunBulan = now()->format('Y-m');
+        $nomor = DocumentCounter::getNextNumber($tahunBulan);
         
         $bulan = now()->format('m');
         $tahun = now()->format('Y');
         
-        $noBAST = sprintf("%04d", $noUrutBAST) . ' / BAST / RP / ' . $bulan . ' / ' . $tahun;
-        $filename = 'BAST-CLIENT-' . sprintf("%04d", $noUrutBAST) . '-RP-' . $bulan . '-' . $tahun . '.pdf';
+        $noBAST = sprintf("%04d", $nomor) . ' / BAST-Client / RP / ' . $bulan . ' / ' . $tahun;
+        $filename = 'BAST-CLIENT-' . sprintf("%04d", $nomor) . '-RP-' . $bulan . '-' . $tahun . '.pdf';
         $path = 'bast-client/' . $filename;
 
         $pengiriman->load([
@@ -443,7 +452,7 @@ class PengirimanController extends Controller
         ]);
 
         $company = CompanyProfile::first();
-        $noPO = sprintf("%04d", $noUrutBAST);  
+        $noPO = sprintf("%04d", $nomor);  
 
         $pdf = Pdf::loadView('pdf.bast-client', [
             'pengiriman' => $pengiriman,

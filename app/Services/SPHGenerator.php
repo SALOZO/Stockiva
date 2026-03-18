@@ -2,8 +2,9 @@
 
 namespace App\Services;
 
-use App\Models\Pesanan;
 use App\Models\CompanyProfile;
+use App\Models\DocumentCounter;
+use App\Models\Pesanan;
 use App\Models\SphSetting;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Storage;
@@ -178,15 +179,14 @@ class SPHGenerator
         return $lastPart;
     }
 
-    private function formatNomorSph(Pesanan $pesanan)
-    {
-        $noUrut = $this->extractNomorUrut($pesanan->no_pesanan);
+    private function formatNomorSph(Pesanan $pesanan){
+        $tahunBulan = now()->format('Y-m');
+        $nomor = DocumentCounter::getNextNumber($tahunBulan);
         
         $bulan = now()->format('m');
         $tahun = now()->format('Y');
-    
         
-        return $noUrut . ' / SPH / RP / ' . $bulan . ' / ' . $tahun;
+        return sprintf("%04d", $nomor) . ' / SPH / RP / ' . $bulan . ' / ' . $tahun;
     }
 
     private function getLogoPath()
