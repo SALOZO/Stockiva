@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('document_counters', function (Blueprint $table) {
             $table->id();
             $table->string('tahun_bulan', 7)->unique();
-            $table->integer('last_number')->default(0);
+            $table->integer('last_number')->default(1);
             $table->timestamps();
         });
     }

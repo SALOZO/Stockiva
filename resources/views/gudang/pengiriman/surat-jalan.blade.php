@@ -22,10 +22,10 @@
                 <div class="row mb-4">
                     <div class="col-md-6">
                         <table class="table table-sm table-borderless">
-                            <tr>
+                            {{-- <tr>
                                 <td width="30%"><strong>No. Surat Jalan</strong></td>
                                 <td>: <strong class="text-primary">{{ $noSJ }}</strong></td>
-                            </tr>
+                            </tr> --}}
                             <tr>
                                 <td><strong>Tanggal</strong></td>
                                 <td>: {{ $pengiriman->tanggal->format('d/m/Y') }}</td>

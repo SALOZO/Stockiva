@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('pesanans', function (Blueprint $table) {
             $table->id();
             $table->string('no_pesanan')->unique(); // Nomor pesanan unik
+            $table->string('no_sph')->nullable();
             $table->foreignId('client_id')->constrained('clients');
             $table->date('tanggal_pesanan');
             $table->enum('status', ['baru', 'diproses', 'selesai', 'dibatalkan'])->default('baru');

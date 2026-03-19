@@ -244,7 +244,7 @@ class PengirimanController extends Controller
             $jumlahKirim = $detail->jumlah_kirim;
             
             if ($detailPesanan->produced_qty >= $jumlahKirim) {
-                $detailPesanan->produced_qty -= $jumlahKirim;
+                $detailPesanan->shipped_qty -= $jumlahKirim;
                 $detailPesanan->save();
             } else {
                 throw new \Exception("Stok produksi {$detailPesanan->barang->nama_barang} tidak mencukupi. Tersedia: {$detailPesanan->produced_qty}, Diminta: {$jumlahKirim}");
@@ -335,19 +335,7 @@ class PengirimanController extends Controller
             'detailPengiriman.satuanKirim'
         ]);
         
-        // $lastSuratJalan = Pengiriman::whereNotNull('surat_jalan_ke')->max('surat_jalan_ke');
-    
-        // $suratJalanKe = $lastSuratJalan ? $lastSuratJalan + 1 : 1;
-
-        $tahunBulan = now()->format('Y-m');
-        $nomor = DocumentCounter::getNextNumber($tahunBulan);
-        
-        $bulan = now()->format('m');
-        $tahun = now()->format('Y');
-        
-        $noSJ = sprintf("%04d", $nomor) . ' / SJ / RP / ' . $bulan . ' / ' . $tahun;
-        
-        return view('gudang.pengiriman.surat-jalan', compact('pengiriman', 'noSJ', 'suratJalanKe'));
+        return view('gudang.pengiriman.surat-jalan', compact('pengiriman'));
     }
 
     public function cetakSuratJalan(Request $request, Pengiriman $pengiriman){

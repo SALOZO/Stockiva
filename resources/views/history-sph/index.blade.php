@@ -69,7 +69,7 @@
                         <thead class="bg-light text-center">
                             <tr>
                                 <th>No</th>
-                                <th>No. SPH</th>
+                                {{-- <th>No. SPH</th> --}}
                                 <th>Client</th>
                                 <th>Tanggal Buat</th>
                                 <th>Dibuat Oleh</th>
@@ -85,9 +85,9 @@
                             @forelse($sphList as $index => $sph)
                             <tr>
                                 <td>{{ $sphList->firstItem() + $index }}</td>
-                                <td>
+                                {{-- <td>
                                     <strong>{{ $sph->no_sph_formatted ?? 'SPH/'.$sph->no_pesanan }}</strong>
-                                </td>
+                                </td> --}}
                                 <td>
                                     {{ $sph->client->nama_client ?? '-' }}
                                     <br>

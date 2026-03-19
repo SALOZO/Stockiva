@@ -21,7 +21,13 @@ class SPHGenerator
     }
 
     public function generate(Pesanan $pesanan){
-    $noSph = $this->formatNomorSph($pesanan);
+        if ($pesanan->no_sph) {
+        $noSph = $pesanan->no_sph;
+    } else {
+        $noSph = $this->formatNomorSph($pesanan);
+        $pesanan->update(['no_sph' => $noSph]);
+    }
+    $pesanan->update(['no_sph' => $noSph]);
     $perihal = $pesanan->keterangan ?? $this->settings['perihal_default'] ?? 'Surat Penawaran Harga';
     $total = $pesanan->total_keseluruhan;
 
@@ -86,10 +92,30 @@ class SPHGenerator
 
     return $pdf;
     }
+    // private function getExistingNomorSph(Pesanan $pesanan){
+    //     if ($pesanan->sph_file) {
+    //         $filename = basename($pesanan->sph_file);
+    //         preg_match('/SPH-PO-\d+-(\d+)-\d+\.pdf/', $filename, $matches);
+    //         if (isset($matches[1])) {
+    //             $nomor = $matches[1];
+    //             $bulan = now()->format('m');
+    //             $tahun = now()->format('Y');
+    //             return sprintf("%04d", $nomor) . ' / SPH / RP / ' . $bulan . ' / ' . $tahun;
+    //         }
+    //     }
+
+    //     $counter = DocumentCounter::where('tahun_bulan', now()->format('Y-m'))->first();
+    //     $nomor = $counter ? $counter->last_number : 0;
+    //     $bulan = now()->format('m');
+    //     $tahun = now()->format('Y');
+        
+    //     return sprintf("%04d", $nomor) . ' / SPH / RP / ' . $bulan . ' / ' . $tahun;
+    // }
 
   public function generateWithSignature(Pesanan $pesanan, $ttdPath = null, $user = null)
     {
-        $noSph = $this->formatNomorSph($pesanan);
+        // $noSph = $this->getExistingNomorSph($pesanan);
+        $noSph = $pesanan->no_sph ?? $this->formatNomorSph($pesanan);
         $perihal = $pesanan->keterangan ?? $this->settings['perihal_default'] ?? 'Surat Penawaran Harga';
         $total = $pesanan->total_keseluruhan;
 
@@ -222,74 +248,92 @@ class SPHGenerator
         return 'data:image/' . $type . ';base64,' . base64_encode($imageData);
     }
 
-public function generatePreview(Pesanan $pesanan)
-{
-    $noSph = $this->formatNomorSph($pesanan);
-    $perihal = $pesanan->keterangan ?? $this->settings['perihal_default'] ?? 'Surat Penawaran Harga';
-    $total = $pesanan->total_keseluruhan;
-
-    $ppnAktif = ($this->settings['ppn_aktif'] ?? '1') == '1';
-    $ppnPersen = (float)($this->settings['ppn_persen'] ?? 11);
-
-    if ($ppnAktif) {
-        $ppn = $total * ($ppnPersen / 100);
-        $totalIncludePpn = $total + $ppn;
-    } else {
-        $ppn = 0;
-        $totalIncludePpn = $total;
-    }
-    
-
-    foreach ($pesanan->details as $detail) {
-        if ($detail->barang && $detail->barang->foto) {
-            $detail->barang->foto_base64 = $this->getBarangImageBase64($detail->barang->foto);
+    private function formatNomorSphPreview(Pesanan $pesanan){
+        if ($pesanan->sph_file) {
+            $filename = basename($pesanan->sph_file);
+            // Contoh: SPH-PO-20260319-0001-20260319.pdf
+            preg_match('/SPH-PO-\d+-(\d+)-\d+\.pdf/', $filename, $matches);
+            if (isset($matches[1])) {
+                return sprintf("%04d", $matches[1]) . ' / SPH / RP / ' . now()->format('m') . ' / ' . now()->format('Y');
+            }
         }
+        
+        // Fallback: pakai nomor terakhir (tanpa increment)
+        $counter = DocumentCounter::where('tahun_bulan', now()->format('Y-m'))->first();
+        $nomor = $counter ? $counter->last_number : 0;
+        
+        return sprintf("%04d", $nomor) . ' / SPH / RP / ' . now()->format('m') . ' / ' . now()->format('Y');
     }
-    $jumlahHalamanLampiran = $this->hitungHalamanLampiran($pesanan);
-    
-    $lampiranText = $jumlahHalamanLampiran .' lembar';
 
-    $data = [
-        'company' => $this->company,
-        'pesanan' => $pesanan,
-        'client' => $pesanan->client,
-        'items' => $pesanan->details,
-        'tanggal' => now()->format('d F Y'),
-        'no_sph' => $noSph,
-        'perihal' => $perihal,
-        'lampiran_text' => $lampiranText,
-        'catatan_ppn' => $this->settings['catatan_ppn'] ?? 'Harga belum termasuk PPN 11%',
-        'masa_berlaku' => $this->settings['masa_berlaku'] ?? '14 (empat belas) hari kalender',
-        'waktu_pengerjaan' => $this->settings['waktu_pengerjaan'] ?? '25 hari kalender',
-        'footer_text' => $this->settings['footer_text'] ?? 'Demikian Surat Penawaran Harga preview...',
-        'logo_base64' => $this->getLogoBase64(),
-        'is_preview' => true,
-        // testing :
-        'ppn_aktif' => $ppnAktif,
-        'ppn_persen' => $ppnPersen,
-        'ppn' => $ppn,
-        'total_include_ppn' => $totalIncludePpn,
-        'dpp' => $total
-    ];
+    public function generatePreview(Pesanan $pesanan){
+        // $noSph = $this->formatNomorSph($pesanan);
+        // $noSph = $this->formatNomorSphPreview($pesanan);
+         $noSph = $pesanan->no_sph ?? 'SPH/RP/' . now()->format('m') . '/' . now()->format('Y');
+        $perihal = $pesanan->keterangan ?? $this->settings['perihal_default'] ?? 'Surat Penawaran Harga';
+        $total = $pesanan->total_keseluruhan;
 
-    $data2 = [
-        'pesanan' => $pesanan,
-        'no_sph' => $noSph,
-    ];
+        $ppnAktif = ($this->settings['ppn_aktif'] ?? '1') == '1';
+        $ppnPersen = (float)($this->settings['ppn_persen'] ?? 11);
 
-    // Render HTML dulu
-    $htmlHalaman1 = view('pdf.sph', $data)->render();
-    $htmlHalaman2 = view('pdf.lampiran-barang', $data2)->render();
+        if ($ppnAktif) {
+            $ppn = $total * ($ppnPersen / 100);
+            $totalIncludePpn = $total + $ppn;
+        } else {
+            $ppn = 0;
+            $totalIncludePpn = $total;
+        }
+        
 
-    // Gabungkan HTML
-    $htmlGabungan = $htmlHalaman1 . $htmlHalaman2;
+        foreach ($pesanan->details as $detail) {
+            if ($detail->barang && $detail->barang->foto) {
+                $detail->barang->foto_base64 = $this->getBarangImageBase64($detail->barang->foto);
+            }
+        }
+        $jumlahHalamanLampiran = $this->hitungHalamanLampiran($pesanan);
+        
+        $lampiranText = $jumlahHalamanLampiran .' lembar';
 
-    // Load ke PDF
-    $pdf = Pdf::loadHTML($htmlGabungan)
-        ->setPaper('A4', 'portrait');
+        $data = [
+            'company' => $this->company,
+            'pesanan' => $pesanan,
+            'client' => $pesanan->client,
+            'items' => $pesanan->details,
+            'tanggal' => now()->format('d F Y'),
+            'no_sph' => $noSph,
+            'perihal' => $perihal,
+            'lampiran_text' => $lampiranText,
+            'catatan_ppn' => $this->settings['catatan_ppn'] ?? 'Harga belum termasuk PPN 11%',
+            'masa_berlaku' => $this->settings['masa_berlaku'] ?? '14 (empat belas) hari kalender',
+            'waktu_pengerjaan' => $this->settings['waktu_pengerjaan'] ?? '25 hari kalender',
+            'footer_text' => $this->settings['footer_text'] ?? 'Demikian Surat Penawaran Harga preview...',
+            'logo_base64' => $this->getLogoBase64(),
+            'is_preview' => true,
+            // testing :
+            'ppn_aktif' => $ppnAktif,
+            'ppn_persen' => $ppnPersen,
+            'ppn' => $ppn,
+            'total_include_ppn' => $totalIncludePpn,
+            'dpp' => $total
+        ];
 
-    return $pdf;
-}
+        $data2 = [
+            'pesanan' => $pesanan,
+            'no_sph' => $noSph,
+        ];
+
+        // Render HTML dulu
+        $htmlHalaman1 = view('pdf.sph', $data)->render();
+        $htmlHalaman2 = view('pdf.lampiran-barang', $data2)->render();
+
+        // Gabungkan HTML
+        $htmlGabungan = $htmlHalaman1 . $htmlHalaman2;
+
+        // Load ke PDF
+        $pdf = Pdf::loadHTML($htmlGabungan)
+            ->setPaper('A4', 'portrait');
+
+        return $pdf;
+    }
 
 private function getBarangImageBase64($path){
     if (!$path) {

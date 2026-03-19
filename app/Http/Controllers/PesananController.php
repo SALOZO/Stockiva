@@ -260,20 +260,24 @@ class PesananController extends Controller
         }
 
         DokumenKontrak::create($data);
-
-        if ($pesanan->sph_status == 'disetujui') {
             $pesanan->update([
                 'is_ready_for_gudang' => true,
                 'ready_for_gudang_at' => now()
             ]);
+
+        // if ($pesanan->sph_status == 'disetujui') {
+        //     $pesanan->update([
+        //         'is_ready_for_gudang' => true,
+        //         'ready_for_gudang_at' => now()
+        //     ]);
             
-            $message = 'Dokumen ' . strtoupper($jenis) . ' berhasil disimpan. SPH siap diproses gudang.';
-        } else {
-            $message = 'Dokumen ' . strtoupper($jenis) . ' berhasil disimpan.';
-        }
+        //     $message = 'Dokumen ' . strtoupper($jenis) . ' berhasil disimpan. SPH siap diproses gudang.';
+        // } else {
+        //     $message = 'Dokumen ' . strtoupper($jenis) . ' berhasil disimpan.';
+        // }
 
         return redirect()->route('history.sph.index')
-            ->with('success', $message);
+            ->with('success', 'Berhasil menambahkan dokument');
     }
 
     
