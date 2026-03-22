@@ -117,14 +117,14 @@
                                     <td class="text-center">{{ $detail->jenis->name_jenis ?? '-' }}</td>
                                     <td class="text-center">{{ $detail->barang->satuan->nama_satuan ?? '-' }}</td>
                                     <td class="text-center">{{ $detail->jumlah }}</td>
-                                    <td class="text-center">{{ $detail->produced_qty }}</td>
+                                    <td class="text-center">{{ $detail->shipped_qty }}</td>
                                     <td>
                                         <input type="number" 
                                                class="form-control form-control-sm kirim-input"
                                                name="kirim[{{ $detail->id }}]" 
                                                placeholder="0"
                                                min="0"
-                                               max="{{ $detail->produced_qty }}"
+                                               max="{{ $detail->shipped_qty }}"
                                                data-max="{{ $detail->produced_qty }}"
                                                data-nama="{{ $detail->barang->nama_barang }}"
                                                style="width: 80px; margin: 0 auto;">

@@ -11,8 +11,7 @@ class CheckRole
     /**
      * Handle an incoming request.
      */
-    public function handle(Request $request, Closure $next, ...$roles)
-    {
+    public function handle(Request $request, Closure $next, ...$roles){
         if (!Auth::check()) {
             return redirect()->route('login');
         }
@@ -24,11 +23,14 @@ class CheckRole
             return $next($request);
         }
 
-        // Jika tidak punya akses, redirect ke dashboard masing-masing
-        if ($user->jabatan === 'Marketing') {
-            return redirect()->route('marketing.dashboard')->with('error', 'Anda tidak memiliki akses ke halaman tersebut.');
-        }
+        $redirect = match($user->jabatan) {
+            'Marketing' => redirect()->route('marketing.dashboard'),
+            'Direktur' => redirect()->route('direktur.sph.index'),
+            'Gudang' => redirect()->route('gudang.tugas-gudang.index'),
+            'Keuangan' => redirect()->route('keuangan.index'),
+            default => redirect()->route('login')
+        };
 
-        return redirect()->route('admin.user.index')->with('error', 'Anda tidak memiliki akses ke halaman tersebut.');
+        return $redirect->with('error', 'Anda tidak memiliki akses ke halaman tersebut.');
     }
 }

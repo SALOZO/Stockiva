@@ -16,6 +16,7 @@ use App\Http\Controllers\HistoryBastController;
 use App\Http\Controllers\HistorySphController;
 use App\Http\Controllers\JenisController;
 use App\Http\Controllers\KategoryController;
+use App\Http\Controllers\KeuanganController;
 use App\Http\Controllers\Marketing\DashboardController;
 use App\Http\Controllers\Marketing\SphSettingController;
 use App\Http\Controllers\PesananController;
@@ -236,5 +237,9 @@ Route::prefix('admin')->middleware(['auth', 'role:Admin'])->group(function () {
         Route::get('/', [HistoryBastController::class, 'index'])->name('index');
         Route::get('/{pengiriman}/{jenis}/preview', [HistoryBastController::class, 'preview'])->name('preview');
         Route::get('/{pengiriman}/{jenis}/download', [HistoryBastController::class, 'download'])->name('download');
+    });
+
+    Route::middleware(['auth', 'role:Keuangan'])->prefix('keuangan')->name('keuangan.')->group(function () {
+        Route::get('/', [KeuanganController::class, 'index'])->name('index');
     });
     
