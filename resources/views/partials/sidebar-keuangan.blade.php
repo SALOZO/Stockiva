@@ -16,6 +16,13 @@
                 <i class="bi bi-receipt"></i> Data Siap Tagih
             </a>
         </li>
+        <li class="nav-item">
+            <a class="nav-link {{ request()->routeIs('keuangan.bank*') ? 'active' : '' }}" 
+            href="{{ route('keuangan.bank.index') }}">
+                <i class="bi bi-bank"></i>
+                <span>Setting DOC Bank Perusahaan</span>
+            </a>
+        </li>
         <li class="nav-item mt-4">
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
