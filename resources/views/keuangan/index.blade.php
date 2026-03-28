@@ -192,7 +192,7 @@
     }
     
     function cetakInvoice(id) {
-        alert('Cetak Invoice untuk pesanan ID: ' + id);
+        window.open('/keuangan/cetak-invoice/' + id, '_blank');
     }
     
     function cetakKwitansi(id) {

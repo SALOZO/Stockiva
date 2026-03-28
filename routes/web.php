@@ -247,5 +247,7 @@ Route::prefix('admin')->middleware(['auth', 'role:Admin'])->group(function () {
         Route::post('/bank', [BankController::class, 'store'])->name('bank.store');
         Route::put('/bank/{id}', [BankController::class, 'update'])->name('bank.update');
         Route::delete('/bank/{id}', [BankController::class, 'destroy'])->name('bank.destroy');
+
+        Route::get('/cetak-invoice/{pesanan}', [KeuanganController::class, 'cetakInvoice'])->name('keuangan.cetak-invoice');
     });
     
