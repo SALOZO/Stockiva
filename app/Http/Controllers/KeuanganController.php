@@ -6,8 +6,10 @@ use App\Models\BankPerusahaan;
 use App\Models\CompanyProfile;
 use App\Models\DocumentCounter;
 use App\Models\Pesanan;
+use App\Models\User;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class KeuanganController extends Controller
 {
@@ -36,35 +38,96 @@ class KeuanganController extends Controller
     }
 
     public function cetakInvoice(Pesanan $pesanan){
-        $pesanan->load(['client', 'details.barang']);
+        // Generate nomor invoice jika belum ada
+        if (!$pesanan->no_invoice) {
+            $tahunBulan = now()->format('Y-m');
+            $nomor = DocumentCounter::getNextNumber($tahunBulan);
+            $noInvoice = sprintf("%04d", $nomor) . '/INV/RP/' . now()->format('m') . '/' . now()->format('Y');
+            $pesanan->update(['no_invoice' => $noInvoice]);
+        }
 
         $bank = BankPerusahaan::where('is_active', true)->first();
-
-        $tahunBulan = now()->format('Y-m');
-        $nomor = DocumentCounter::getNextNumber($tahunBulan);
-        $noInvoice = sprintf("%04d", $nomor) . '/INV/RP/' . now()->format('m') . '/' . now()->format('Y');
-
-        // Jatuh tempo (30 hari dari tanggal invoice)
-        $jatuhTempo = now()->addDays(30);
-
-        // $numberToWords = new NumberToWords();
-        // $numberTransformer = $numberToWords->getNumberTransformer('id');
-
-        // $terbilang = $numberTransformer->toWords($pesanan->total_keseluruhan);
-
         $company = CompanyProfile::first();
 
+        // Generate PDF preview (tanpa TTD)
         $pdf = Pdf::loadView('pdf.invoice', [
             'pesanan' => $pesanan,
             'company' => $company,
             'bank' => $bank,
-            'no_invoice' => $noInvoice,
-            'jatuh_tempo' => $jatuhTempo,
-            // 'terbilang' => $terbilang,
+            'no_invoice' => $pesanan->no_invoice,
+            'jatuh_tempo' => $pesanan->created_at->addDays(30),
             'tanggal' => now()->format('d F Y'),
         ]);
 
         $pdf->setPaper('A4', 'portrait');
-        return $pdf->stream('invoice-' . $pesanan->no_pesanan . '.pdf');
+        $pdf->setOptions([
+            'isRemoteEnabled' => true,
+            'isHtml5ParserEnabled' => true,
+            'defaultFont' => 'Helvetica'
+        ]);
+
+        // Simpan file sementara (preview)
+        $filename = 'INVOICE-' . $pesanan->no_pesanan . '-' . date('Ymd') . '.pdf';
+        $path = 'invoice/temp/' . $filename;
+        Storage::disk('public')->put($path, $pdf->output());
+
+        // Download file
+        return Storage::disk('public')->download($path, $filename);
+    }
+
+    public function riwayatInvoice(){
+        $invoices = Pesanan::with(['client', 'details.barang'])
+            ->whereNotNull('no_invoice')
+            ->whereNotNull('invoice_approved_at')
+            ->orderBy('invoice_approved_at', 'desc')
+            ->paginate(15);
+
+        return view('keuangan.invoice.riwayat', compact('invoices'));
+    }
+
+ public function previewInvoice(Pesanan $pesanan)
+{
+    if (!$pesanan->no_invoice) {
+        abort(404);
+    }
+
+    $bank = BankPerusahaan::where('is_active', true)->first();
+    $company = CompanyProfile::first();
+
+    // Ambil TTD dari direktur yang approve
+    $ttdBase64 = null;
+    if ($pesanan->invoice_approved_by) {
+        $direktur = User::find($pesanan->invoice_approved_by);
+        if ($direktur && $direktur->ttd_path) {
+            $ttdPath = storage_path('app/public/' . $direktur->ttd_path);
+            if (file_exists($ttdPath)) {
+                $imageData = file_get_contents($ttdPath);
+                $mime = mime_content_type($ttdPath);
+                $ttdBase64 = 'data:' . $mime . ';base64,' . base64_encode($imageData);
+            }
+        }
+    }
+
+    $pdf = Pdf::loadView('pdf.invoice-approved', [
+        'pesanan' => $pesanan,
+        'company' => $company,
+        'bank' => $bank,
+        'no_invoice' => $pesanan->no_invoice,
+        'jatuh_tempo' => $pesanan->created_at->addDays(30),
+        'tanggal' => now()->format('d F Y'),
+        'approved_by' => $pesanan->approvedBy->name ?? 'Direktur',
+        'approved_at' => $pesanan->invoice_approved_at ? $pesanan->invoice_approved_at->format('d F Y') : '-',
+        'ttd_base64' => $ttdBase64,  // ← TAMBAHKAN INI
+    ]);
+
+    return $pdf->stream('invoice-' . $pesanan->no_pesanan . '.pdf');
+}
+
+    public function downloadInvoice(Pesanan $pesanan){
+        if (!$pesanan->invoice_file) {
+            abort(404, 'File invoice tidak ditemukan');
+        }
+
+        return Storage::disk('public')->download($pesanan->invoice_file);
     }
 }

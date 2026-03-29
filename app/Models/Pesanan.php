@@ -29,7 +29,12 @@ class Pesanan extends Model
         'approved_at',
         'approved_by',
         'approval_notes',
-        'created_by'
+        'created_by',
+
+        'no_invoice',
+        'invoice_file',
+        'invoice_approved_at',
+        'invoice_approved_by',
     ];
 
     protected $casts = [
@@ -37,6 +42,7 @@ class Pesanan extends Model
         'total_keseluruhan' => 'decimal:2',
         'approved_at' => 'datetime',
         'gudang_status' => 'string',
+        'invoice_approved_at' => 'datetime',
     ];
 
     // Relasi ke Client
@@ -129,5 +135,9 @@ class Pesanan extends Model
     public function getIsReadyForGudangAttribute()
     {
     return $this->sph_status == 'disetujui' && $this->ready_for_gudang_at != null;
+    }
+    public function getNoInvoiceFormattedAttribute()
+    {
+        return $this->no_invoice ?? '-';
     }
 }

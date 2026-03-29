@@ -3,6 +3,7 @@
 use App\Http\Controllers\Authcontroller;
 use App\Http\Controllers\BarangController;
 use App\Http\Controllers\ClientsController;
+use App\Http\Controllers\Direktur\InvoiceController;
 use App\Http\Controllers\Direktur\ProfileController;
 use App\Http\Controllers\Direktur\SphController;
 use App\Http\Controllers\EkspedisiController;
@@ -173,6 +174,11 @@ Route::prefix('admin')->middleware(['auth', 'role:Admin'])->group(function () {
         Route::post('/sph/{pesanan}/reject', [SphController::class, 'reject'])->name('sph.reject');
 
         Route::get('/sph/{pesanan}/download', [SphController::class, 'downloadApproved'])->name('sph.download');
+
+        // Untuk invoice
+        Route::get('/invoice', [InvoiceController::class, 'index'])->name('invoice.index');
+        Route::get('/invoice/{pesanan}/preview', [InvoiceController::class, 'preview'])->name('invoice.preview');
+        Route::post('/invoice/{pesanan}/approve', [InvoiceController::class, 'approve'])->name('invoice.approve');
         
         // Profile & Upload TTD
         Route::get('/profile', [ProfileController::class, 'edit'])->name('profile');
@@ -249,5 +255,9 @@ Route::prefix('admin')->middleware(['auth', 'role:Admin'])->group(function () {
         Route::delete('/bank/{id}', [BankController::class, 'destroy'])->name('bank.destroy');
 
         Route::get('/cetak-invoice/{pesanan}', [KeuanganController::class, 'cetakInvoice'])->name('keuangan.cetak-invoice');
+
+        Route::get('/invoice/riwayat', [KeuanganController::class, 'riwayatInvoice'])->name('invoice.riwayat');
+        Route::get('/invoice/{pesanan}/preview', [KeuanganController::class, 'previewInvoice'])->name('preview-invoice');
+        Route::get('/invoice/{pesanan}/download', [KeuanganController::class, 'downloadInvoice'])->name('download-invoice');
     });
     

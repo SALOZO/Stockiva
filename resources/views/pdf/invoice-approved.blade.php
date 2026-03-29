@@ -144,7 +144,7 @@
         }
         .signature-block .company-sig {
             font-weight: 700;
-            margin-bottom: 55px;
+            margin-bottom: 10px;
         }
         .signature-block .sig-name {
             font-weight: 700;
@@ -152,6 +152,16 @@
         }
         .signature-block .sig-title {
             font-weight: 400;
+        }
+
+        /* ── FIX: class name disesuaikan & ukuran diperbaiki ── */
+        .ttd-img, .signature-img {
+            max-width: 150px;
+            max-height: 60px;
+            object-fit: contain;
+            margin: 5px 0;
+            display: block;
+            margin-left: auto;
         }
     </style>
 </head>
@@ -266,11 +276,21 @@
     </div>
 
     {{-- ── TANDA TANGAN ── --}}
-    {{-- <div class="signature-block">
+    <div class="signature-block">
         <div class="company-sig">{{ $company->nama_perusahaan }}</div>
-        <div class="sig-name">{{ $company->nama_direktur }}</div>
-        <div class="sig-title">Direktur Keuangan</div>
-    </div> --}}
+
+        @if($ttd_base64)
+            <img src="{{ $ttd_base64 }}" class="signature-img">
+        @else
+            <div style="height: 70px;"></div>
+        @endif
+
+        <div class="sig-name">{{ $approved_by }}</div>
+        <div class="sig-title">{{ $approved_by_jabatan ?? 'Direktur Keuangan' }}</div>
+        <div class="approval-info">
+            Disetujui pada: {{ $approved_at }}
+        </div>
+    </div>
 
 </body>
 </html>

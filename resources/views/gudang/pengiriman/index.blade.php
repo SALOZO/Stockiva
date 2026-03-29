@@ -93,10 +93,10 @@
                                         </small>
                                     </td>
                                     <td>{{ $kirim->penerima_ekspedisi ?? '-' }}
-                                    <br>
+                                    {{-- <br>
                                     <small class="text-muted">
                                         <i class="bi bi-person-badge"></i> {{ $kirim->nama_kurir }}
-                                    </small>
+                                    </small> --}}
                                     </td>
                                     <td>
                                         <div class="btn-group" role="group">

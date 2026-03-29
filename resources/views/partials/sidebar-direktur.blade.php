@@ -35,6 +35,14 @@
         </li>
 
         <li class="nav-item">
+            <a class="nav-link {{ request()->routeIs('direktur.invoice*') ? 'active' : '' }}" 
+            href="{{ route('direktur.invoice.index') }}">
+                <i class="bi bi-receipt"></i>
+                <span>Invoice Menunggu</span>
+            </a>
+        </li>
+
+        <li class="nav-item">
             <a class="nav-link {{ request()->routeIs('history.sph.index') ? 'active' : '' }}" 
             href="{{ route('history.sph.index') }}">
                 <i class="bi bi-clock-history"></i>
@@ -44,6 +52,7 @@
                 @endif
             </a>
         </li>
+
 
         
         {{-- DIVIDER --}}

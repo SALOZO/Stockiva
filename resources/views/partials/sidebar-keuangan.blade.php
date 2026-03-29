@@ -17,6 +17,13 @@
             </a>
         </li>
         <li class="nav-item">
+            <a class="nav-link {{ request()->routeIs('keuangan.invoice.riwayat') ? 'active' : '' }}" 
+            href="{{ route('keuangan.invoice.riwayat') }}">
+                <i class="bi bi-archive"></i>
+                <span>Riwayat Invoice</span>
+            </a>
+        </li>
+        <li class="nav-item">
             <a class="nav-link {{ request()->routeIs('keuangan.bank*') ? 'active' : '' }}" 
             href="{{ route('keuangan.bank.index') }}">
                 <i class="bi bi-bank"></i>
