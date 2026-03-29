@@ -38,7 +38,7 @@ class KeuanganController extends Controller
     }
 
     public function cetakInvoice(Pesanan $pesanan){
-        // Generate nomor invoice jika belum ada
+
         if (!$pesanan->no_invoice) {
             $tahunBulan = now()->format('Y-m');
             $nomor = DocumentCounter::getNextNumber($tahunBulan);
@@ -49,7 +49,14 @@ class KeuanganController extends Controller
         $bank = BankPerusahaan::where('is_active', true)->first();
         $company = CompanyProfile::first();
 
-        // Generate PDF preview (tanpa TTD)
+        $logoPath = public_path('storage/' . $company->logo);
+
+        $logoBase64 = null;
+        if (file_exists($logoPath)) {
+            $logoBase64 = 'data:image/png;base64,' . base64_encode(file_get_contents($logoPath));
+        }
+
+        // dd($company->logo);
         $pdf = Pdf::loadView('pdf.invoice', [
             'pesanan' => $pesanan,
             'company' => $company,
@@ -57,6 +64,7 @@ class KeuanganController extends Controller
             'no_invoice' => $pesanan->no_invoice,
             'jatuh_tempo' => $pesanan->created_at->addDays(30),
             'tanggal' => now()->format('d F Y'),
+            'logo' => $logoBase64,
         ]);
 
         $pdf->setPaper('A4', 'portrait');
@@ -66,12 +74,11 @@ class KeuanganController extends Controller
             'defaultFont' => 'Helvetica'
         ]);
 
-        // Simpan file sementara (preview)
         $filename = 'INVOICE-' . $pesanan->no_pesanan . '-' . date('Ymd') . '.pdf';
         $path = 'invoice/temp/' . $filename;
         Storage::disk('public')->put($path, $pdf->output());
 
-        // Download file
+
         return Storage::disk('public')->download($path, $filename);
     }
 
@@ -94,6 +101,7 @@ class KeuanganController extends Controller
     $bank = BankPerusahaan::where('is_active', true)->first();
     $company = CompanyProfile::first();
 
+
     // Ambil TTD dari direktur yang approve
     $ttdBase64 = null;
     if ($pesanan->invoice_approved_by) {
@@ -108,6 +116,13 @@ class KeuanganController extends Controller
         }
     }
 
+        $logoPath = public_path('storage/' . $company->logo);
+
+        $logoBase64 = null;
+        if (file_exists($logoPath)) {
+            $logoBase64 = 'data:image/png;base64,' . base64_encode(file_get_contents($logoPath));
+        }
+
     $pdf = Pdf::loadView('pdf.invoice-approved', [
         'pesanan' => $pesanan,
         'company' => $company,
@@ -117,17 +132,18 @@ class KeuanganController extends Controller
         'tanggal' => now()->format('d F Y'),
         'approved_by' => $pesanan->approvedBy->name ?? 'Direktur',
         'approved_at' => $pesanan->invoice_approved_at ? $pesanan->invoice_approved_at->format('d F Y') : '-',
-        'ttd_base64' => $ttdBase64,  // ← TAMBAHKAN INI
+        'ttd_base64' => $ttdBase64,
+        'logo' => $logoBase64,
     ]);
 
     return $pdf->stream('invoice-' . $pesanan->no_pesanan . '.pdf');
 }
 
-    public function downloadInvoice(Pesanan $pesanan){
-        if (!$pesanan->invoice_file) {
-            abort(404, 'File invoice tidak ditemukan');
-        }
+    // public function downloadInvoice(Pesanan $pesanan){
+    //     if (!$pesanan->invoice_file) {
+    //         abort(404, 'File invoice tidak ditemukan');
+    //     }
 
-        return Storage::disk('public')->download($pesanan->invoice_file);
-    }
+    //     return Storage::disk('public')->download($pesanan->invoice_file);
+    // }
 }

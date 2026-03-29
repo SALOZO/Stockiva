@@ -109,12 +109,12 @@
                                                 <i class="bi bi-arrow-repeat"></i>
                                             </button> --}}
 
-                                            <a href="" 
+                                            {{-- <a href="" 
                                                 class="btn btn-sm btn-outline-info"
                                                 data-bs-toggle="tooltip" 
                                                 title="Detail">
                                                 <i class="bi bi-eye"></i>
-                                            </a>
+                                            </a> --}}
 
                                             <button type="button" 
                                                     class="btn btn-sm btn-outline-primary"

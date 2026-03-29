@@ -159,8 +159,8 @@
 
     {{-- ── HEADER ── --}}
     <div class="header">
-        @if($company->logo)
-            <img src="{{ public_path($company->logo) }}" class="logo" alt="Logo">
+        @if($logo)
+            <img src="{{ $logo }}" class="logo">
         @endif
         <div class="company-info">
             <div class="company-name">{{ $company->nama_perusahaan }}</div>

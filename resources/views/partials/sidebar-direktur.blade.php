@@ -38,9 +38,12 @@
             <a class="nav-link {{ request()->routeIs('direktur.invoice*') ? 'active' : '' }}" 
             href="{{ route('direktur.invoice.index') }}">
                 <i class="bi bi-receipt"></i>
-                <span>Invoice Menunggu</span>
+                <span>Daftar Invoice</span>
             </a>
         </li>
+
+        {{-- DIVIDER --}}
+        <li class="nav-divider"></li>
 
         <li class="nav-item">
             <a class="nav-link {{ request()->routeIs('history.sph.index') ? 'active' : '' }}" 
@@ -53,10 +56,16 @@
             </a>
         </li>
 
+        <li class="nav-item">
+            <a class="nav-link {{ request()->routeIs('keuangan.invoice.riwayat') ? 'active' : '' }}" 
+            href="{{ route('keuangan.invoice.riwayat') }}">
+                <i class="bi bi-archive"></i>
+                <span>History Invoice yang sudah di approve</span>
+            </a>
+        </li>
+
 
         
-        {{-- DIVIDER --}}
-        <li class="nav-divider"></li>
 
         {{-- LOGOUT --}}
         <li class="nav-item mt-4">

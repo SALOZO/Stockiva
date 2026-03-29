@@ -1,4 +1,4 @@
-@extends('layouts.keuangan')
+@extends(auth()->user()->jabatan == 'Keuangan' ? 'layouts.keuangan' : (auth()->user()->jabatan == 'Direktur' ? 'layouts.direktur' : 'layouts.gudang'))
 
 @section('title', 'Riwayat Invoice - Stockiva')
 @section('page-title', 'Riwayat Invoice')
@@ -44,10 +44,10 @@
                                            class="btn btn-sm btn-info" target="_blank">
                                             <i class="bi bi-eye"></i> Preview
                                         </a>
-                                        <a href="{{ route('keuangan.download-invoice', $inv->id) }}" 
+                                        {{-- <a href="{{ route('keuangan.download-invoice', $inv->id) }}" 
                                            class="btn btn-sm btn-primary" target="_blank">
                                             <i class="bi bi-download"></i> Download
-                                        </a>
+                                        </a> --}}
                                     </div>
                                 </td>
                                </tr>

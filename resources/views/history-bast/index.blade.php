@@ -1,5 +1,4 @@
-@extends(auth()->user()->jabatan == 'Marketing' ? 'layouts.marketing' : 
-        (auth()->user()->jabatan == 'Direktur' ? 'layouts.direktur' : 'layouts.gudang'))
+@extends(auth()->user()->jabatan == 'Marketing' ? 'layouts.marketing' : (auth()->user()->jabatan == 'Direktur' ? 'layouts.direktur' : 'layouts.gudang'))
 
 @section('title', 'History BAST - Stockiva')
 @section('page-title', 'History BAST')

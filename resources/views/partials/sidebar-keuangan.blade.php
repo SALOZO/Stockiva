@@ -20,7 +20,7 @@
             <a class="nav-link {{ request()->routeIs('keuangan.invoice.riwayat') ? 'active' : '' }}" 
             href="{{ route('keuangan.invoice.riwayat') }}">
                 <i class="bi bi-archive"></i>
-                <span>Riwayat Invoice</span>
+                <span>History Invoice yang sudah di approve</span>
             </a>
         </li>
         <li class="nav-item">

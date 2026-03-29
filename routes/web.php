@@ -256,6 +256,9 @@ Route::prefix('admin')->middleware(['auth', 'role:Admin'])->group(function () {
 
         Route::get('/cetak-invoice/{pesanan}', [KeuanganController::class, 'cetakInvoice'])->name('keuangan.cetak-invoice');
 
+    });
+
+    Route::prefix('keuangan')->name('keuangan.')->group(function () {
         Route::get('/invoice/riwayat', [KeuanganController::class, 'riwayatInvoice'])->name('invoice.riwayat');
         Route::get('/invoice/{pesanan}/preview', [KeuanganController::class, 'previewInvoice'])->name('preview-invoice');
         Route::get('/invoice/{pesanan}/download', [KeuanganController::class, 'downloadInvoice'])->name('download-invoice');
