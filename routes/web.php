@@ -6,6 +6,7 @@ use App\Http\Controllers\ClientsController;
 use App\Http\Controllers\Direktur\InvoiceController;
 use App\Http\Controllers\Direktur\ProfileController;
 use App\Http\Controllers\Direktur\SphController;
+use App\Http\Controllers\Direktur\TagihanDirekturController;
 use App\Http\Controllers\EkspedisiController;
 use App\Http\Controllers\Gudang\EkspedisiControll;
 use App\Http\Controllers\Gudang\PengirimanController;
@@ -18,6 +19,8 @@ use App\Http\Controllers\HistorySphController;
 use App\Http\Controllers\JenisController;
 use App\Http\Controllers\KategoryController;
 use App\Http\Controllers\Keuangan\BankController;
+use App\Http\Controllers\Keuangan\KwitansiController;
+use App\Http\Controllers\Keuangan\TagihanController;
 use App\Http\Controllers\KeuanganController;
 use App\Http\Controllers\Marketing\DashboardController;
 use App\Http\Controllers\Marketing\SphSettingController;
@@ -179,6 +182,9 @@ Route::prefix('admin')->middleware(['auth', 'role:Admin'])->group(function () {
         Route::get('/invoice', [InvoiceController::class, 'index'])->name('invoice.index');
         Route::get('/invoice/{pesanan}/preview', [InvoiceController::class, 'preview'])->name('invoice.preview');
         Route::post('/invoice/{pesanan}/approve', [InvoiceController::class, 'approve'])->name('invoice.approve');
+
+        Route::get('/tagihan', [TagihanDirekturController::class, 'index'])->name('tagihan.index');
+        Route::post('/tagihan/{pesanan}/approve', [TagihanDirekturController::class, 'approve'])->name('tagihan.approve');
         
         // Profile & Upload TTD
         Route::get('/profile', [ProfileController::class, 'edit'])->name('profile');
@@ -255,6 +261,9 @@ Route::prefix('admin')->middleware(['auth', 'role:Admin'])->group(function () {
         Route::delete('/bank/{id}', [BankController::class, 'destroy'])->name('bank.destroy');
 
         Route::get('/cetak-invoice/{pesanan}', [KeuanganController::class, 'cetakInvoice'])->name('keuangan.cetak-invoice');
+        Route::get('/tagihan/{pesanan}/download', [TagihanController::class, 'download'])->name('tagihan.download');
+
+        Route::get('/kwitansi/{pesanan}/download', [KwitansiController::class, 'download'])->name('kwitansi.download');
 
     });
 
@@ -262,5 +271,7 @@ Route::prefix('admin')->middleware(['auth', 'role:Admin'])->group(function () {
         Route::get('/invoice/riwayat', [KeuanganController::class, 'riwayatInvoice'])->name('invoice.riwayat');
         Route::get('/invoice/{pesanan}/preview', [KeuanganController::class, 'previewInvoice'])->name('preview-invoice');
         Route::get('/invoice/{pesanan}/download', [KeuanganController::class, 'downloadInvoice'])->name('download-invoice');
+
+        Route::get('/tagihan/riwayat', [TagihanController::class, 'riwayat'])->name('tagihan.riwayat');
     });
     

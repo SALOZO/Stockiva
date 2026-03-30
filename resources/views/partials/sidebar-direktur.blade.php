@@ -42,6 +42,16 @@
             </a>
         </li>
 
+        <a href="{{ route('direktur.tagihan.index') }}"
+        class="nav-link {{ request()->routeIs('direktur.tagihan.*') ? 'active' : '' }}">
+            <i class="bi bi-file-earmark-check me-2"></i>
+            Daftar Tagihan
+            {{-- @php $pendingTagihan = \App\Models\Pesanan::whereNotNull('no_tagihan')->whereNull('tagihan_approved_at')->count(); @endphp
+            @if($pendingTagihan > 0)
+                <span class="badge bg-warning ms-1">{{ $pendingTagihan }}</span>
+            @endif --}}
+        </a>
+
         {{-- DIVIDER --}}
         <li class="nav-divider"></li>
 
@@ -64,9 +74,12 @@
             </a>
         </li>
 
-
+        <a href="{{ route('keuangan.tagihan.riwayat') }}"
+        class="nav-link {{ request()->routeIs('keuangan.tagihan.riwayat') ? 'active' : '' }}">
+            <i class="bi bi-clock-history me-2"></i>
+            History Tagihan yang sudah di approve
+        </a>
         
-
         {{-- LOGOUT --}}
         <li class="nav-item mt-4">
             <form method="POST" action="{{ route('logout') }}">

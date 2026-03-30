@@ -23,6 +23,11 @@
                 <span>History Invoice yang sudah di approve</span>
             </a>
         </li>
+        <a href="{{ route('keuangan.tagihan.riwayat') }}"
+        class="nav-link {{ request()->routeIs('keuangan.tagihan.riwayat') ? 'active' : '' }}">
+            <i class="bi bi-clock-history me-2"></i>
+            History Tagihan yang sudah di approve
+        </a>
         <li class="nav-item">
             <a class="nav-link {{ request()->routeIs('keuangan.bank*') ? 'active' : '' }}" 
             href="{{ route('keuangan.bank.index') }}">

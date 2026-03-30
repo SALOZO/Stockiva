@@ -92,12 +92,11 @@
                                                 title="Cetak Invoice">
                                             <i class="bi bi-receipt"></i> Invoice
                                         </button>
-                                        <button type="button" 
-                                                class="btn btn-sm btn-outline-success"
-                                                onclick="cetakKwitansi({{ $p->id }})"
-                                                title="Cetak Kwitansi">
-                                            <i class="bi bi-cash"></i> Kwitansi
-                                        </button>
+                                        <a href="{{ route('keuangan.kwitansi.download', $p->id) }}"
+                                        class="btn btn-sm btn-outline-success"
+                                        title="Download Kwitansi">
+                                            <i class="bi bi-receipt"></i> Kwitansi
+                                        </a>
                                         <button type="button" 
                                                 class="btn btn-sm btn-outline-secondary"
                                                 data-bs-toggle="modal" 
@@ -188,15 +187,11 @@
 @push('scripts')
 <script>
     function cetakTagihan(id) {
-        alert('Cetak Tagihan untuk pesanan ID: ' + id);
+        window.location.href = `/keuangan/tagihan/${id}/download`;
     }
     
     function cetakInvoice(id) {
         window.open('/keuangan/cetak-invoice/' + id, '_blank');
-    }
-    
-    function cetakKwitansi(id) {
-        alert('Cetak Kwitansi untuk pesanan ID: ' + id);
     }
 </script>
 @endpush
