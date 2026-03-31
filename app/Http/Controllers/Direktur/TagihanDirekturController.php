@@ -21,6 +21,23 @@ class TagihanDirekturController extends Controller
 
         return view('direktur.tagihan.index', compact('tagihans'));
     }
+    private function terbilang($angka): string
+    {
+        $angka = abs((int) $angka);
+        $huruf = ['', 'Satu', 'Dua', 'Tiga', 'Empat', 'Lima',
+                'Enam', 'Tujuh', 'Delapan', 'Sembilan', 'Sepuluh', 'Sebelas'];
+
+        if ($angka < 12)         return $huruf[$angka];
+        if ($angka < 20)         return $this->terbilang($angka - 10) . ' Belas';
+        if ($angka < 100)        return $this->terbilang((int)($angka / 10)) . ' Puluh ' . $this->terbilang($angka % 10);
+        if ($angka < 200)        return 'Seratus ' . $this->terbilang($angka - 100);
+        if ($angka < 1000)       return $this->terbilang((int)($angka / 100)) . ' Ratus ' . $this->terbilang($angka % 100);
+        if ($angka < 2000)       return 'Seribu ' . $this->terbilang($angka - 1000);
+        if ($angka < 1000000)    return $this->terbilang((int)($angka / 1000)) . ' Ribu ' . $this->terbilang($angka % 1000);
+        if ($angka < 1000000000) return $this->terbilang((int)($angka / 1000000)) . ' Juta ' . $this->terbilang($angka % 1000000);
+
+        return $this->terbilang((int)($angka / 1000000000)) . ' Miliar ' . $this->terbilang($angka % 1000000000);
+    }   
     public function approve(Pesanan $pesanan){
         if ($pesanan->tagihan_approved_at) {
             return back()->with('error', 'Tagihan sudah ditandatangani.');
@@ -54,6 +71,7 @@ class TagihanDirekturController extends Controller
                 'approved_by'       => $direktur->name,
                 'approved_jabatan'  => $direktur->jabatan,
                 'approved_at'       => now()->translatedFormat('d F Y'),
+                'terbilang'        => ucwords(strtolower($this->terbilang($pesanan->total_keseluruhan))) . ' Rupiah',
             ])->setPaper('A4', 'portrait')->setOptions([
                 'isRemoteEnabled'     => true,
                 'isHtml5ParserEnabled' => true,

@@ -128,11 +128,11 @@
             <td class="colon">:</td>
             <td>{{ $pesanan->client->nama_client }}</td>
         </tr>
-        {{-- <tr>
+        <tr>
             <td class="label">Uang sejumlah</td>
             <td class="colon">:</td>
             <td>{{ $terbilang }}</td>
-        </tr> --}}
+        </tr>
         <tr>
             <td class="label">Untuk pembayaran</td>
             <td class="colon">:</td>

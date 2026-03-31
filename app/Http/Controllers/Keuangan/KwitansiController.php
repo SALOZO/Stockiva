@@ -12,6 +12,24 @@ use Illuminate\Http\Request;
 
 class KwitansiController extends Controller
 {
+    private function terbilang($angka): string
+    {
+        $angka = abs((int) $angka);
+        $huruf = ['', 'Satu', 'Dua', 'Tiga', 'Empat', 'Lima',
+                'Enam', 'Tujuh', 'Delapan', 'Sembilan', 'Sepuluh', 'Sebelas'];
+
+        if ($angka < 12)         return $huruf[$angka];
+        if ($angka < 20)         return $this->terbilang($angka - 10) . ' Belas';
+        if ($angka < 100)        return $this->terbilang((int)($angka / 10)) . ' Puluh ' . $this->terbilang($angka % 10);
+        if ($angka < 200)        return 'Seratus ' . $this->terbilang($angka - 100);
+        if ($angka < 1000)       return $this->terbilang((int)($angka / 100)) . ' Ratus ' . $this->terbilang($angka % 100);
+        if ($angka < 2000)       return 'Seribu ' . $this->terbilang($angka - 1000);
+        if ($angka < 1000000)    return $this->terbilang((int)($angka / 1000)) . ' Ribu ' . $this->terbilang($angka % 1000);
+        if ($angka < 1000000000) return $this->terbilang((int)($angka / 1000000)) . ' Juta ' . $this->terbilang($angka % 1000000);
+
+        return $this->terbilang((int)($angka / 1000000000)) . ' Miliar ' . $this->terbilang($angka % 1000000000);
+    }
+
     public function download(Pesanan $pesanan)
     {
         if (!$pesanan->no_kwitansi) {
@@ -41,11 +59,11 @@ class KwitansiController extends Controller
             'tglSurat'        => now()->translatedFormat('d F Y'),
             'logo'            => $logoBase64,
             'untukPembayaran' => $untukPembayaran,
-        //     'terbilang'       => ucwords(strtolower(terbilang($pesanan->total_keseluruhan))) . ' Rupiah',
-        // ])->setPaper('A4', 'portrait')->setOptions([
-        //     'isRemoteEnabled'     => true,
-        //     'isHtml5ParserEnabled' => true,
-        //     'defaultFont'         => 'Helvetica',
+            'terbilang'       => ucwords(strtolower($this->terbilang($pesanan->total_keseluruhan))) . ' Rupiah',
+        ])->setPaper('A4', 'portrait')->setOptions([
+            'isRemoteEnabled'     => true,
+            'isHtml5ParserEnabled' => true,
+            'defaultFont'         => 'Helvetica',
         ]);
 
         $filename = 'KWITANSI-' . $pesanan->no_pesanan . '-' . date('Ymd') . '.pdf';

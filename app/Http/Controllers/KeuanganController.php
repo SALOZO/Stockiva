@@ -37,6 +37,23 @@ class KeuanganController extends Controller
         return view('keuangan.index', compact('pesanans'));
     }
 
+    private function terbilang($angka): string{
+        $angka = abs((int) $angka);
+        $huruf = ['', 'Satu', 'Dua', 'Tiga', 'Empat', 'Lima',
+                'Enam', 'Tujuh', 'Delapan', 'Sembilan', 'Sepuluh', 'Sebelas'];
+
+        if ($angka < 12)         return $huruf[$angka];
+        if ($angka < 20)         return $this->terbilang($angka - 10) . ' Belas';
+        if ($angka < 100)        return $this->terbilang((int)($angka / 10)) . ' Puluh ' . $this->terbilang($angka % 10);
+        if ($angka < 200)        return 'Seratus ' . $this->terbilang($angka - 100);
+        if ($angka < 1000)       return $this->terbilang((int)($angka / 100)) . ' Ratus ' . $this->terbilang($angka % 100);
+        if ($angka < 2000)       return 'Seribu ' . $this->terbilang($angka - 1000);
+        if ($angka < 1000000)    return $this->terbilang((int)($angka / 1000)) . ' Ribu ' . $this->terbilang($angka % 1000);
+        if ($angka < 1000000000) return $this->terbilang((int)($angka / 1000000)) . ' Juta ' . $this->terbilang($angka % 1000000);
+
+        return $this->terbilang((int)($angka / 1000000000)) . ' Miliar ' . $this->terbilang($angka % 1000000000);
+    }
+
     public function cetakInvoice(Pesanan $pesanan){
 
         if (!$pesanan->no_invoice) {
@@ -65,6 +82,7 @@ class KeuanganController extends Controller
             'jatuh_tempo' => $pesanan->created_at->addDays(30),
             'tanggal' => now()->format('d F Y'),
             'logo' => $logoBase64,
+            'terbilang'  => ucwords(strtolower($this->terbilang($pesanan->total_keseluruhan))) . ' Rupiah',
         ]);
 
         $pdf->setPaper('A4', 'portrait');
@@ -134,6 +152,7 @@ class KeuanganController extends Controller
         'approved_at' => $pesanan->invoice_approved_at ? $pesanan->invoice_approved_at->format('d F Y') : '-',
         'ttd_base64' => $ttdBase64,
         'logo' => $logoBase64,
+        'terbilang'  => ucwords(strtolower($this->terbilang($pesanan->total_keseluruhan))) . ' Rupiah',
     ]);
 
     return $pdf->stream('invoice-' . $pesanan->no_pesanan . '.pdf');

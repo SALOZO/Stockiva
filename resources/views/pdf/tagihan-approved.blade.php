@@ -141,9 +141,9 @@
     </table>
 
     {{-- TERBILANG --}}
-    {{-- <div class="mb-15" style="font-style:italic; font-size:10.5pt;">
-        Terbilang : {{ ucwords(strtolower(terbilang($pesanan->total_keseluruhan))) }} Rupiah
-    </div> --}}
+    <div class="mb-15" style="font-family: Arial, Helvetica, sans-serif; font-size:10.5pt;">
+        Terbilang : {{ $terbilang }}
+    </div>
 
     {{-- REKENING --}}
     @if($bank)

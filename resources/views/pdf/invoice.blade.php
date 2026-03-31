@@ -248,12 +248,10 @@
         </tfoot>
     </table>
 
-    {{-- ── TERBILANG (di-comment karena masih error) ── --}}
-    {{-- <div class="terbilang">
-        <span class="tb-label">Terbilang</span>
-        <span>:</span>
-        <span class="tb-value">{{ $terbilang }}</span>
-    </div> --}}
+    {{-- ── TERBILANG ── --}}
+    <div class="mb-15" style="font-family: Arial, Helvetica, sans-serif; font-size:10.5pt;">
+        Terbilang : {{ $terbilang }}
+    </div>
 
     {{-- ── BANK INFO ── --}}
     <div class="bank-info">
