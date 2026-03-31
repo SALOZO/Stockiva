@@ -23,7 +23,7 @@
                         <table class="table table-sm table-borderless">
                             <tr>
                                 <td width="30%">No. SPH</td>
-                                <td width="70%">: <strong>{{ $pesanan->no_sph_formatted }}</strong></td>
+                                <td width="70%">: <strong>{{ $pesanan->no_sph }}</strong></td>
                             </tr>
                             <tr>
                                 <td>Client</td>

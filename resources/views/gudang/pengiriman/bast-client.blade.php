@@ -24,7 +24,7 @@
                         <table class="table table-sm table-borderless">
                             <tr>
                                 <td width="30%"><strong>No. SPH</strong></td>
-                                <td>: {{ $pengiriman->pesanan->no_sph_formatted }}</td>
+                                <td>: {{ $pengiriman->pesanan->no_sph }}</td>
                             </tr>
                             {{-- <tr>
                                 <td><strong>No. Pengiriman</strong></td>

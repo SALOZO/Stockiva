@@ -64,7 +64,7 @@
                             <tr>
                                 <td>{{ $tugasList->firstItem() + $index }}</td>
                                 <td>
-                                    <strong>{{ $tugas->no_sph_formatted }}</strong>
+                                    <strong>{{ $tugas->no_sph }}</strong>
                                 </td>
                                 <td class="text-center">
                                     <strong>{{ $tugas->client->nama_client ?? '-' }}</strong>

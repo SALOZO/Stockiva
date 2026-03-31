@@ -104,7 +104,7 @@
                     <tr>
                         <td class="label">No. SPH</td>
                         <td class="colon">:</td>
-                        <td>{{ $pesanan->no_sph_formatted }}</td>
+                        <td>{{ $pesanan->no_sph }}</td>
                     </tr>
                     <tr>
                         <td class="label">No. Invoice</td>

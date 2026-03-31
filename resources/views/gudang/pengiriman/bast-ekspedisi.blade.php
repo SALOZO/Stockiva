@@ -24,7 +24,7 @@
                         <table class="table table-sm table-borderless">
                             <tr>
                                 <td width="35%">No. SPH</td>
-                                <td>: <strong>{{ $pengiriman->pesanan->no_sph_formatted }}</strong></td>
+                                <td>: <strong>{{ $pengiriman->pesanan->no_sph }}</strong></td>
                             </tr>
                             <tr>
                                 <td>Tanggal</td>

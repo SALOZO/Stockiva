@@ -52,7 +52,7 @@
                             @forelse($invoices as $inv)
                               <tr class="text-center">
                                 <td><strong>{{ $inv->no_invoice }}</strong></td>
-                                <td>{{ $inv->no_sph_formatted }}</td>
+                                <td>{{ $inv->no_sph }}</td>
                                 <td>
                                     {{ $inv->client->nama_client }}
                                     <br><small>{{ $inv->client->nama_pic }}</small>

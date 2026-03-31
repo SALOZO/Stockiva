@@ -22,7 +22,7 @@
                         <table class="table table-sm table-borderless">
                             <tr>
                                 <td width="30%">No. SPH</td>
-                                <td width="70%">: <strong>{{ $pesanan->no_sph_formatted }}</strong></td>
+                                <td width="70%">: <strong>{{ $pesanan->no_sph }}</strong></td>
                             </tr>
                             <tr>
                                 <td>Client</td>
@@ -199,7 +199,7 @@
                                             </div>
                                             <div class="modal-body">
                                                 <p class="text-muted mb-3">
-                                                    Pengiriman:<strong>{{ $pesanan->no_sph_formatted }}</strong>
+                                                    Pengiriman:<strong>{{ $pesanan->no_sph }}</strong>
                                                 </p>
                                                 
                                                 <div class="d-grid gap-3">

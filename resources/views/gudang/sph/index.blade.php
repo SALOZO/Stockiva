@@ -64,7 +64,7 @@
                             @forelse($sphList as $sph)
                             <tr>
                                 <td>
-                                    <strong>{{ $sph->no_sph_formatted }}</strong>
+                                    <strong>{{ $sph->no_sph }}</strong>
                                 </td>
                                 <td>
                                     {{ $sph->client->nama_client ?? '-' }}

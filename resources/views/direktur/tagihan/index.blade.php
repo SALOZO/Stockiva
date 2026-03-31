@@ -24,7 +24,7 @@
                     @forelse($tagihans as $t)
                     <tr>
                         <td>{{ $t->no_tagihan }}</td>
-                        <td>{{ $t->no_sph_formatted }}</td>
+                        <td>{{ $t->no_sph }}</td>
                         <td>{{ $t->client->nama_client }}</td>
                         <td>Rp {{ number_format($t->total_keseluruhan, 0, ',', '.') }}</td>
                         <td>{{ $t->created_at->translatedFormat('d F Y') }}</td>

@@ -525,7 +525,7 @@
                     <thead>
                         <tr>
                             <th>No</th>
-                            <th style="text-align:left">Client</th>
+                            <th>Client</th>
                             <th>Tanggal Buat</th>
                             <th>Dibuat Oleh</th>
                             <th>Status</th>
@@ -541,7 +541,7 @@
                         <tr>
                             <td><span class="row-num">{{ str_pad($sphList->firstItem() + $index, 2, '0', STR_PAD_LEFT) }}</span></td>
 
-                            <td class="client-cell">
+                            <td>
                                 <span class="client-name">{{ $sph->client->nama_client ?? '-' }}</span>
                                 <span class="client-pic"><i class="bi bi-person me-1"></i>{{ $sph->client->nama_pic ?? '-' }}</span>
                             </td>

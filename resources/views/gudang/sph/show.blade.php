@@ -16,7 +16,7 @@
         <div class="card mb-4">
             <div class="card-header">
                 <div class="d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0">SPH/{{ $pesanan->no_pesanan }}</h5>
+                    <h5 class="mb-0">SPH/{{ $pesanan->no_sph }}</h5>
                     <span class="badge bg-success">DISETUJUI</span>
                 </div>
             </div>

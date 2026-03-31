@@ -34,7 +34,7 @@
                             @forelse($invoices as $inv)
                               <tr class="text-center">
                                 <td><strong>{{ $inv->no_invoice }}</strong></td>
-                                <td>{{ $inv->no_sph_formatted }}</td>
+                                <td>{{ $inv->no_sph }}</td>
                                 <td>{{ $inv->client->nama_client }}</td>
                                 <td>{{ $inv->invoice_approved_at ? \Carbon\Carbon::parse($inv->invoice_approved_at)->format('d/m/Y') : '-' }}</td>
                                 <td>Rp {{ number_format($inv->total_keseluruhan, 0, ',', '.') }}</td>

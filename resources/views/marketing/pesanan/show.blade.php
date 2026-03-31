@@ -59,10 +59,10 @@
                             Data Pesanan
                         </h6>
                         <table class="table table-sm table-borderless">
-                            <tr>
+                            {{-- <tr>
                                 <td width="30%">No. Pesanan</td>
                                 <td width="70%">: <strong>{{ $pesanan->no_sph_formatted }}</strong></td>
-                            </tr>
+                            </tr> --}}
                             <tr>
                                 <td>Tanggal</td>
                                 <td>: {{ $pesanan->tanggal_pesanan->format('d/m/Y') }}</td>
@@ -229,7 +229,7 @@
             <div class="card-header bg-light d-flex justify-content-between align-items-center">
                 <span>
                     <i class="bi bi-file-pdf text-danger me-2"></i>
-                    <strong>Preview SPH</strong> - {{ $pesanan->no_sph_formatted }}
+                    <strong>Preview SPH</strong> - {{ $pesanan->no_sph }}
                 </span>
                 <div>
                     <span class="badge bg-warning me-2">PREVIEW</span>

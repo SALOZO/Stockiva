@@ -199,7 +199,7 @@
             <td class="value">{{ $no_invoice }}</td>
             <td class="label">No. SPH</td>
             <td class="colon">:</td>
-            <td class="value">{{ $pesanan->no_sph_formatted }}</td>
+            <td class="value">{{ $pesanan->no_sph }}</td>
         </tr>
         <tr>
             <td class="label">Pelanggan</td>

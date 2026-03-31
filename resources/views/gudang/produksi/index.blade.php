@@ -22,7 +22,7 @@
                         <table class="table table-sm table-borderless">
                             <tr>
                                 <td width="30%">No. SPH</td>
-                                <td width="70%">: <strong>{{ $pesanan->no_sph_formatted }}</strong></td>
+                                <td width="70%">: <strong>{{ $pesanan->no_sph }}</strong></td>
                             </tr>
                             <tr>
                                 <td>Tanggal</td>
@@ -73,7 +73,7 @@
                                 @foreach($pesanan->details as $index => $detail)
                                 <tr>
                                     <td class="text-center">{{ $index + 1 }}</td>
-                                    <td>{{ $detail->barang->nama_barang ?? '-' }}</td>
+                                    <td class="text-center">{{ $detail->barang->nama_barang ?? '-' }}</td>
                                     <td class="text-center">{{ $detail->kategori->name_kategori ?? '-' }}</td>
                                     <td class="text-center">{{ $detail->jenis->name_jenis ?? '-' }}</td>
                                     <td class="text-center">{{ $detail->barang->satuan->nama_satuan ?? '-' }}</td>
