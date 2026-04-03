@@ -36,31 +36,19 @@ class Pengiriman extends Model
         'bast_client_file',
         'surat_jalan_file',
         'surat_jalan_ke',
-        'created_by'
+        'created_by',
+
+        'no_bast',
+        'bast_approved_file',
+        'bast_approved_at',
+        'bast_approved_by',
     ];
-    // protected $fillable = [
-    //     'pesanan_id',
-    //     'no_pengiriman',
-    //     'pengiriman_ke',
-    //     'tanggal',
-    //     'status',
-    //     // 'penerima_ekspedisi',
-    //     'penerima_client',
-    //     'ekspedisi',
-    //     'nama_kurir', 
-    //     // 'no_resi',
-    //     'tanggal_kirim',
-    //     'tanggal_terima',
-    //     'bast_ekspedisi_file',
-    //     'bast_client_file',
-    //     // 'catatan',
-    //     'created_by'
-    // ];
 
     protected $casts = [
         'tanggal' => 'date',
         'tanggal_kirim' => 'datetime',
         'tanggal_terima' => 'datetime',
+        'bast_approved_at' => 'datetime',
     ];
 
     public function pesanan(){

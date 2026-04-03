@@ -167,8 +167,8 @@
 </div>
 
 <div class="signature">
-    <p class="signature-name">{{ auth()->user()->name ?? 'Nama Pegawai Gudang' }}</p>
-    <p class="signature-company">{{ $company->nama_perusahaan ?? 'PT. Catur Niaga Sagara' }}</p>
+    <p class="signature-name">{{ auth()->user()->name }}</p>
+    <p class="signature-company">{{ $company->nama_perusahaan }}</p>
 </div>
 
 </body>

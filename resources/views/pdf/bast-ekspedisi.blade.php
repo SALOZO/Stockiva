@@ -273,7 +273,7 @@
                 <div><strong>{{ $ekspedisi->nama_ekspedisi ?? '' }}</strong></div>
             </td>
             <td class="right">
-                <div>{{ $company->nama_perusahaan ?? 'PT.Catur Niaga Sagara' }}</div>
+                <div>{{ $company->nama_perusahaan }}</div>
             </td>
         </tr>
     </table>

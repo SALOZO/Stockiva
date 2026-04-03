@@ -139,6 +139,12 @@
                                     {{-- <td>{!! $doc->status_badge !!}</td> --}}
                                     <td>{{ $doc->catatan ?? '-' }}</td>
                                     <td>
+                                        <a href="{{ Storage::url($doc->file_path) }}"
+                                            target="_blank"
+                                            class="btn btn-sm btn-outline-info"
+                                            title="Preview">
+                                                <i class="bi bi-eye"></i>
+                                        </a>
                                         <a href="{{ route('gudang.upload.download', $doc->id) }}" 
                                            class="btn btn-sm btn-outline-primary"
                                            target="_blank">

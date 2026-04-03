@@ -3,6 +3,7 @@
 use App\Http\Controllers\Authcontroller;
 use App\Http\Controllers\BarangController;
 use App\Http\Controllers\ClientsController;
+use App\Http\Controllers\Direktur\BastClientController;
 use App\Http\Controllers\Direktur\InvoiceController;
 use App\Http\Controllers\Direktur\ProfileController;
 use App\Http\Controllers\Direktur\SphController;
@@ -189,6 +190,10 @@ Route::prefix('admin')->middleware(['auth', 'role:Admin'])->group(function () {
         // Profile & Upload TTD
         Route::get('/profile', [ProfileController::class, 'edit'])->name('profile');
         Route::post('/profile/ttd', [ProfileController::class, 'uploadTtd'])->name('profile.upload-ttd');
+
+        // BAST CLIENT
+        Route::get('/bast-client', [BastClientController::class, 'index'])->name('bast-client.index');
+        Route::post('/bast-client/{pengiriman}/approve', [BastClientController::class, 'approve'])->name('bast-client.approve');
     });
 
     Route::middleware(['auth', 'gudang'])->prefix('gudang')->name('gudang.')->group(function () {    

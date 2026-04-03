@@ -396,73 +396,49 @@ class PengirimanController extends Controller
 
     public function cetakBastClient(Request $request, Pengiriman $pengiriman){
         $request->validate([
-            // 'hari_penyerahan' => 'required|string',
             'tanggal_penyerahan' => 'required|date',
-            'jabatan_penerima' => 'required|string',
-            'penerima_client' =>'required|string'
+            'jabatan_penerima'   => 'required|string',
+            'penerima_client'    => 'required|string',
         ]);
 
         $pengiriman->update([
-            // 'hari_penyerahan' => $request->hari_penyerahan,
             'tanggal_penyerahan' => $request->tanggal_penyerahan,
-            'jabatan_penerima' => $request->jabatan_penerima,
-            'penerima_client' => $request->penerima_client
+            'jabatan_penerima'   => $request->jabatan_penerima,
+            'penerima_client'    => $request->penerima_client,
         ]);
 
-        // $noUrutSPH = $this->extractNomorUrut($pengiriman->pesanan->no_pesanan);
-        
-        // $jumlahBastEkspedisi = Pengiriman::where('pesanan_id', $pengiriman->pesanan_id)
-        //                         ->whereNotNull('bast_ekspedisi_file')
-        //                         ->count();
-        
-        // $jumlahBastClient = Pengiriman::where('pesanan_id', $pengiriman->pesanan_id)
-        //                         ->whereNotNull('bast_client_file')
-        //                         ->where('id', '<=', $pengiriman->id)
-        //                         ->count();
-        
-        // $totalBast = $jumlahBastEkspedisi + $jumlahBastClient;
-        // $noUrutBAST = $noUrutSPH + $totalBast + 1;
-
-        $tahunBulan = now()->format('Y-m');
-        $nomor = DocumentCounter::getNextNumber($tahunBulan);
-        
-        $bulan = now()->format('m');
-        $tahun = now()->format('Y');
-        
-        $noBAST = sprintf("%04d", $nomor) . ' / BAST-Client / RP / ' . $bulan . ' / ' . $tahun;
-        $filename = 'BAST-CLIENT-' . sprintf("%04d", $nomor) . '-RP-' . $bulan . '-' . $tahun . '.pdf';
-        $path = 'bast-client/' . $filename;
+        if (!$pengiriman->no_bast) {
+            $bulan  = now()->format('m');
+            $tahun  = now()->format('Y');
+            $nomor  = DocumentCounter::getNextNumber(now()->format('Y-m'));
+            $noBAST = sprintf("%04d", $nomor) . ' / BAST-Client / RP / ' . $bulan . ' / ' . $tahun;
+            $pengiriman->update(['no_bast' => $noBAST]);
+        }
 
         $pengiriman->load([
             'pesanan.client',
             'detailPengiriman.detailPesanan.barang',
-            'detailPengiriman.satuanKirim'
+            'detailPengiriman.satuanKirim',
         ]);
 
-        $company = CompanyProfile::first();
-        $noPO = sprintf("%04d", $nomor);  
+        $company  = CompanyProfile::first();
+        $filename = 'BAST-CLIENT-' . $pengiriman->no_pesanan . '-' . date('Ymd') . '.pdf';
+        $path     = 'bast-client/' . $filename;
 
         $pdf = Pdf::loadView('pdf.bast-client', [
             'pengiriman' => $pengiriman,
-            'company' => $company,
-            'no_bast' => $noBAST,
-            'no_po' => $noPO,
-            'tanggal_po' => now(),
-            'perihal' => 'Berita Acara Serah Terima Barang Pengiriman untuk Pelanggan'
-        ]);
-        
-        $pdf->setPaper('A4', 'portrait');
-        $pdf->setOptions([
-            'isRemoteEnabled' => true,
+            'company'    => $company,
+            'no_bast'    => $pengiriman->no_bast,
+            'perihal'    => 'Berita Acara Serah Terima Barang Pengiriman untuk Pelanggan',
+            'ttd_base64' => null, // belum ada TTD
+        ])->setPaper('A4', 'portrait')->setOptions([
+            'isRemoteEnabled'     => true,
             'isHtml5ParserEnabled' => true,
-            'defaultFont' => 'Helvetica'
-        ]);
-
-        $pengiriman->update([
-            'bast_client_file' => $path
+            'defaultFont'         => 'Helvetica',
         ]);
 
         Storage::disk('public')->put($path, $pdf->output());
+        $pengiriman->update(['bast_client_file' => $path]);
 
         return $pdf->download($filename);
     }

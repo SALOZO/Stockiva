@@ -311,11 +311,18 @@
     <table class="sig-bottom">
         <tr>
             <td>
-                <div class="sig-name">{{ $pengiriman->pesanan->client->nama_pic ?? 'Nama Pemesan' }}</div>
-                <div class="sig-role">{{ $pengiriman->pesanan->client->jabatan_pic ?? 'Jabatan Pemesan' }}</div>
+                <div style="height:60px;"></div>
+                <div class="sig-name">{{ $pengiriman->penerima_client ?? '________________' }}</div>
+                <div class="sig-role">{{ $pengiriman->jabatan_penerima ?? '' }}</div>
             </td>
+
             <td class="right">
-                <div class="sig-name">{{ $company->nama_direktur ?? 'Nama Direktur' }}</div>
+                @if($ttd_base64)
+                    <img src="{{ $ttd_base64 }}" style="height:60px; margin-bottom:4px;">
+                @else
+                    <div style="height:60px;"></div>
+                @endif
+                <div class="sig-name">{{ $approved_by }}</div>
                 <div class="sig-role"><strong>Direktur</strong></div>
             </td>
         </tr>

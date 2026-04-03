@@ -34,6 +34,23 @@
             </a>
         </li>
 
+        <li class="nav-divider"></li>
+
+        <a href="{{ route('direktur.bast-client.index') }}"
+        class="nav-link {{ request()->routeIs('direktur.bast-client.*') ? 'active' : '' }}">
+            <i class="bi bi-file-earmark-check me-2"></i>
+            Daftar BAST Client
+            {{-- @php
+                $pendingBast = \App\Models\Pengiriman::whereNotNull('no_bast')
+                    ->whereNull('bast_approved_at')->count();
+            @endphp
+            @if($pendingBast > 0)
+                <span class="badge bg-warning ms-1">{{ $pendingBast }}</span>
+            @endif --}}
+        </a>
+
+        <li class="nav-divider"></li>
+
         <li class="nav-item">
             <a class="nav-link {{ request()->routeIs('direktur.invoice*') ? 'active' : '' }}" 
             href="{{ route('direktur.invoice.index') }}">
