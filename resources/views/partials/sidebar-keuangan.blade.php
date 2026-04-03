@@ -9,6 +9,14 @@
         <small class="text-muted">{{ Auth::user()->jabatan }}</small>
     </div>
     
+    <li class="nav-item">
+            <a class="nav-link {{ request()->routeIs('keuangan.bank*') ? 'active' : '' }}" 
+            href="{{ route('keuangan.bank.index') }}">
+                <i class="bi bi-bank"></i>
+                <span>Setting DOC Bank Perusahaan</span>
+            </a>
+    </li>
+
     <ul class="nav flex-column mt-3">
         <li class="nav-item">
             <a class="nav-link {{ request()->routeIs('keuangan.index') ? 'active' : '' }}" 
@@ -28,13 +36,6 @@
             <i class="bi bi-clock-history me-2"></i>
             History Tagihan yang sudah di approve
         </a>
-        <li class="nav-item">
-            <a class="nav-link {{ request()->routeIs('keuangan.bank*') ? 'active' : '' }}" 
-            href="{{ route('keuangan.bank.index') }}">
-                <i class="bi bi-bank"></i>
-                <span>Setting DOC Bank Perusahaan</span>
-            </a>
-        </li>
         <li class="nav-item mt-4">
             <form method="POST" action="{{ route('logout') }}">
                 @csrf

@@ -42,8 +42,7 @@ class SphController extends Controller
         ]);
     }
 
-    public function approve(Pesanan $pesanan)
-{
+    public function approve(Pesanan $pesanan){
     // Validasi status
     if ($pesanan->sph_status !== 'menunggu') {
         return back()->with('error', 'SPH tidak dalam status menunggu');

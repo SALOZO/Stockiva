@@ -56,7 +56,7 @@
                                 <th>Total Item</th>
                                 <th>Total Nilai</th>
                                 <th>Disetujui Oleh</th>
-                                <th>Status</th>
+                                {{-- <th>Status</th> --}}
                                 <th>Aksi</th>
                             </tr>
                         </thead>
@@ -79,7 +79,7 @@
                                     Rp {{ number_format($sph->total_keseluruhan, 0, ',', '.') }}
                                 </td>
                                 <td>{{ $sph->approvedBy->name ?? '-' }}</td>
-                                 <td>{!! $sph->gudang_status_badge !!}</td>
+                                 {{-- <td>{!! $sph->gudang_status_badge !!}</td> --}}
                                 <td>
                                     <a href="{{ route('gudang.sph.show', $sph->id) }}" 
                                        class="btn btn-sm btn-info text-white">
@@ -107,14 +107,14 @@
                                         <i class="bi bi-file-text"></i>
                                     </a> --}}
                                     {{-- TOMBOL UBAH STATUS --}}
-                                    <button type="button" 
+                                    {{-- <button type="button" 
                                             class="btn btn-sm btn-secondary"
                                             data-bs-toggle="modal" 
                                             data-bs-target="#ubahStatusModal{{ $sph->id }}"
                                             data-bs-toggle="tooltip" 
                                             title="Ubah Status">
                                         <i class="bi bi-arrow-repeat"></i>
-                                    </button>
+                                    </button> --}}
                                       {{-- Modal Ubah Status --}}
                                         <div class="modal fade" id="ubahStatusModal{{ $sph->id }}" tabindex="-1">
                                             <div class="modal-dialog">

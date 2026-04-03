@@ -44,13 +44,11 @@
             width: 10px;
         }
         .info-table .field-value {
-            border-bottom: 1px solid #000;
             width: 100%;
             display: inline-block;
             min-height: 18px;
         }
         .info-table .field-value-multiline {
-            border-bottom: 1px solid #000;
             display: block;
             min-height: 18px;
             margin-bottom: 4px;
@@ -159,8 +157,8 @@
             <td class="text-center">{{ $detail->jumlah_kirim }}</td>
             {{-- <td class="text-center">{{$detail->detailPesanan->produced_qty}}</td> --}}
             <td class="text-center">{{ $detail->detailPesanan->barang->satuan->nama_satuan }}</td>
+        </tr>
         @endforeach
-
     </tbody>
 </table>
 

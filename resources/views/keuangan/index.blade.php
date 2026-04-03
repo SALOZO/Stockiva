@@ -97,13 +97,13 @@
                                         title="Download Kwitansi">
                                             <i class="bi bi-receipt"></i> Kwitansi
                                         </a>
-                                        <button type="button" 
+                                        {{-- <button type="button" 
                                                 class="btn btn-sm btn-outline-secondary"
                                                 data-bs-toggle="modal" 
                                                 data-bs-target="#uploadModal{{ $p->id }}"
                                                 title="Upload Dokumen">
                                             <i class="bi bi-upload"></i>
-                                        </button>
+                                        </button> --}}
                                     </div>
 
                                     {{-- Modal Upload Dokumen --}}
