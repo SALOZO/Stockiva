@@ -20,6 +20,7 @@ use App\Http\Controllers\HistorySphController;
 use App\Http\Controllers\JenisController;
 use App\Http\Controllers\KategoryController;
 use App\Http\Controllers\Keuangan\BankController;
+use App\Http\Controllers\Keuangan\DokumenKeuanganController;
 use App\Http\Controllers\Keuangan\KwitansiController;
 use App\Http\Controllers\Keuangan\TagihanController;
 use App\Http\Controllers\KeuanganController;
@@ -269,6 +270,10 @@ Route::prefix('admin')->middleware(['auth', 'role:Admin'])->group(function () {
         Route::get('/tagihan/{pesanan}/download', [TagihanController::class, 'download'])->name('tagihan.download');
 
         Route::get('/kwitansi/{pesanan}/download', [KwitansiController::class, 'download'])->name('kwitansi.download');
+
+        Route::get('/dokumen/{pesanan}/upload', [DokumenKeuanganController::class, 'index'])->name('dokumen.index');
+        Route::post('/dokumen/{pesanan}/upload', [DokumenKeuanganController::class, 'store'])->name('dokumen.store');
+        Route::delete('/dokumen/{dokumen}', [DokumenKeuanganController::class, 'destroy'])->name('dokumen.destroy');
 
     });
 

@@ -81,74 +81,29 @@
                                 <td class="text-center">
                                     <div class="btn-group" role="group">
                                         <button type="button" 
-                                                class="btn btn-sm btn-outline-primary"
-                                                onclick="cetakTagihan({{ $p->id }})"
-                                                title="Cetak Tagihan">
-                                            <i class="bi bi-file-text"></i> Tagihan
-                                        </button>
-                                        <button type="button" 
                                                 class="btn btn-sm btn-outline-info"
                                                 onclick="cetakInvoice({{ $p->id }})"
                                                 title="Cetak Invoice">
                                             <i class="bi bi-receipt"></i> Invoice
+                                        </button>
+                                        <button type="button" 
+                                                class="btn btn-sm btn-outline-primary"
+                                                onclick="cetakTagihan({{ $p->id }})"
+                                                title="Cetak Tagihan">
+                                            <i class="bi bi-file-text"></i> Tagihan
                                         </button>
                                         <a href="{{ route('keuangan.kwitansi.download', $p->id) }}"
                                         class="btn btn-sm btn-outline-success"
                                         title="Download Kwitansi">
                                             <i class="bi bi-receipt"></i> Kwitansi
                                         </a>
-                                        {{-- <button type="button" 
-                                                class="btn btn-sm btn-outline-secondary"
-                                                data-bs-toggle="modal" 
-                                                data-bs-target="#uploadModal{{ $p->id }}"
-                                                title="Upload Dokumen">
+                                        <a href="{{ route('keuangan.dokumen.index', $p->id) }}"
+                                        class="btn btn-sm btn-outline-secondary"
+                                        title="Upload Dokumen">
                                             <i class="bi bi-upload"></i>
-                                        </button> --}}
+                                        </a>
                                     </div>
 
-                                    {{-- Modal Upload Dokumen --}}
-                                    <div class="modal fade" id="uploadModal{{ $p->id }}" tabindex="-1">
-                                        <div class="modal-dialog modal-dialog-centered">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h5 class="modal-title">
-                                                        <i class="bi bi-cloud-upload"></i> Upload Dokumen
-                                                    </h5>
-                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                                </div>
-                                                <form action="" 
-                                                      method="POST" 
-                                                      enctype="multipart/form-data">
-                                                    @csrf
-                                                    <div class="modal-body">
-                                                        <div class="mb-3">
-                                                            <label class="form-label">Jenis Dokumen</label>
-                                                            <select class="form-select" name="jenis" required>
-                                                                <option value="">-- Pilih --</option>
-                                                                <option value="tagihan">Tagihan</option>
-                                                                <option value="invoice">Invoice</option>
-                                                                <option value="kwitansi">Kwitansi</option>
-                                                                <option value="bukti_bayar">Bukti Bayar</option>
-                                                            </select>
-                                                        </div>
-                                                        <div class="mb-3">
-                                                            <label class="form-label">File (PDF/JPG/PNG)</label>
-                                                            <input type="file" class="form-control" name="file" accept=".pdf,.jpg,.jpeg,.png" required>
-                                                            <small class="text-muted">Maks. 2MB</small>
-                                                        </div>
-                                                        {{-- <div class="mb-3">
-                                                            <label class="form-label">Catatan (Opsional)</label>
-                                                            <textarea class="form-control" name="catatan" rows="2"></textarea>
-                                                        </div> --}}
-                                                    </div>
-                                                    <div class="modal-footer">
-                                                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Batal</button>
-                                                        <button type="submit" class="btn btn-primary">Upload</button>
-                                                    </div>
-                                                </form>
-                                            </div>
-                                        </div>
-                                    </div>
                                 </td>
                             </tr>
                             @empty
