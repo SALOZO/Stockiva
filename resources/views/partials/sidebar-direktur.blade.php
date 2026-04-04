@@ -67,6 +67,12 @@
             </a>
         </li>
 
+        <a href="{{ route('direktur.kwitansi.index') }}"
+        class="nav-link {{ request()->routeIs('direktur.kwitansi.*') ? 'active' : '' }}">
+            <i class="bi bi-receipt me-2"></i>
+             DAftar Kwitansi
+        </a>
+
         {{-- <a href="{{ route('direktur.tagihan.index') }}"
         class="nav-link {{ request()->routeIs('direktur.tagihan.*') ? 'active' : '' }}">
             <i class="bi bi-file-earmark-check me-2"></i>

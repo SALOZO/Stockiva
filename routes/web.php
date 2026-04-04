@@ -5,6 +5,7 @@ use App\Http\Controllers\BarangController;
 use App\Http\Controllers\ClientsController;
 use App\Http\Controllers\Direktur\BastClientController;
 use App\Http\Controllers\Direktur\InvoiceController;
+use App\Http\Controllers\Direktur\KwitansiDirekturController;
 use App\Http\Controllers\Direktur\ProfileController;
 use App\Http\Controllers\Direktur\SphController;
 use App\Http\Controllers\Direktur\TagihanDirekturController;
@@ -21,9 +22,9 @@ use App\Http\Controllers\JenisController;
 use App\Http\Controllers\KategoryController;
 use App\Http\Controllers\Keuangan\BankController;
 use App\Http\Controllers\Keuangan\DokumenKeuanganController;
-use App\Http\Controllers\Keuangan\KwitansiController;
 use App\Http\Controllers\Keuangan\TagihanController;
 use App\Http\Controllers\KeuanganController;
+use App\Http\Controllers\KwitansiController;
 use App\Http\Controllers\Marketing\DashboardController;
 use App\Http\Controllers\Marketing\SphSettingController;
 use App\Http\Controllers\PesananController;
@@ -195,6 +196,9 @@ Route::prefix('admin')->middleware(['auth', 'role:Admin'])->group(function () {
         // BAST CLIENT
         Route::get('/bast-client', [BastClientController::class, 'index'])->name('bast-client.index');
         Route::post('/bast-client/{pengiriman}/approve', [BastClientController::class, 'approve'])->name('bast-client.approve');
+
+        Route::get('/kwitansi', [KwitansiDirekturController::class, 'index'])->name('kwitansi.index');
+        Route::post('/kwitansi/{pesanan}/approve', [KwitansiDirekturController::class, 'approve'])->name('kwitansi.approve');
     });
 
     Route::middleware(['auth', 'gudang'])->prefix('gudang')->name('gudang.')->group(function () {    

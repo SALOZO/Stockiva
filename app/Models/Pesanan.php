@@ -43,6 +43,10 @@ class Pesanan extends Model
         'tagihan_approved_by',
 
         'no_kwitansi',
+        'kwitansi_file',
+        'kwitansi_approved_file',
+        'kwitansi_approved_at',
+        'kwitansi_approved_by',
     ];
 
     protected $casts = [
@@ -52,6 +56,7 @@ class Pesanan extends Model
         'gudang_status' => 'string',
         'invoice_approved_at' => 'datetime',
         'tagihan_approved_at' => 'datetime',
+        'kwitansi_approved_at' => 'datetime',
     ];
 
     // Relasi ke Client
