@@ -81,7 +81,7 @@ class Pesanan extends Model
     }
 
     public function pengiriman(){
-        return $this->hasOne(Pengiriman::class, 'pesanan_id');
+        return $this->hasMany(Pengiriman::class, 'pesanan_id');
     }
 
     public function dokumenKontrak(){

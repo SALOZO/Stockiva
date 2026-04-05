@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Keuangan;
 
+use App\Http\Controllers\Controller; 
 use App\Models\BankPerusahaan;
 use App\Models\CompanyProfile;
 use App\Models\DocumentCounter;

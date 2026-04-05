@@ -70,7 +70,7 @@
         <a href="{{ route('direktur.kwitansi.index') }}"
         class="nav-link {{ request()->routeIs('direktur.kwitansi.*') ? 'active' : '' }}">
             <i class="bi bi-receipt me-2"></i>
-             DAftar Kwitansi
+             Daftar Kwitansi
         </a>
 
         {{-- <a href="{{ route('direktur.tagihan.index') }}"
@@ -85,6 +85,12 @@
 
         {{-- DIVIDER --}}
         <li class="nav-divider"></li>
+        
+        <a href="{{ route('direktur.dokumen.index') }}"
+        class="nav-link {{ request()->routeIs('direktur.dokumen.*') ? 'active' : '' }}">
+            <i class="bi bi-folder2 me-2"></i>
+            Document Center
+        </a>
 
         <li class="nav-item">
             <a class="nav-link {{ request()->routeIs('history.sph.index') ? 'active' : '' }}" 

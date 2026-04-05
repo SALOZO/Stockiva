@@ -65,13 +65,13 @@ class SphController extends Controller
         
         // Simpan file approved
         $filename = 'SPH-APPROVED-' . $pesanan->no_pesanan . '-' . date('Ymd') . '.pdf';
-        $path = 'private/sph-approved/' . $filename;
+        $path = 'sph-approved/' . $filename; 
         
-        if (!Storage::exists('private/sph-approved')) {
-            Storage::makeDirectory('private/sph-approved');
+        if (!Storage::disk('public')->exists('sph-approved')) {
+            Storage::disk('public')->makeDirectory('sph-approved');
         }
         
-        Storage::put($path, $pdf->output());
+        Storage::disk('public')->put($path, $pdf->output());
         
         // Update pesanan
         $pesanan->update([

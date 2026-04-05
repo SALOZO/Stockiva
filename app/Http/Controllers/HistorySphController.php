@@ -40,7 +40,7 @@ class HistorySphController extends Controller
         if ($pesanan->sph_status == 'disetujui' && $pesanan->sph_approved_file) {
             // Tampilkan file approved
             $file = $pesanan->sph_approved_file;
-            $path = storage_path('app/private/' . $file);
+            $path = storage_path('app/public/' . $file);
         } else {
             // Untuk status lain (draft, menunggu, ditolak), generate preview real-time
             $generator = new SPHGenerator();
