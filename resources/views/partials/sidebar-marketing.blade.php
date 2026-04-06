@@ -70,6 +70,12 @@
             </a>
         </li>
 
+        <a href="{{ route('direktur.dokumen.index') }}"
+        class="nav-link {{ request()->routeIs('direktur.dokumen.*') ? 'active' : '' }}">
+            <i class="bi bi-folder2 me-2"></i>
+            Document Center
+        </a>
+
         {{-- Divider --}}
         <li class="nav-divider"></li>
 

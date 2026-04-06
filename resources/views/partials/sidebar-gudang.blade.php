@@ -35,6 +35,12 @@
             </a>
         </li>
 
+        <a href="{{ route('direktur.dokumen.index') }}"
+        class="nav-link {{ request()->routeIs('direktur.dokumen.*') ? 'active' : '' }}">
+            <i class="bi bi-folder2 me-2"></i>
+            Document Center
+        </a>
+
         <li class="nav-item">
             <a class="nav-link {{ request()->routeIs('history.sph.index') ? 'active' : '' }}" 
             href="{{ route('history.sph.index') }}">

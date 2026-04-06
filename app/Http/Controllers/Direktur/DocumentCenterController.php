@@ -13,8 +13,10 @@ class DocumentCenterController extends Controller
             ->whereNotNull('sph_approved_file')
             ->latest()
             ->paginate(15);
+        $layout = $this->getLayoutByRole();
 
-        return view('direktur.dokumen.index', compact('pesanans'));
+
+        return view('direktur.dokumen.index', compact('pesanans', 'layout'));
     }
 
     public function detail(Pesanan $pesanan)
@@ -31,10 +33,46 @@ class DocumentCenterController extends Controller
 
         $pengirimanIds = $pesanan->pengiriman->pluck('id')->toArray();
 
+        $jabatan  = auth()->user()->jabatan;
+        $aksesDok = $this->getAksesDokumen($jabatan);
+        $layout = $this->getLayoutByRole();
+
         $dokumenPengiriman = \App\Models\DokumenPengiriman::whereIn('pengiriman_id', $pengirimanIds)
             ->get()
             ->groupBy('jenis');
 
-        return view('direktur.dokumen.detail', compact('pesanan', 'dokumenPengiriman'));
+        return view('direktur.dokumen.detail', compact('pesanan', 'dokumenPengiriman','aksesDok', 'layout'));
+    }
+
+    private function getLayoutByRole(){
+        $user = auth()->user();
+        
+        return match($user->jabatan) {
+            'Marketing' => 'layouts.marketing',
+            'Direktur'  => 'layouts.direktur',
+            'Gudang'    => 'layouts.gudang',
+            default     => 'layouts.app'
+        };
+    }
+
+    private function getAksesDokumen(string $jabatan): array
+    {
+        return match($jabatan) {
+            'Gudang' => [
+                'pesanan'    => ['sph'],
+                'pengiriman' => ['surat_jalan', 'bast_ekspedisi', 'bast_client'],
+                'kontrak'    => true,
+            ],
+            'Keuangan' => [
+                'pesanan'    => ['invoice', 'tagihan', 'kwitansi', 'faktur_pajak'],
+                'pengiriman' => [],
+                'kontrak'    => false,
+            ],
+            default => [ // direktur & marketing: lihat semua
+                'pesanan'    => ['sph', 'invoice', 'tagihan', 'kwitansi', 'faktur_pajak'],
+                'pengiriman' => ['surat_jalan', 'bast_ekspedisi', 'bast_client'],
+                'kontrak'    => true,
+            ],
+        };
     }
 }

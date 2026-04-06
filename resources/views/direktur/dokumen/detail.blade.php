@@ -1,4 +1,4 @@
-@extends('layouts.direktur')
+@extends($layout)
 
 @section('content')
 <div class="container-fluid">
@@ -44,8 +44,8 @@
         </div>
     </div>
 
-    {{-- DOKUMEN KONTRAK (SPK/PO/SP) --}}
-    @if($pesanan->dokumenKontrak->count() > 0)
+    {{-- DOKUMEN KONTRAK — hanya direktur & marketing --}}
+    @if($aksesDok['kontrak'] && $pesanan->dokumenKontrak->count() > 0)
     <div class="card shadow-sm mb-4">
         <div class="card-header bg-white fw-bold">
             <i class="bi bi-file-earmark-ruled me-2 text-dark"></i>Dokumen Kontrak
@@ -75,7 +75,17 @@
     </div>
     @endif
 
-    {{-- DOKUMEN PESANAN --}}
+    {{-- DOKUMEN PESANAN — filter per role --}}
+    @php
+        $adaRowPesanan = count(array_intersect(
+            ['sph','invoice','tagihan','kwitansi','faktur_pajak'],
+            $aksesDok['pesanan']
+        )) > 0;
+        $kwitansi    = $dokumenPengiriman->get('kwitansi', collect())->first();
+        $fakturPajak = $dokumenPengiriman->get('faktur_pajak', collect())->first();
+    @endphp
+
+    @if($adaRowPesanan)
     <div class="card shadow-sm mb-4">
         <div class="card-header bg-white fw-bold">
             <i class="bi bi-file-earmark-text me-2 text-primary"></i>Dokumen Pesanan
@@ -91,6 +101,8 @@
                     </tr>
                 </thead>
                 <tbody class="text-center">
+
+                    @if(in_array('sph', $aksesDok['pesanan']))
                     <tr>
                         <td><span class="badge bg-secondary">SPH</span></td>
                         <td>{{ $pesanan->no_sph }}</td>
@@ -103,6 +115,9 @@
                             @endif
                         </td>
                     </tr>
+                    @endif
+
+                    @if(in_array('invoice', $aksesDok['pesanan']))
                     <tr>
                         <td><span class="badge bg-info">Invoice</span></td>
                         <td>{{ $pesanan->no_invoice ?? '-' }}</td>
@@ -115,6 +130,9 @@
                             @endif
                         </td>
                     </tr>
+                    @endif
+
+                    @if(in_array('tagihan', $aksesDok['pesanan']))
                     <tr>
                         <td><span class="badge bg-primary">Tagihan</span></td>
                         <td>{{ $pesanan->no_tagihan ?? '-' }}</td>
@@ -127,12 +145,12 @@
                             @endif
                         </td>
                     </tr>
-                        @php
-                            $kwitansi = $dokumenPengiriman->get('kwitansi',collect())->first();
-                        @endphp
+                    @endif
+
+                    @if(in_array('kwitansi', $aksesDok['pesanan']))
                     <tr>
                         <td><span class="badge bg-warning text-dark">Kwitansi</span></td>
-                        <td>{{ $kwitansi ? $kwitansi->nomor_dokumen ?? '-' : '-' }}</td>
+                        <td>-</td>
                         <td>{{ $kwitansi ? \Carbon\Carbon::parse($kwitansi->uploaded_at)->translatedFormat('d F Y') : '-' }}</td>
                         <td>
                             @if($kwitansi)
@@ -142,12 +160,12 @@
                             @endif
                         </td>
                     </tr>
-                        @php
-                            $fakturPajak = $dokumenPengiriman->get('faktur_pajak', collect())->first();
-                        @endphp
+                    @endif
+
+                    @if(in_array('faktur_pajak', $aksesDok['pesanan']))
                     <tr>
                         <td><span class="badge bg-danger">Faktur Pajak</span></td>
-                        <td>{{ $fakturPajak ? $fakturPajak->nomor_dokumen ?? '-' : '-' }}</td>
+                        <td>-</td>
                         <td>{{ $fakturPajak ? \Carbon\Carbon::parse($fakturPajak->uploaded_at)->translatedFormat('d F Y') : '-' }}</td>
                         <td>
                             @if($fakturPajak)
@@ -157,81 +175,80 @@
                             @endif
                         </td>
                     </tr>
+                    @endif
+
                 </tbody>
             </table>
         </div>
     </div>
+    @endif
 
-    {{-- DOKUMEN PENGIRIMAN (SEMUA PENGIRIMAN) --}}
-    @if($pesanan->pengiriman && $pesanan->pengiriman->count() > 0)
-        @foreach($pesanan->pengiriman as $pengirimanItem)
-        <div class="card shadow-sm mb-4">
-            <div class="card-header bg-white fw-bold">
-                <i class="bi bi-truck me-2 text-success"></i>
-                Dokumen Pengiriman ke-{{ $pengirimanItem->pengiriman_ke }}
-                @if($pengirimanItem->tanggal_pengiriman)
-                    <small class="text-muted ms-2">({{ $pengirimanItem->tanggal_pengiriman->translatedFormat('d F Y') }})</small>
-                @endif
-            </div>
-            <div class="card-body p-0">
-                <table class="table table-hover mb-0">
-                    <thead class="table-light text-center">
-                        <tr>
-                            <th style="width:25%;">Jenis Dokumen</th>
-                            <th style="width:25%;">Tanggal Upload</th>
-                            <th style="width:15%;">Upload Oleh</th>
-                            <th style="width:20%;">Catatan</th>
-                            <th style="width:15%;">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody class="text-center">
-                        @php
-                            $jenisMap = [
-                                'surat_jalan'   => ['label' => 'Surat Jalan',    'class' => 'bg-success'],
-                                'bast_ekspedisi' => ['label' => 'BAST Ekspedisi', 'class' => 'bg-dark'],
-                                'bast_client'   => ['label' => 'BAST Client',    'class' => 'bg-warning text-dark'],
-                            ];
-                            $adaDokumen = false;
-                        @endphp
+    {{-- DOKUMEN PENGIRIMAN — filter per role --}}
+    @if(count($aksesDok['pengiriman']) > 0)
+        @if($pesanan->pengiriman && $pesanan->pengiriman->count() > 0)
+            @foreach($pesanan->pengiriman as $pengirimanItem)
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-white fw-bold">
+                    <i class="bi bi-truck me-2 text-success"></i>
+                    Dokumen Pengiriman ke-{{ $pengirimanItem->pengiriman_ke }}
+                </div>
+                <div class="card-body p-0">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light text-center">
+                            <tr>
+                                <th style="width:25%;">Jenis Dokumen</th>
+                                <th style="width:25%;">Tanggal Upload</th>
+                                <th style="width:15%;">Upload Oleh</th>
+                                <th style="width:20%;">Catatan</th>
+                                <th style="width:15%;">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-center">
+                            @php
+                                $semuaJenis = [
+                                    'surat_jalan'    => ['label' => 'Surat Jalan',    'class' => 'bg-success'],
+                                    'bast_ekspedisi' => ['label' => 'BAST Ekspedisi', 'class' => 'bg-dark'],
+                                    'bast_client'    => ['label' => 'BAST Client',    'class' => 'bg-warning text-dark'],
+                                ];
+                                $jenisMap   = array_filter($semuaJenis, fn($k) => in_array($k, $aksesDok['pengiriman']), ARRAY_FILTER_USE_KEY);
+                                $adaDokumen = false;
+                            @endphp
 
-                        @foreach($jenisMap as $jenis => $config)
-                            @foreach($dokumenPengiriman->get($jenis, collect()) as $dok)
-                                @if($dok->pengiriman_id == $pengirimanItem->id)
-                                    @php $adaDokumen = true; @endphp
-                                    <tr>
-                                        <td>
-                                            <span class="badge {{ $config['class'] }}">
-                                                {{ $config['label'] }}
-                                            </span>
-                                        </td>
-                                        <td>{{ \Carbon\Carbon::parse($dok->uploaded_at)->translatedFormat('d F Y H:i') }}</td>
-                                        <td>{{ $dok->uploader->name ?? '-' }}</td>
-                                        <td>{{ $dok->catatan ?? '-' }}</td>
-                                        <td>@include('direktur.dokumen._aksi', ['path' => $dok->file_path])</td>
-                                    </tr>
-                                @endif
+                            @foreach($jenisMap as $jenis => $config)
+                                @foreach($dokumenPengiriman->get($jenis, collect()) as $dok)
+                                    @if($dok->pengiriman_id == $pengirimanItem->id)
+                                        @php $adaDokumen = true; @endphp
+                                        <tr>
+                                            <td><span class="badge {{ $config['class'] }}">{{ $config['label'] }}</span></td>
+                                            <td>{{ \Carbon\Carbon::parse($dok->uploaded_at)->translatedFormat('d F Y H:i') }}</td>
+                                            <td>{{ $dok->uploader->name ?? '-' }}</td>
+                                            <td>{{ $dok->catatan ?? '-' }}</td>
+                                            <td>@include('direktur.dokumen._aksi', ['path' => $dok->file_path])</td>
+                                        </tr>
+                                    @endif
+                                @endforeach
                             @endforeach
-                        @endforeach
 
-                        @if(!$adaDokumen)
-                        <tr>
-                            <td colspan="5" class="text-center py-3 text-muted">
-                                Belum ada dokumen untuk pengiriman ke-{{ $pengirimanItem->pengiriman_ke }}
-                            </td>
-                        </tr>
-                        @endif
-                    </tbody>
-                </table>
+                            @if(!$adaDokumen)
+                            <tr>
+                                <td colspan="5" class="text-center py-3 text-muted">
+                                    Belum ada dokumen untuk pengiriman ke-{{ $pengirimanItem->pengiriman_ke }}
+                                </td>
+                            </tr>
+                            @endif
+                        </tbody>
+                    </table>
+                </div>
             </div>
-        </div>
-        @endforeach
-    @else
+            @endforeach
+        @else
         <div class="card shadow-sm mb-4">
             <div class="card-body text-center text-muted py-4">
                 <i class="bi bi-truck fs-1"></i>
                 <p class="mt-2 mb-0">Belum ada data pengiriman</p>
             </div>
         </div>
+        @endif
     @endif
 
     <div class="mb-3 text-end">

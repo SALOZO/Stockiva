@@ -24,6 +24,13 @@
                 <i class="bi bi-receipt"></i> Data Siap Tagih
             </a>
         </li>
+        
+        <a href="{{ route('direktur.dokumen.index') }}"
+        class="nav-link {{ request()->routeIs('direktur.dokumen.*') ? 'active' : '' }}">
+            <i class="bi bi-folder2 me-2"></i>
+            Document Center
+        </a>
+
         <li class="nav-item">
             <a class="nav-link {{ request()->routeIs('keuangan.invoice.riwayat') ? 'active' : '' }}" 
             href="{{ route('keuangan.invoice.riwayat') }}">

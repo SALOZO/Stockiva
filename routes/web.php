@@ -202,8 +202,6 @@ Route::prefix('admin')->middleware(['auth', 'role:Admin'])->group(function () {
         Route::get('/kwitansi', [KwitansiDirekturController::class, 'index'])->name('kwitansi.index');
         Route::post('/kwitansi/{pesanan}/approve', [KwitansiDirekturController::class, 'approve'])->name('kwitansi.approve');
 
-        Route::get('/dokumen', [DocumentCenterController::class, 'index'])->name('dokumen.index');
-        Route::get('/dokumen/{pesanan}', [DocumentCenterController::class, 'detail'])->name('dokumen.detail');
     });
 
     Route::middleware(['auth', 'gudang'])->prefix('gudang')->name('gudang.')->group(function () {    
@@ -292,5 +290,10 @@ Route::prefix('admin')->middleware(['auth', 'role:Admin'])->group(function () {
         Route::get('/invoice/{pesanan}/download', [KeuanganController::class, 'downloadInvoice'])->name('download-invoice');
 
         Route::get('/tagihan/riwayat', [TagihanController::class, 'riwayat'])->name('tagihan.riwayat');
+    });
+
+    Route::middleware(['auth'])->group(function () {
+        Route::get('/dokumen', [DocumentCenterController::class, 'index'])->name('direktur.dokumen.index');
+        Route::get('/dokumen/{pesanan}', [DocumentCenterController::class, 'detail'])->name('direktur.dokumen.detail');
     });
     
