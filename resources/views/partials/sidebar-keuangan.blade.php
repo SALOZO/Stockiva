@@ -31,7 +31,7 @@
             Document Center
         </a>
 
-        <li class="nav-item">
+        {{-- <li class="nav-item">
             <a class="nav-link {{ request()->routeIs('keuangan.invoice.riwayat') ? 'active' : '' }}" 
             href="{{ route('keuangan.invoice.riwayat') }}">
                 <i class="bi bi-archive"></i>
@@ -42,7 +42,8 @@
         class="nav-link {{ request()->routeIs('keuangan.tagihan.riwayat') ? 'active' : '' }}">
             <i class="bi bi-clock-history me-2"></i>
             History Tagihan yang sudah di approve
-        </a>
+        </a> --}}
+        
         <li class="nav-item mt-4">
             <form method="POST" action="{{ route('logout') }}">
                 @csrf

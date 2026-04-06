@@ -41,7 +41,7 @@
             Document Center
         </a>
 
-        <li class="nav-item">
+        {{-- <li class="nav-item">
             <a class="nav-link {{ request()->routeIs('history.sph.index') ? 'active' : '' }}" 
             href="{{ route('history.sph.index') }}">
                 <i class="bi bi-clock-history"></i>
@@ -50,7 +50,7 @@
                     <span class="active-indicator"></span>
                 @endif
             </a>
-        </li>
+        </li> --}}
 
         {{-- <li class="nav-item">
             <a class="nav-link {{ request()->routeIs('history.bast.*') ? 'active' : '' }}" 

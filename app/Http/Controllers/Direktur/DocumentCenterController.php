@@ -51,6 +51,7 @@ class DocumentCenterController extends Controller
             'Marketing' => 'layouts.marketing',
             'Direktur'  => 'layouts.direktur',
             'Gudang'    => 'layouts.gudang',
+            'Keuangan'  => 'layouts.keuangan',
             default     => 'layouts.app'
         };
     }
@@ -68,6 +69,11 @@ class DocumentCenterController extends Controller
                 'pengiriman' => [],
                 'kontrak'    => false,
             ],
+            // 'Marketing' => [
+            //     'pesanan'    => ['sph', 'invoice', 'tagihan', 'kwitansi', 'faktur_pajak'],
+            //     'pengiriman' => ['surat_jalan'],
+            //     'kontrak'    => true,
+            // ],
             default => [ // direktur & marketing: lihat semua
                 'pesanan'    => ['sph', 'invoice', 'tagihan', 'kwitansi', 'faktur_pajak'],
                 'pengiriman' => ['surat_jalan', 'bast_ekspedisi', 'bast_client'],
