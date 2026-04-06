@@ -30,7 +30,7 @@
                     <table class="table table-borderless table-sm mb-0">
                         <tr>
                             <td class="text-muted" style="width:140px;">No. SPH</td>
-                            <td>: <strong>{{ $pesanan->no_sph_formatted }}</strong></td>
+                            <td>: <strong>{{ $pesanan->no_sph }}</strong></td>
                         </tr>
                         <tr>
                             <td class="text-muted">Client</td>

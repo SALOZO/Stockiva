@@ -11,11 +11,13 @@ use Illuminate\Support\Facades\Storage;
 class UploadDokumenController extends Controller
 {
     public function index(Pengiriman $pengiriman){
-        $dokumen = DokumenPengiriman::where('pengiriman_id', $pengiriman->id)->orderBy('created_at', 'desc')->get();
+        $dokumen = DokumenPengiriman::where('pengiriman_id', $pengiriman->id)
+            ->whereIn('jenis', ['surat_jalan', 'bast_ekspedisi', 'bast_client'])
+            ->orderBy('created_at', 'desc')
+            ->get();
         
         return view('gudang.upload.index', compact('pengiriman', 'dokumen'));
     }
-
     public function create(Pengiriman $pengiriman, $jenis){
         $validJenis = ['surat_jalan', 'bast_ekspedisi', 'bast_client'];
         if (!in_array($jenis, $validJenis)) {

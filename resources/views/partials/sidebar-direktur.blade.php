@@ -26,27 +26,32 @@
         <li class="nav-item">
             <a class="nav-link {{ request()->routeIs('direktur.sph.index') ? 'active' : '' }}" 
                 href="{{ route('direktur.sph.index') }}">
-                <i class="bi bi-file-text"></i>
+                <i class="bi bi-file-earmark-medical"></i>
                 <span>Daftar SPH</span>
+                @php
+                    $pendingSph = \App\Models\Pesanan::whereNull('approved_at')->count();
+                @endphp
+                @if($pendingSph > 0)
+                    <span class="badge bg-warning ms-1">{{ $pendingSph }}</span>
+                @endif
                 @if(request()->routeIs('direktur.sph.index'))
                 <span class="active-indicator"></span>
                 @endif
             </a>
         </li>
 
-        <li class="nav-divider"></li>
+        {{-- <li class="nav-divider"></li> --}}
 
         <a href="{{ route('direktur.bast-client.index') }}"
         class="nav-link {{ request()->routeIs('direktur.bast-client.*') ? 'active' : '' }}">
-            <i class="bi bi-file-earmark-check me-2"></i>
+            <i class="bi bi-clipboard-check"></i>
             Daftar BAST Client
-            {{-- @php
-                $pendingBast = \App\Models\Pengiriman::whereNotNull('no_bast')
-                    ->whereNull('bast_approved_at')->count();
+            @php
+                $pendingBast = \App\Models\Pengiriman::whereNotNull('no_bast')->whereNull('bast_approved_at')->count();
             @endphp
             @if($pendingBast > 0)
                 <span class="badge bg-warning ms-1">{{ $pendingBast }}</span>
-            @endif --}}
+            @endif
         </a>
 
         <li class="nav-divider"></li>
@@ -54,34 +59,42 @@
         <li class="nav-item">
             <a class="nav-link {{ request()->routeIs('direktur.invoice*') ? 'active' : '' }}" 
             href="{{ route('direktur.invoice.index') }}">
-                <i class="bi bi-receipt"></i>
+                <i class="bi bi-file-earmark-post"></i>
                 <span>Daftar Invoice</span>
+                @php
+                    $pendingInvoice = \App\Models\Pesanan::whereNotNull('no_invoice')->whereNull('invoice_approved_at')->count();
+                @endphp
+                @if($pendingInvoice > 0)
+                    <span class="badge bg-warning ms-1">{{ $pendingInvoice }}</span>
+                @endif
             </a>
         </li>
 
         <li class="nav-item">
             <a class="nav-link {{ request()->routeIs('direktur.tagihan*') ? 'active' : '' }}" 
             href="{{ route('direktur.tagihan.index') }}">
-                <i class="bi bi-file-earmark-check"></i>
+                <i class="bi bi-cash-stack"></i>
                 <span>Daftar Tagihan</span>
+                @php
+                    $pendingTagihan = \App\Models\Pesanan::whereNotNull('no_tagihan')->whereNull('tagihan_approved_at')->count();
+                @endphp
+                @if($pendingTagihan > 0)
+                    <span class="badge bg-warning ms-1">{{ $pendingTagihan }}</span>
+                @endif
             </a>
         </li>
 
         <a href="{{ route('direktur.kwitansi.index') }}"
         class="nav-link {{ request()->routeIs('direktur.kwitansi.*') ? 'active' : '' }}">
-            <i class="bi bi-receipt me-2"></i>
+            <i class="bi bi-patch-check me-2"></i>
              Daftar Kwitansi
+                @php
+                    $pendingKwitansi = \App\Models\Pesanan::whereNotNull('no_kwitansi')->whereNull('kwitansi_approved_at')->count();
+                @endphp
+                @if($pendingKwitansi > 0)
+                    <span class="badge bg-warning ms-1">{{ $pendingKwitansi }}</span>
+                @endif
         </a>
-
-        {{-- <a href="{{ route('direktur.tagihan.index') }}"
-        class="nav-link {{ request()->routeIs('direktur.tagihan.*') ? 'active' : '' }}">
-            <i class="bi bi-file-earmark-check me-2"></i>
-            Daftar Tagihan
-            @php $pendingTagihan = \App\Models\Pesanan::whereNotNull('no_tagihan')->whereNull('tagihan_approved_at')->count(); @endphp
-            @if($pendingTagihan > 0)
-                <span class="badge bg-warning ms-1">{{ $pendingTagihan }}</span>
-            @endif
-        </a> --}}
 
         {{-- DIVIDER --}}
         <li class="nav-divider"></li>
@@ -92,7 +105,7 @@
             Document Center
         </a>
 
-        <li class="nav-item">
+        {{-- <li class="nav-item">
             <a class="nav-link {{ request()->routeIs('history.sph.index') ? 'active' : '' }}" 
             href="{{ route('history.sph.index') }}">
                 <i class="bi bi-clock-history"></i>
@@ -109,13 +122,13 @@
                 <i class="bi bi-archive"></i>
                 <span>History Invoice yang sudah di approve</span>
             </a>
-        </li>
+        </li> --}}
 
-        <a href="{{ route('keuangan.tagihan.riwayat') }}"
+        {{-- <a href="{{ route('keuangan.tagihan.riwayat') }}"
         class="nav-link {{ request()->routeIs('keuangan.tagihan.riwayat') ? 'active' : '' }}">
             <i class="bi bi-clock-history me-2"></i>
             History Tagihan yang sudah di approve
-        </a>
+        </a> --}}
         
         {{-- LOGOUT --}}
         <li class="nav-item mt-4">

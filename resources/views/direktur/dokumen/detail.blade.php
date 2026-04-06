@@ -127,21 +127,24 @@
                             @endif
                         </td>
                     </tr>
+                        @php
+                            $kwitansi = $dokumenPengiriman->get('kwitansi',collect())->first();
+                        @endphp
                     <tr>
                         <td><span class="badge bg-warning text-dark">Kwitansi</span></td>
-                        <td>{{ $pesanan->no_kwitansi ?? '-' }}</td>
-                        <td>{{ $pesanan->kwitansi_approved_at?->translatedFormat('d F Y') ?? '-' }}</td>
+                        <td>{{ $kwitansi ? $kwitansi->nomor_dokumen ?? '-' : '-' }}</td>
+                        <td>{{ $kwitansi ? \Carbon\Carbon::parse($kwitansi->uploaded_at)->translatedFormat('d F Y') : '-' }}</td>
                         <td>
-                            @if($pesanan->kwitansi_approved_file)
-                                @include('direktur.dokumen._aksi', ['path' => $pesanan->kwitansi_approved_file])
+                            @if($kwitansi)
+                                @include('direktur.dokumen._aksi', ['path' => $kwitansi->file_path])
                             @else
                                 <span class="text-muted small">Belum ada</span>
                             @endif
                         </td>
                     </tr>
-                    @php
-                        $fakturPajak = $dokumenPengiriman->get('faktur_pajak', collect())->first();
-                    @endphp
+                        @php
+                            $fakturPajak = $dokumenPengiriman->get('faktur_pajak', collect())->first();
+                        @endphp
                     <tr>
                         <td><span class="badge bg-danger">Faktur Pajak</span></td>
                         <td>{{ $fakturPajak ? $fakturPajak->nomor_dokumen ?? '-' : '-' }}</td>
@@ -187,7 +190,6 @@
                                 'surat_jalan'   => ['label' => 'Surat Jalan',    'class' => 'bg-success'],
                                 'bast_ekspedisi' => ['label' => 'BAST Ekspedisi', 'class' => 'bg-dark'],
                                 'bast_client'   => ['label' => 'BAST Client',    'class' => 'bg-warning text-dark'],
-                                'kwitansi'      => ['label' => 'Kwitansi',       'class' => 'bg-warning text-dark'],
                             ];
                             $adaDokumen = false;
                         @endphp

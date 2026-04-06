@@ -18,7 +18,7 @@ class KwitansiController extends Controller
             $bulan      = now()->format('m');
             $tahun      = now()->format('Y');
             $nomor      = DocumentCounter::getNextNumber(now()->format('Y-m'));
-            $noKwitansi = sprintf("%04d", $nomor) . '/KWI/' . $bulan . '/' . $tahun;
+            $noKwitansi = sprintf("%04d", $nomor) . '/KWI/RP/' . $bulan . '/' . $tahun;
             $pesanan->update(['no_kwitansi' => $noKwitansi]);
         }
 
