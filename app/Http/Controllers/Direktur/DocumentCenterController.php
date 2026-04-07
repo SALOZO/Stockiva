@@ -9,13 +9,28 @@ class DocumentCenterController extends Controller
 {
     public function index()
     {
-        $pesanans = Pesanan::with('client')
+        $pesanans = Pesanan::with('client','pengiriman.dokumenPengiriman')
             ->whereNotNull('sph_approved_file')
             ->latest()
             ->paginate(15);
         $layout = $this->getLayoutByRole();
 
+        foreach ($pesanans as $pesanan) {
+            $fakturPajakAda = $pesanan->pengiriman->flatMap->dokumenPengiriman
+                ->pluck('jenis')
+                ->contains('faktur_pajak');
+                
+            $kwitansiAda = $pesanan->pengiriman->flatMap->dokumenPengiriman
+                ->pluck('jenis')
+                ->contains('kwitansi');
+            
+            $invoiceAda = !empty($pesanan->invoice_file);
+            $tagihanAda = !empty($pesanan->tagihan_file);
+            
+            $pesanan->status_terbit = $fakturPajakAda && $kwitansiAda && $invoiceAda && $tagihanAda;
+        }
 
+        // dd($pesanans->pluck('status_terbit'));
         return view('direktur.dokumen.index', compact('pesanans', 'layout'));
     }
 
@@ -65,7 +80,7 @@ class DocumentCenterController extends Controller
                 'kontrak'    => true,
             ],
             'Keuangan' => [
-                'pesanan'    => ['invoice', 'tagihan', 'kwitansi', 'faktur_pajak'],
+                'pesanan'    => ['sph','invoice', 'tagihan', 'kwitansi', 'faktur_pajak'],
                 'pengiriman' => [],
                 'kontrak'    => false,
             ],

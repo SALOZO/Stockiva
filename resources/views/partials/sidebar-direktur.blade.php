@@ -29,7 +29,7 @@
                 <i class="bi bi-file-earmark-medical"></i>
                 <span>Daftar SPH</span>
                 @php
-                    $pendingSph = \App\Models\Pesanan::whereNull('approved_at')->count();
+                    $pendingSph = \App\Models\Pesanan::whereNotNull('no_sph')->whereNull('approved_at')->count();
                 @endphp
                 @if($pendingSph > 0)
                     <span class="badge bg-warning ms-1">{{ $pendingSph }}</span>

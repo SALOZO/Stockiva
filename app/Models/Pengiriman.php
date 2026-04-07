@@ -66,6 +66,11 @@ class Pengiriman extends Model
         return $this->belongsTo(Ekspedisi::class);
     }
 
+    public function dokumenPengiriman()
+    {
+        return $this->hasMany(DokumenPengiriman::class, 'pengiriman_id');
+    }
+
     public function getStatusBadgeAttribute(){
         return match($this->status) {
             'pending' => '<span class="badge bg-secondary">Pending</span>',

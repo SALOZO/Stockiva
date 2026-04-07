@@ -15,6 +15,9 @@
                         <th>No. SPH</th>
                         <th>Client</th>
                         <th>Tanggal</th>
+                        @if(in_array(auth()->user()->jabatan, ['Marketing', 'Direktur']))
+                        <th>Status</th>
+                        @endif
                         {{-- <th>Dokumen Tersedia</th> --}}
                         <th>Aksi</th>
                     </tr>
@@ -25,6 +28,15 @@
                         <td><strong>{{ $p->no_sph }}</strong></td>
                         <td>{{ $p->client->nama_client }}</td>
                         <td>{{ $p->tanggal_pesanan->translatedFormat('d F Y') }}</td>
+                        @if(in_array(auth()->user()->jabatan, ['Marketing', 'Direktur']))
+                            <td>
+                                @if($p->status_terbit)
+                                    <span class="badge bg-success">Sudah Terbit</span>
+                                @else
+                                    <span class="badge bg-secondary">Belum Terbit</span>
+                                @endif
+                            </td>
+                        @endif
                         <td>
                             <a href="{{ route('direktur.dokumen.detail', $p->id) }}"
                                class="btn btn-sm btn-outline-primary">
