@@ -60,6 +60,10 @@ class TagihanDirekturController extends Controller
             $bank       = BankPerusahaan::where('is_active', true)->first() ?? BankPerusahaan::first();
             $logoBase64 = $this->logoToBase64($company?->logo);
 
+            $ppn        = $this->getPpnData((float) $pesanan->total_keseluruhan);
+            $totalUntukTerbilang = $ppn['ppn_aktif'] ? $ppn['total_include_ppn'] : $ppn['dpp'];
+
+
             $pdf = Pdf::loadView('pdf.tagihan-approved', [
                 'pesanan'           => $pesanan->load(['client', 'details.barang.satuan']),
                 'company'           => $company,
@@ -71,7 +75,14 @@ class TagihanDirekturController extends Controller
                 'approved_by'       => $direktur->name,
                 'approved_jabatan'  => $direktur->jabatan,
                 'approved_at'       => now()->translatedFormat('d F Y'),
-                'terbilang'        => ucwords(strtolower($this->terbilang($pesanan->total_keseluruhan))) . ' Rupiah',
+                'terbilang'        => ucwords(strtolower($this->terbilang($totalUntukTerbilang))) . ' Rupiah',
+                // PPN
+                'ppn_aktif'         => $ppn['ppn_aktif'],
+                'ppn_persen'        => $ppn['ppn_persen'],
+                'ppn'               => $ppn['ppn'],
+                'dpp'               => $ppn['dpp'],
+                'total_include_ppn' => $ppn['total_include_ppn'],
+
             ])->setPaper('A4', 'portrait')->setOptions([
                 'isRemoteEnabled'     => true,
                 'isHtml5ParserEnabled' => true,
@@ -102,5 +113,26 @@ class TagihanDirekturController extends Controller
         return file_exists($path)
             ? 'data:image/png;base64,' . base64_encode(file_get_contents($path))
             : null;
+    }
+    private function getPpnData(float $total): array
+    {
+        $ppnAktif = \App\Models\SphSetting::get('ppn_aktif', '0') == '1';
+        $ppnPersen = (float) \App\Models\SphSetting::get('ppn_persen', 11);
+
+        if ($ppnAktif) {
+            $ppn            = $total * ($ppnPersen / 100);
+            $totalIncludePpn = $total + $ppn;
+        } else {
+            $ppn            = 0;
+            $totalIncludePpn = $total;
+        }
+
+        return [
+            'ppn_aktif'        => $ppnAktif,
+            'ppn_persen'       => $ppnPersen,
+            'ppn'              => $ppn,
+            'dpp'              => $total,
+            'total_include_ppn' => $totalIncludePpn,
+        ];
     }
 }

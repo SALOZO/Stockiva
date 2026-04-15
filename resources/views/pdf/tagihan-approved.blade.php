@@ -8,20 +8,17 @@
         body { font-family: 'Times New Roman', serif; font-size: 11pt; color: #000; line-height: 1.5; }
         .page { padding: 15mm 20mm 15mm 25mm; }
 
-        /* Header */
         .header { border-bottom: 3px double #000; padding-bottom: 8px; margin-bottom: 15px; }
         .header table { width: 100%; }
         .company-name { font-size: 14pt; font-weight: bold; }
         .company-sub { font-size: 8pt; color: #333; margin-top: 2px; }
 
-        /* Info surat */
         .info-surat { margin-bottom: 15px; }
         .info-surat table td { padding: 1px 0; vertical-align: top; }
         .info-surat td.label { width: 80px; }
         .info-surat td.colon { width: 10px; }
         .tgl-surat { float: right; margin-top: -52px; }
 
-        /* Tabel rincian */
         .tabel { width: 100%; border-collapse: collapse; margin-bottom: 5px; font-size: 10.5pt; }
         .tabel th, .tabel td { border: 1px solid #000; padding: 5px 7px; }
         .tabel th { text-align: center; font-weight: bold; }
@@ -29,12 +26,10 @@
         .tabel td.right { text-align: right; }
         .tabel tr.total td { font-weight: bold; }
 
-        /* Rekening */
         .rekening table td { padding: 1px 0; vertical-align: top; }
         .rekening td.label { width: 120px; }
         .rekening td.colon { width: 10px; }
 
-        /* TTD */
         .ttd { text-align: center; margin-top: 10px; float: right; }
         .ttd .space { height: 60px; }
         .ttd .nama { font-weight: bold; text-decoration: underline; }
@@ -133,10 +128,22 @@
             @endforeach
         </tbody>
         <tfoot>
+            {{-- Total DPP --}}
             <tr class="total">
                 <td colspan="5" class="center">Jumlah</td>
-                <td class="right">Rp. {{ number_format($pesanan->total_keseluruhan, 0, ',', '.') }}</td>
+                <td class="right">Rp. {{ number_format($dpp, 0, ',', '.') }}</td>
             </tr>
+            {{-- PPN — hanya muncul jika aktif --}}
+            @if($ppn_aktif)
+            <tr>
+                <td colspan="5" class="center">PPN {{ $ppn_persen }}%</td>
+                <td class="right">Rp. {{ number_format($ppn, 0, ',', '.') }}</td>
+            </tr>
+            <tr class="total">
+                <td colspan="5" class="center">Total termasuk PPN</td>
+                <td class="right">Rp. {{ number_format($total_include_ppn, 0, ',', '.') }}</td>
+            </tr>
+            @endif
         </tfoot>
     </table>
 

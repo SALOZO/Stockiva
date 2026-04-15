@@ -8,13 +8,11 @@
         body { font-family: Arial, sans-serif; font-size: 11pt; color: #000; }
         .page { padding: 15mm 20mm; }
 
-        /* Header */
         .header { border-bottom: 3px double #000; padding-bottom: 10px; margin-bottom: 20px; }
         .header table { width: 100%; }
         .company-name { font-size: 18pt; font-weight: bold; color: #1a3a6b; }
         .company-sub { font-size: 9pt; color: #333; margin-top: 3px; }
 
-        /* Judul */
         .judul {
             text-align: center;
             font-size: 16pt;
@@ -24,29 +22,29 @@
             padding-bottom: 5px;
         }
 
-        /* Info atas 2 kolom */
         .info-table { width: 100%; margin-bottom: 25px; }
         .info-table td { padding: 2px 0; vertical-align: top; font-size: 10.5pt; }
         .info-table td.label { width: 90px; }
         .info-table td.colon { width: 10px; }
-        .info-table td.value { }
 
-        /* Body kwitansi */
         .body-table { width: 100%; margin-bottom: 15px; }
         .body-table td { padding: 6px 0; vertical-align: top; font-size: 11pt; }
         .body-table td.label { width: 150px; }
         .body-table td.colon { width: 15px; }
 
-        /* Total */
-        .total-box { text-align: right; margin-bottom: 20px; }
-        .total-box .label-rp { font-size: 13pt; font-weight: bold; margin-right: 30px; }
-        .total-box .nilai { font-size: 15pt; font-weight: bold; }
+        /* Total box */
+        .total-section { margin-bottom: 20px; }
+        .total-row { display: flex; justify-content: flex-end; align-items: center; gap: 20px; margin-bottom: 4px; }
+        .total-row .lbl { font-size: 11pt; }
+        .total-row .val { font-size: 13pt; font-weight: bold; min-width: 150px; text-align: right; }
+        .total-row.ppn-row .lbl { font-size: 10.5pt; }
+        .total-row.ppn-row .val { font-size: 11pt; font-weight: normal; }
+        .total-row.grand .val { font-size: 15pt; }
+        .divider-total { border-top: 1px solid #000; margin: 4px 0; width: 300px; float: right; clear: both; }
 
-        /* Rekening */
         .rekening { font-size: 10pt; margin-bottom: 30px; }
         .rekening p { margin-bottom: 3px; }
 
-        /* TTD */
         .ttd { text-align: center; float: right; width: 220px; }
         .ttd .space { height: 70px; }
         .ttd .nama { font-weight: bold; text-decoration: underline; font-size: 11pt; }
@@ -141,9 +139,26 @@
     </table>
 
     {{-- TOTAL --}}
-    <div class="total-box">
-        <span class="label-rp">Rp.</span>
-        <span class="nilai">{{ number_format($pesanan->total_keseluruhan, 0, ',', '.') }}</span>
+    <div class="total-section">
+        {{-- DPP --}}
+        <div class="total-row">
+            <span class="lbl">Rp.</span>
+            <span class="val">{{ number_format($dpp, 0, ',', '.') }}</span>
+        </div>
+
+        {{-- PPN — hanya muncul jika aktif --}}
+        @if($ppn_aktif)
+        {{-- <div class="divider-total"></div> --}}
+        <div class="total-row ppn-row">
+            <span class="lbl">PPN {{ $ppn_persen }}%</span>
+            <span class="val">{{ number_format($ppn, 0, ',', '.') }}</span>
+        </div>
+        {{-- <div class="divider-total"></div> --}}
+        <div class="total-row grand">
+            <span class="lbl"><strong>Total termasuk PPN</strong></span>
+            <span class="val">{{ number_format($total_include_ppn, 0, ',', '.') }}</span>
+        </div>
+        @endif
     </div>
 
     {{-- REKENING --}}

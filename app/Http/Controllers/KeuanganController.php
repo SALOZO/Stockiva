@@ -54,48 +54,54 @@ class KeuanganController extends Controller
         return $this->terbilang((int)($angka / 1000000000)) . ' Miliar ' . $this->terbilang($angka % 1000000000);
     }
 
-    public function cetakInvoice(Pesanan $pesanan){
-
+    public function cetakInvoice(Pesanan $pesanan)
+    {
         if (!$pesanan->no_invoice) {
             $tahunBulan = now()->format('Y-m');
-            $nomor = DocumentCounter::getNextNumber($tahunBulan);
-            $noInvoice = sprintf("%04d", $nomor) . '/INV/RP/' . now()->format('m') . '/' . now()->format('Y');
+            $nomor      = DocumentCounter::getNextNumber($tahunBulan);
+            $noInvoice  = sprintf("%04d", $nomor) . '/INV/RP/' . now()->format('m') . '/' . now()->format('Y');
             $pesanan->update(['no_invoice' => $noInvoice]);
         }
 
-        $bank = BankPerusahaan::where('is_active', true)->first();
-        $company = CompanyProfile::first();
+        $bank       = BankPerusahaan::where('is_active', true)->first();
+        $company    = CompanyProfile::first();
+        $logoPath   = public_path('storage/' . $company->logo);
+        $logoBase64 = file_exists($logoPath)
+            ? 'data:image/png;base64,' . base64_encode(file_get_contents($logoPath))
+            : null;
 
-        $logoPath = public_path('storage/' . $company->logo);
+        $ppn = $this->getPpnData((float) $pesanan->total_keseluruhan);
 
-        $logoBase64 = null;
-        if (file_exists($logoPath)) {
-            $logoBase64 = 'data:image/png;base64,' . base64_encode(file_get_contents($logoPath));
-        }
+        // Terbilang pakai total include PPN jika PPN aktif
+        $totalUntukTerbilang = $ppn['ppn_aktif'] ? $ppn['total_include_ppn'] : $ppn['dpp'];
 
-        // dd($company->logo);
         $pdf = Pdf::loadView('pdf.invoice', [
-            'pesanan' => $pesanan,
-            'company' => $company,
-            'bank' => $bank,
-            'no_invoice' => $pesanan->no_invoice,
+            'pesanan'     => $pesanan,
+            'company'     => $company,
+            'bank'        => $bank,
+            'no_invoice'  => $pesanan->no_invoice,
             'jatuh_tempo' => $pesanan->created_at->addDays(30),
-            'tanggal' => now()->format('d F Y'),
-            'logo' => $logoBase64,
-            'terbilang'  => ucwords(strtolower($this->terbilang($pesanan->total_keseluruhan))) . ' Rupiah',
+            'tanggal'     => now()->translatedFormat('d F Y'),
+            'logo'        => $logoBase64,
+            'terbilang'   => ucwords(strtolower($this->terbilang($totalUntukTerbilang))) . ' Rupiah',
+            // PPN
+            'ppn_aktif'         => $ppn['ppn_aktif'],
+            'ppn_persen'        => $ppn['ppn_persen'],
+            'ppn'               => $ppn['ppn'],
+            'dpp'               => $ppn['dpp'],
+            'total_include_ppn' => $ppn['total_include_ppn'],
         ]);
 
         $pdf->setPaper('A4', 'portrait');
         $pdf->setOptions([
-            'isRemoteEnabled' => true,
+            'isRemoteEnabled'     => true,
             'isHtml5ParserEnabled' => true,
-            'defaultFont' => 'Helvetica'
+            'defaultFont'         => 'Helvetica',
         ]);
 
         $filename = 'INVOICE-' . $pesanan->no_pesanan . '-' . date('Ymd') . '.pdf';
-        $path = 'invoice/temp/' . $filename;
+        $path     = 'invoice/temp/' . $filename;
         Storage::disk('public')->put($path, $pdf->output());
-
 
         return Storage::disk('public')->download($path, $filename);
     }
@@ -157,12 +163,25 @@ class KeuanganController extends Controller
 
     return $pdf->stream('invoice-' . $pesanan->no_pesanan . '.pdf');
 }
+    private function getPpnData(float $total): array
+    {
+        $ppnAktif = \App\Models\SphSetting::get('ppn_aktif', '0') == '1';
+        $ppnPersen = (float) \App\Models\SphSetting::get('ppn_persen', 11);
 
-    // public function downloadInvoice(Pesanan $pesanan){
-    //     if (!$pesanan->invoice_file) {
-    //         abort(404, 'File invoice tidak ditemukan');
-    //     }
+        if ($ppnAktif) {
+            $ppn            = $total * ($ppnPersen / 100);
+            $totalIncludePpn = $total + $ppn;
+        } else {
+            $ppn            = 0;
+            $totalIncludePpn = $total;
+        }
 
-    //     return Storage::disk('public')->download($pesanan->invoice_file);
-    // }
+        return [
+            'ppn_aktif'        => $ppnAktif,
+            'ppn_persen'       => $ppnPersen,
+            'ppn'              => $ppn,
+            'dpp'              => $total,
+            'total_include_ppn' => $totalIncludePpn,
+        ];
+    }
 }

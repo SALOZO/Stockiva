@@ -55,7 +55,7 @@
                                 <th width="20%">No. SPH</th>
                                 <th width="25%">Client</th>
                                 <th width="10%">Progress</th>
-                                <th width="10%">Kirim</th>
+                                {{-- <th width="10%">Kirim</th> --}}
                                 <th width="15%">Aksi</th>
                             </tr>
                         </thead>
@@ -95,7 +95,7 @@
                                     <small class="text-muted">
                                         {{ $tugas->details->sum('produced_qty') }}/{{ $tugas->details->sum('jumlah') }} item
                                     </small>
-                                    <td>
+                                    {{-- <td>
                                         @php
                                             $pengiriman = $tugas->pengiriman()->latest()->first();
                                         @endphp
@@ -134,7 +134,7 @@
                                         @else
                                             <span class="text-muted">-</span>
                                         @endif
-                                    </td>
+                                    </td> --}}
                                 <td>
                                     <div class="btn-group" role="group">
                                         {{-- Tombol PRODUKSI --}}

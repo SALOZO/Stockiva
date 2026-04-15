@@ -38,8 +38,8 @@ class TagihanController extends Controller
 
         return $this->terbilang((int)($angka / 1000000000)) . ' Miliar ' . $this->terbilang($angka % 1000000000);
     }
-    public function download(Pesanan $pesanan){
-        // Generate nomor tagihan sekali saja (tidak berubah tiap klik)
+    public function download(Pesanan $pesanan)
+    {
         if (!$pesanan->no_tagihan) {
             $bulan     = now()->format('m');
             $tahun     = now()->format('Y');
@@ -48,9 +48,13 @@ class TagihanController extends Controller
             $pesanan->update(['no_tagihan' => $noTagihan]);
         }
 
-        $company  = CompanyProfile::first();
-        $bank     = BankPerusahaan::where('is_active', true)->first() ?? BankPerusahaan::first();
+        $company    = CompanyProfile::first();
+        $bank       = BankPerusahaan::where('is_active', true)->first() ?? BankPerusahaan::first();
         $logoBase64 = $this->logoToBase64($company?->logo);
+        $ppn        = $this->getPpnData((float) $pesanan->total_keseluruhan);
+
+        // Terbilang pakai total include PPN jika PPN aktif
+        $totalUntukTerbilang = $ppn['ppn_aktif'] ? $ppn['total_include_ppn'] : $ppn['dpp'];
 
         $pdf = Pdf::loadView('pdf.tagihan', [
             'pesanan'   => $pesanan->load(['client', 'details.barang.satuan']),
@@ -58,15 +62,20 @@ class TagihanController extends Controller
             'bank'      => $bank,
             'noTagihan' => $pesanan->no_tagihan,
             'tglSurat'  => now()->translatedFormat('d F Y'),
-            'logoPath'      => $logoBase64,
-            'terbilang'  => ucwords(strtolower($this->terbilang($pesanan->total_keseluruhan))) . ' Rupiah',
+            'logo'      => $logoBase64,
+            'terbilang' => ucwords(strtolower($this->terbilang($totalUntukTerbilang))) . ' Rupiah',
+            // PPN
+            'ppn_aktif'         => $ppn['ppn_aktif'],
+            'ppn_persen'        => $ppn['ppn_persen'],
+            'ppn'               => $ppn['ppn'],
+            'dpp'               => $ppn['dpp'],
+            'total_include_ppn' => $ppn['total_include_ppn'],
         ])->setPaper('A4', 'portrait')->setOptions([
-            'isRemoteEnabled'    => true,
+            'isRemoteEnabled'     => true,
             'isHtml5ParserEnabled' => true,
-            'defaultFont'        => 'Helvetica',
+            'defaultFont'         => 'Helvetica',
         ]);
 
-        // Simpan file PDF ke storage
         $filename = 'tagihan/temp/TAGIHAN-' . $pesanan->no_pesanan . '-' . date('Ymd') . '.pdf';
         Storage::disk('public')->put($filename, $pdf->output());
         $pesanan->update(['tagihan_file' => $filename]);
@@ -80,5 +89,27 @@ class TagihanController extends Controller
         $path = public_path('storage/' . $logo);
         return file_exists($path)
             ? 'data:image/png;base64,' . base64_encode(file_get_contents($path)): null;
+    }
+
+    private function getPpnData(float $total): array
+    {
+        $ppnAktif = \App\Models\SphSetting::get('ppn_aktif', '0') == '1';
+        $ppnPersen = (float) \App\Models\SphSetting::get('ppn_persen', 11);
+
+        if ($ppnAktif) {
+            $ppn            = $total * ($ppnPersen / 100);
+            $totalIncludePpn = $total + $ppn;
+        } else {
+            $ppn            = 0;
+            $totalIncludePpn = $total;
+        }
+
+        return [
+            'ppn_aktif'        => $ppnAktif,
+            'ppn_persen'       => $ppnPersen,
+            'ppn'              => $ppn,
+            'dpp'              => $total,
+            'total_include_ppn' => $totalIncludePpn,
+        ];
     }
 }

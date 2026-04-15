@@ -68,7 +68,6 @@
                                 </tr>
                             </thead>
                             <tbody id="itemsContainer">
-                                {{-- Item akan ditambahkan via JavaScript --}}
                             </tbody>
                             <tfoot>
                                 <tr class="text-center">
@@ -102,7 +101,6 @@
     </div>
 </div>
 
-{{-- TEMPLATE ITEM (untuk di-clone via JavaScript) --}}
 <template id="itemTemplate">
     <tr class="item-row">
         <td>

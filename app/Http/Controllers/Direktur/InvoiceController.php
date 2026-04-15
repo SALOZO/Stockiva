@@ -59,12 +59,15 @@ class InvoiceController extends Controller
 
             $bank = BankPerusahaan::where('is_active', true)->first();
             $company = CompanyProfile::first();
+            $logoBase64 = $this->logoToBase64($company?->logo);
 
             $ttdBase64 = null;
             if (file_exists($ttdPath)) {
                 $imageData = file_get_contents($ttdPath);
                 $ttdBase64 = 'data:image/png;base64,' . base64_encode($imageData);
             }
+            $ppn        = $this->getPpnData((float) $pesanan->total_keseluruhan);
+            $totalUntukTerbilang = $ppn['ppn_aktif'] ? $ppn['total_include_ppn'] : $ppn['dpp'];
 
             // dd([
             //     'ttd_path' => $ttdPath,
@@ -78,6 +81,7 @@ class InvoiceController extends Controller
             $pdf = Pdf::loadView('pdf.invoice-approved', [
                 'pesanan' => $pesanan,
                 'company' => $company,
+                'logoPath' => $logoBase64,
                 'bank' => $bank,
                 'no_invoice' => $pesanan->no_invoice,
                 'jatuh_tempo' => $pesanan->created_at->addDays(30),
@@ -86,7 +90,13 @@ class InvoiceController extends Controller
                 'approved_by_jabatan' => $direktur->jabatan,
                 'approved_at' => now()->format('d F Y'),
                 'ttd_base64' => $ttdBase64,
-                'terbilang' => ucwords(strtolower($this->terbilang($pesanan->total_keseluruhan))) . ' Rupiah',
+                'terbilang' => ucwords(strtolower($this->terbilang($totalUntukTerbilang))) . ' Rupiah',
+                // PPN
+                'ppn_aktif'         => $ppn['ppn_aktif'],
+                'ppn_persen'        => $ppn['ppn_persen'],
+                'ppn'               => $ppn['ppn'],
+                'dpp'               => $ppn['dpp'],
+                'total_include_ppn' => $ppn['total_include_ppn'],
             ]);
             
             $pdf->setPaper('A4', 'portrait');
@@ -140,4 +150,40 @@ class InvoiceController extends Controller
 
             return $pdf->stream('invoice-' . $pesanan->no_pesanan . '.pdf');
         }
+    private function getPpnData(float $total): array
+    {
+        $ppnAktif = \App\Models\SphSetting::get('ppn_aktif', '0') == '1';
+        $ppnPersen = (float) \App\Models\SphSetting::get('ppn_persen', 11);
+
+        if ($ppnAktif) {
+            $ppn            = $total * ($ppnPersen / 100);
+            $totalIncludePpn = $total + $ppn;
+        } else {
+            $ppn            = 0;
+            $totalIncludePpn = $total;
+        }
+
+        return [
+            'ppn_aktif'        => $ppnAktif,
+            'ppn_persen'       => $ppnPersen,
+            'ppn'              => $ppn,
+            'dpp'              => $total,
+            'total_include_ppn' => $totalIncludePpn,
+        ];
+    }
+    private function logoToBase64($logoPath)
+    {
+        if (!$logoPath) {
+            return null;
+        }
+
+        $fullPath = storage_path('app/public/' . $logoPath);
+
+        if (!file_exists($fullPath)) {
+            return null;
+        }
+
+        $imageData = file_get_contents($fullPath);
+        return 'data:image/png;base64,' . base64_encode($imageData);
+    }
     }
