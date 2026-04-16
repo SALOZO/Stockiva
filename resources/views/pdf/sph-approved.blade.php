@@ -23,16 +23,18 @@
             padding-bottom: 5px;
         }
         .header h1 {
-            font-size: 18pt;
+            font-size: 20pt;
             margin: 0 0 3px 0;
             color: #0b2b4f;
             text-transform: uppercase;
             font-weight: bold;
+            text-align: center;
         }
         .header .company-detail {
-            font-size: 8.5pt;
+            font-size: 9pt;
             color: #555;
             line-height: 1.25;
+            text-align: center;
         }
         .header-table {
             width: 100%;
@@ -44,7 +46,7 @@
             vertical-align: middle;
         }
         .header-logo {
-            max-height: 65px;
+            max-height: 110px;
             max-width: 140px;
             object-fit: contain;
         }
@@ -85,8 +87,8 @@
             table-layout: fixed;
         }
         table th {
-            background: #0b2b4f;
-            color: white;
+            background: none;
+            color: #0b2b4f;
             padding: 6px 4px;
             text-align: center;
             font-weight: bold;
@@ -106,7 +108,7 @@
         }
         .total-row {
             font-weight: bold;
-            background: #f0f0f0;
+            background: none;
         }
         
         /* Kolom Lebar */
@@ -232,15 +234,15 @@
             <strong>Perihal :</strong> {{ $perihal }}<br>
             <strong>Lampiran :</strong> {{ $lampiran_text }}
         </td>
-        <td style="width: 40%; text-align: right;">
-            <strong>{{ $company->kota ?? 'Jakarta' }},</strong> {{ $tanggal }}
+        <td style="width: 40%; text-align: right; vertical-align: top;">
+            {{ $company->kota ?? 'Jakarta' }}, {{ $tanggal }}
         </td>
     </tr>
 </table>
 
 {{-- Kepada Yth --}}
 <div class="kepada">
-    <strong>Kepada Yth,</strong><br>
+    Kepada Yth,<br>
     Bagian Pengadaan / UP. {{ $client->nama_pic ?? '-' }}<br>
     <strong>{{ $client->nama_client ?? '-' }}</strong><br>
     {{ $client->alamat ?? '-' }}{{ $client->alamat && $client->desa ? ', ' : '' }}{{ $client->desa ?? '' }}{{ ($client->alamat || $client->desa) && $client->kecamatan ? ', ' : '' }}{{ $client->kecamatan ?? '' }}<br>
@@ -249,8 +251,8 @@
 
 {{-- Pembuka --}}
 <div class="pembuka">
-    <p><strong>Dengan Hormat,</strong></p>
-    <p>Sehubungan dengan adanya kebutuhan di <strong>{{ $client->nama_client ?? 'perusahaan' }}</strong> atas barang yang dimaksud, dengan ini kami menyampaikan penawaran harga yang sesuai dengan kebutuhan dan spesifikasi yang diinginkan, sebagai berikut:</p>
+    <p style="text-indent: 25px"><strong>Dengan Hormat,</strong></p>
+    <p style="text-indent: 25px">Sehubungan dengan adanya kebutuhan di <strong>{{ $client->nama_client ?? 'perusahaan' }}</strong> atas barang yang dimaksud, dengan ini kami menyampaikan penawaran harga yang sesuai dengan kebutuhan dan spesifikasi yang diinginkan, sebagai berikut:</p>
 </div>
 
 {{-- Tabel Barang --}}
@@ -261,8 +263,8 @@
             <th>Nama Barang</th>
             <th>Kebutuhan</th>
             <th>Satuan</th>
-            <th>Harga Satuan</th>
-            <th>Jumlah Harga</th>
+            <th colspan="2">Harga Satuan</th>
+            <th colspan="2">Jumlah Harga</th>
         </tr>
     </thead>
     <tbody>
@@ -272,8 +274,10 @@
             <td>{{ $item->barang->nama_barang ?? $item->nama_barang ?? '-' }}</td>
             <td class="text-center">{{ $item->jumlah }}</td>
             <td class="text-center">{{ $item->barang->satuan->nama_satuan ?? $item->satuan ?? '-' }}</td>
-            <td class="text-right">Rp {{ number_format($item->harga_satuan, 0, ',', '.') }}</td>
-            <td class="text-right">Rp {{ number_format($item->subtotal, 0, ',', '.') }}</td>
+            <td class="text-center">Rp.</td>
+            <td class="text-right">{{ number_format($item->harga_satuan, 0, ',', '.') }}</td>
+            <td class="text-center">Rp.</td>
+            <td class="text-right">{{ number_format($item->subtotal, 0, ',', '.') }}</td>
         </tr>
         @empty
         <tr>
@@ -283,17 +287,26 @@
     </tbody>
     <tfoot>
         <tr class="total-row">
-            <td colspan="5" class="text-right"><strong>Total</strong></td>
-            <td class="text-right"><strong>Rp {{ number_format($pesanan->total_keseluruhan ?? 0, 0, ',', '.') }}</strong></td>
+            <td> </td>
+            <td> </td>
+            <td colspan="4" class="text-center"><strong>Total</strong></td>
+                <td class="text-center"> <strong>Rp.</strong></td>
+                <td class="text-right"><strong>{{ number_format($pesanan->total_keseluruhan ?? 0, 0, ',', '.') }}</strong></td>
         </tr>
         @if($ppn_aktif)
             <tr>
-                <td colspan="5" class="text-right"><strong>PPN {{ $ppn_persen }}%</strong></td>
-                <td class="text-right">Rp {{ number_format($ppn, 0, ',', '.') }}</td>
+            <td> </td>
+            <td> </td>
+                <td colspan="4" class="text-center"><strong>PPN {{ $ppn_persen }}%</strong></td>
+                <td class="text-center"> <strong>Rp.</strong></td>
+                <td class="text-right"><strong>{{ number_format($ppn, 0, ',', '.') }}</strong></td>
             </tr>
             <tr class="total-row">
-                <td colspan="5" class="text-right"><strong>Total termasuk PPN</strong></td>
-                <td class="text-right"><strong>Rp {{ number_format($total_include_ppn, 0, ',', '.') }}</strong></td>
+            <td> </td>
+            <td> </td>
+                <td colspan="4" class="text-center"><strong>Total termasuk PPN</strong></td>
+                <td class="text-center"> <strong>Rp.</strong></td>
+                <td class="text-right"><strong>{{ number_format($total_include_ppn, 0, ',', '.') }}</strong></td>
             </tr>
         @endif
     </tfoot>
@@ -311,13 +324,13 @@
 
 {{-- Penutup --}}
 <div class="penutup">
-    <p>Demikian Surat Penawaran Harga ini kami buat beserta lampirannya, agar dapat membantu Bapak/Ibu untuk membuat keputusan yang tepat. Jika Bapak/Ibu membutuhkan informasi lanjutan, dapat menghubungi kami langsung pada kontak yang tertera di atas. Atas perhatian dan kerjasamanya, kami ucapkan terima kasih.</p>
+    <p style="text-indent: 25px;">Demikian Surat Penawaran Harga ini kami buat beserta lampirannya, agar dapat membantu Bapak/Ibu untuk membuat keputusan yang tepat. Jika Bapak/Ibu membutuhkan informasi lanjutan, dapat menghubungi kami langsung pada kontak yang tertera di atas. Atas perhatian dan kerjasamanya, kami ucapkan terima kasih.</p>
 </div>
 
 {{-- Tanda Tangan --}}
 <div class="signature-wrapper">
     <div class="signature-box">
-        <p>Hormat kami,</p>
+        <p>{{ $company->nama_perusahaan }}</p>
         
         @if($ttd_base64)
             <img src="{{ $ttd_base64 }}" class="signature-img">
@@ -325,13 +338,9 @@
             <p style="margin-top: 30px;">&nbsp;</p>
         @endif
         
-        <div class="signature-line"></div>
-        <p><strong>{{ $approved_by_name ?? $company->nama_direktur ?? 'Direktur' }}</strong></p>
+        {{-- <div class="signature-line"></div> --}}
+        <p><strong style="text-decoration: underline">{{ $approved_by_name ?? $company->nama_direktur ?? 'Direktur' }}</strong></p>
         <p>{{ $approved_by_jabatan ?? $company->jabatan_direktur ?? 'Direktur Utama' }}</p>
-        
-        @if($approved_at)
-            <p style="font-size: 8pt; margin-top: 3px;">{{ \Carbon\Carbon::parse($approved_at)->format('d/m/Y') }}</p>
-        @endif
     </div>
     <div class="clear"></div>
 </div>

@@ -22,16 +22,18 @@
             padding-bottom: 6px;
         }
         .header h1 {
-            font-size: 20pt; /* Diperbesar dari 18pt */
+            font-size: 26pt;
             margin: 0 0 5px 0;
             color: #0b2b4f;
             text-transform: uppercase;
             font-weight: bold;
+            text-align: center;
         }
         .header .company-detail {
-            font-size: 9pt; /* Diperbesar dari 8pt */
+            font-size: 9pt;
             color: #555;
             line-height: 1.3;
+            text-align: center;
         }
         .header-table {
             width: 100%;
@@ -43,7 +45,7 @@
             vertical-align: middle;
         }
         .header-logo {
-            max-height: 70px; /* Diperbesar */
+            max-height: 100px;
             max-width: 150px;
             object-fit: contain;
         }
@@ -84,8 +86,8 @@
             table-layout: fixed;
         }
         table th {
-            background: #0b2b4f;
-            color: white;
+            background: none;
+            color: #0b2b4f;
             padding: 8px 5px; /* Padding diperbesar */
             text-align: center;
             font-weight: bold;
@@ -105,7 +107,7 @@
         }
         .total-row {
             font-weight: bold;
-            background: #f0f0f0;
+            background: none;
         }
         
         /* Kolom Lebar */
@@ -117,18 +119,18 @@
         th:nth-child(6) { width: 30%; }
         
         /* Note */
-        .note-section {
-            margin: 15px 0;
-            font-size: 10pt;
-        }
-        .note-section ul {
-            margin: 5px 0 0 20px;
-            padding-left: 0;
-        }
-        .note-section li {
-            margin-bottom: 3px;
-        }
-        
+            .note-section {
+                margin: 15px 0;
+                font-size: 10pt;
+            }
+            .note-section ul {
+                margin: 5px 0 0 20px;
+                padding-left: 0;
+            }
+            .note-section li {
+                margin-bottom: 3px;
+            }
+            
         /* Penutup */
         .penutup {
             margin: 5px 0;
@@ -220,7 +222,7 @@
             <strong>Perihal :</strong> {{ $perihal }}<br>
             <strong>Lampiran :</strong> {{ $lampiran_text }}
         </td>
-        <td style="width: 40%; text-align: right;">
+        <td style="width: 40%; text-align: right; vertical-align: top;">
             <strong>{{ $company->kota ?? 'Jakarta' }},</strong> {{ $tanggal }}
         </td>
     </tr>
@@ -228,7 +230,7 @@
 
 {{-- Kepada Yth --}}
 <div class="kepada">
-    <strong>Kepada Yth,</strong><br>
+    Kepada Yth,<br>
     Bagian Pengadaan / UP. {{ $client->nama_pic ?? '-' }}<br>
     <strong>{{ $client->nama_client ?? '-' }}</strong><br>
     {{ $client->alamat ?? '-' }}{{ $client->alamat && $client->desa ? ', ' : '' }}{{ $client->desa ?? '' }}{{ ($client->alamat || $client->desa) && $client->kecamatan ? ', ' : '' }}{{ $client->kecamatan ?? '' }}<br>
@@ -238,7 +240,7 @@
 {{-- Pembuka --}}
 <div class="pembuka">
     <p><strong>Dengan Hormat,</strong></p>
-    <p>Sehubungan dengan adanya kebutuhan di <strong>{{ $client->nama_client ?? 'perusahaan' }}</strong> atas barang yang dimaksud, dengan ini kami menyampaikan penawaran harga yang sesuai dengan kebutuhan dan spesifikasi yang diinginkan, sebagai berikut:</p>
+    <p style="text-indent: 30px">Sehubungan dengan adanya kebutuhan di <strong>{{ $client->nama_client ?? 'perusahaan' }}</strong> atas barang yang dimaksud, dengan ini kami menyampaikan penawaran harga yang sesuai dengan kebutuhan dan spesifikasi yang diinginkan, sebagai berikut:</p>
 </div>
 
 {{-- Tabel Barang --}}
@@ -249,8 +251,8 @@
             <th>Nama Barang</th>
             <th>Kebutuhan</th>
             <th>Satuan</th>
-            <th>Harga Satuan</th>
-            <th>Jumlah Harga</th>
+            <th colspan="2">Harga Satuan</th>
+            <th colspan="2">Jumlah Harga</th>
         </tr>
     </thead>
     <tbody>
@@ -260,8 +262,10 @@
             <td>{{ $item->barang->nama_barang ?? $item->nama_barang ?? '-' }}</td>
             <td class="text-center">{{ $item->jumlah }}</td>
             <td class="text-center">{{ $item->barang->satuan->nama_satuan ?? $item->satuan ?? '-' }}</td>
-            <td class="text-right">Rp {{ number_format($item->harga_satuan, 0, ',', '.') }}</td>
-            <td class="text-right">Rp {{ number_format($item->subtotal, 0, ',', '.') }}</td>
+            <td class="text-center">Rp.</td>
+            <td class="text-right">{{ number_format($item->harga_satuan, 0, ',', '.') }}</td>
+            <td class="text-center">Rp.</td>
+            <td class="text-right">{{ number_format($item->subtotal, 0, ',', '.') }}</td>
         </tr>
         @empty
         <tr>
@@ -271,8 +275,11 @@
     </tbody>
     <tfoot>
         <tr class="total-row">
-            <td colspan="5" class="text-right"><strong>Total</strong></td>
-            <td class="text-right"><strong>Rp {{ number_format($pesanan->total_keseluruhan ?? 0, 0, ',', '.') }}</strong></td>
+            <td> </td>
+            <td> </td>
+            <td colspan="4" class="text-center"><strong>Total</strong></td>
+            <td class="text-center">Rp.</td>
+            <td class="text-right"><strong>{{ number_format($pesanan->total_keseluruhan ?? 0, 0, ',', '.') }}</strong></td>
         </tr>
         @if($ppn_aktif)
             <tr>
@@ -299,7 +306,7 @@
 
 {{-- Penutup --}}
 <div class="penutup">
-    <p>Demikian Surat Penawaran Harga ini kami buat beserta lampirannya, agar dapat membantu Bapak/Ibu untuk membuat keputusan yang tepat. Jika Bapak/Ibu membutuhkan informasi lanjutan, dapat menghubungi kami langsung pada kontak yang tertera di atas. Atas perhatian dan kerjasamanya, kami ucapkan terima kasih.</p>
+    <p style="text-indent: 30px">Demikian Surat Penawaran Harga ini kami buat beserta lampirannya, agar dapat membantu Bapak/Ibu untuk membuat keputusan yang tepat. Jika Bapak/Ibu membutuhkan informasi lanjutan, dapat menghubungi kami langsung pada kontak yang tertera di atas. Atas perhatian dan kerjasamanya, kami ucapkan terima kasih.</p>
 </div>
 
 </body>
