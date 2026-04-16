@@ -107,21 +107,42 @@
             text-align: right;
         }
         .ttd-bottom {
+            margin-top: 45px;
             width: 100%;
         }
         .ttd-bottom td {
-            width: 50%;
+            width: 70%;
             vertical-align: top;
         }
         .ttd-bottom td.right {
             text-align: right;
         }
-        .sig-name {
+        .sig-name-kurir {
             text-decoration: underline;
             font-weight: bold;
+            margin-left: 20px;
+        }
+        .sig-name-ekspedisi {
+            /* text-decoration: underline; */
+            /* font-weight: bold; */
+            margin-left: 5px;
+        }
+        .sig-name-direktur {
+            text-decoration: underline;
+            font-weight: bold;
+            margin-right: 32px;
         }
         .sig-role {
             font-size: 10pt;
+            font-weight: bold;
+            text-decoration: underline;
+            margin-right: 7px;
+        }
+        .sig-role-ekspedisi {
+            font-size: 10pt;
+            font-weight: bold;
+            text-decoration: underline;
+            margin-left: 7px;
         }
     </style>
 </head>
@@ -269,8 +290,8 @@
     <table class="ttd-top">
         <tr>
             <td>
-                <div>Nama Ekspedisi</div>
-                <div><strong>{{ $ekspedisi->nama_ekspedisi ?? '' }}</strong></div>
+                {{-- <div>Nama Ekspedisi</div> --}}
+                <div class="sig-name-ekspedisi">{{ $ekspedisi->nama_ekspedisi ?? '' }}</div>
             </td>
             <td class="right">
                 <div>{{ $company->nama_perusahaan }}</div>
@@ -281,11 +302,11 @@
     <table class="ttd-bottom">
         <tr>
             <td>
-                <div class="sig-name">{{ $pengiriman->nama_kurir ?? 'Nama Kurir' }}</div>
+                <div class="sig-name-kurir">{{ $pengiriman->nama_kurir ?? 'Nama Kurir' }}</div>
                 <div class="sig-role">Kurir/Pengemudi</div>
             </td>
             <td class="right">
-                <div class="sig-name">{{ auth()->user()->name }}</div>
+                <div class="sig-name-direktur">{{ auth()->user()->name }}</div>
                 <div class="sig-role"><strong>Stuff {{ auth()->user()->jabatan }}</strong></div>
             </td>
         </tr>

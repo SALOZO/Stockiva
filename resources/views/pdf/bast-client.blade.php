@@ -93,6 +93,7 @@
         .sig-bottom {
             width: 100%;
             border-collapse: collapse;
+            margin-top: 30px
         }
         .sig-bottom td {
             width: 50%;
@@ -101,12 +102,23 @@
         .sig-bottom td.right {
             text-align: right;
         }
-        .sig-name {
+        .sig-name-jabatan {
             text-decoration: underline;
             font-weight: bold;
+            /* margin-left: 5px */
         }
-        .sig-role {
-            font-size: 9.5pt;
+        .sig-name-direktur {
+            text-decoration: underline;
+            font-weight: bold;
+            /* margin-right: 10px */
+        }
+        .sig-role-jabatan {
+            font-size: 10pt;
+            margin-left: 5px
+        }
+        .sig-role-direktur {
+            font-size: 10pt;
+            margin-right: 15px
         }
 
         .sig-divider {
@@ -120,19 +132,27 @@
 <table class="doc-info">
     <tr>
         <td style="width:55%;">
-            <strong>No.</strong> : {{ $no_bast }}
+            <table>
+                <tr>
+                    <td style="width:80px;"><strong>No.</strong></td>
+                    <td style="width:20px; text-align:center;">:</td>
+                    <td>{{ $no_bast }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Perihal</strong></td>
+                    <td style="text-align:center;">:</td>
+                    <td>{{ $perihal }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Lampiran</strong></td>
+                    <td style="text-align:center;">:</td>
+                    <td>-</td>
+                </tr>
+            </table>
         </td>
-        <td style="width:45%; text-align:right;">
+        <td style="width:45%; text-align:right; vertical-align:top;">
             {{ $company->kota }}, {{ \Carbon\Carbon::now()->locale('id')->translatedFormat('d F Y') }}
         </td>
-    </tr>
-    <tr>
-        <td><strong>Perihal</strong> : {{ $perihal }}</td>
-        <td></td>
-    </tr>
-    <tr>
-        <td><strong>Lampiran</strong> : -</td>
-        <td></td>
     </tr>
 </table>
 
@@ -311,12 +331,12 @@
     <table class="sig-bottom">
         <tr>
             <td>
-                <div class="sig-name">{{ $pengiriman->pesanan->client->nama_pic ?? 'Nama Pemesan' }}</div>
-                <div class="sig-role">{{ $pengiriman->pesanan->client->jabatan_pic ?? 'Jabatan Pemesan' }}</div>
+                <div class="sig-name-jabatan">{{ $pengiriman->pesanan->client->nama_pic ?? 'Nama Pemesan' }}</div>
+                <div class="sig-role-jabatan">{{ $pengiriman->pesanan->client->jabatan_pic ?? 'Jabatan Pemesan' }}</div>
             </td>
             <td class="right">
-                <div class="sig-name">{{ $company->nama_direktur ?? 'Nama Direktur' }}</div>
-                <div class="sig-role"><strong>Direktur</strong></div>
+                <div class="sig-name-direktur">{{ $company->nama_direktur ?? 'Nama Direktur' }}</div>
+                <div class="sig-role-direktur"><strong>Direktur</strong></div>
             </td>
         </tr>
     </table>

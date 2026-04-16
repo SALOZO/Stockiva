@@ -11,13 +11,52 @@
             color: #222;
             margin: 1.5cm 2cm;
         }
+    .header-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 4px;
+    }
+    .header-logo-cell {
+        width: 110px;
+        vertical-align: middle;
+        padding-right: 18px;
+    }
+    .header-info-cell {
+        vertical-align: middle;
+        text-align: center;
+    }
+    .logo {
+        height: 90px;
+        width: auto;
+        display: block;
+    }
+    .company-name {
+        font-size: 26pt;
+        font-weight: 900;
+        color: #1a3a6b;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        line-height: 1.1;
+        margin-bottom: 4px;
+    }
+    .company-address {
+        font-size: 9pt;
+        color: #1a3a6b;
+        font-weight: 600;
+        line-height: 1.6;
+    }
+    .company-contact {
+        font-size: 9pt;
+        color: #1a3a6b;
+        line-height: 1.6;
+    }
 
-        .header { display: flex; align-items: flex-start; gap: 16px; margin-bottom: 4px; }
-        .logo { height: 70px; width: auto; }
+        /* .header { display: flex; align-items: flex-start; gap: 16px; margin-bottom: 4px; } */
+        /* .logo { height: 70px; width: auto; } */
         .company-info { line-height: 1.55; }
-        .company-name { font-size: 20pt; font-weight: 900; color: #1a3a6b; letter-spacing: 1px; text-transform: uppercase; }
-        .company-address { font-size: 9pt; color: #1a3a6b; font-weight: 600; }
-        .company-contact { font-size: 9pt; color: #1a3a6b; }
+        /* .company-name { font-size: 20pt; font-weight: 900; color: #1a3a6b; letter-spacing: 1px; text-transform: uppercase; } */
+        /* .company-address { font-size: 9pt; color: #1a3a6b; font-weight: 600; } */
+        /* .company-contact { font-size: 9pt; color: #1a3a6b; } */
 
         .divider { border: none; border-top: 3px solid #1a3a6b; margin: 10px 0 4px 0; }
         .divider-thin { border: none; border-top: 1px solid #1a3a6b; margin: 3px 0 14px 0; }
@@ -55,25 +94,32 @@
 <body>
 
     {{-- HEADER --}}
-    <div class="header">
-        @if(!empty($logoPath))
-            <img src="{{ $logoPath }}" class="logo">
-        @endif
-        <div class="company-info">
-            <div class="company-name">{{ $company->nama_perusahaan }}</div>
-            <div class="company-address">{{ $company->alamat }}, {{ $company->kota }}, {{ $company->provinsi }}</div>
-            <div class="company-contact">
-                Telp. : {{ $company->telepon }}
-                @if($company->website)
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    web : {{ $company->website }}
-                @endif
-            </div>
-        </div>
-    </div>
+    <table class="header-table">
+        <tr>
+            @if(isset($logo) && $logo)
+            <td class="header-logo-cell">
+                <img src="{{ $logo }}" class="logo" alt="Logo">
+            </td>
+            @endif
+            <td class="header-info-cell">
+                <div class="company-name">{{ $company->nama_perusahaan }}</div>
+                <div class="company-address">
+                    {{ $company->alamat }}
+                    {{ $company->kota }}, {{ $company->provinsi }}
+                </div>
+                <div class="company-contact">
+                    Telp. : {{ $company->telepon }}
+                    @if(isset($company->website) && $company->website)
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        web : {{ $company->website }}
+                    @endif
+                </div>
+            </td>
+        </tr>
+    </table>
 
     <hr class="divider">
-    <hr class="divider-thin">
+    {{-- <hr class="divider-thin"> --}}
 
     {{-- TITLE --}}
     <div class="title">INVOICE</div>
@@ -139,19 +185,24 @@
         <tfoot>
             {{-- Total DPP --}}
             <tr>
-                <td colspan="4" style="border:none; background:transparent;"></td>
-                <td class="center">Total</td>
+                <td> </td>
+                <td> </td>
+                <td colspan="3" class="center">Total</td>
                 <td class="right">Rp. {{ number_format($dpp, 0, ',', '.') }}</td>
             </tr>
             {{-- PPN — hanya muncul jika aktif --}}
             @if($ppn_aktif)
             <tr class="ppn-row">
-                <td colspan="5" style="border:none; background:transparent;"></td>
+                <td> </td>
+                <td> </td>
+                <td colspan="3" style="border:none; background:transparent;"></td>
                 <td class="center" style="font-weight:normal;">PPN {{ $ppn_persen }}%</td>
                 <td class="right" style="font-weight:normal;">Rp. {{ number_format($ppn, 0, ',', '.') }}</td>
             </tr>
             <tr class="grand-total">
-                <td colspan="5" style="border:none; background:transparent;"></td>
+                <td> </td>
+                <td> </td>
+                <td colspan="3" style="border:none; background:transparent;"></td>
                 <td class="center">Total termasuk PPN</td>
                 <td class="right">Rp. {{ number_format($total_include_ppn, 0, ',', '.') }}</td>
             </tr>
@@ -186,9 +237,6 @@
 
         <div class="sig-name">{{ $approved_by }}</div>
         <div class="sig-title">{{ $approved_by_jabatan ?? 'Direktur Keuangan' }}</div>
-        <div class="approval-info">
-            Disetujui pada: {{ $approved_at }}
-        </div>
     </div>
 
 </body>

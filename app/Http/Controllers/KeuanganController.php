@@ -74,6 +74,7 @@ class KeuanganController extends Controller
 
         // Terbilang pakai total include PPN jika PPN aktif
         $totalUntukTerbilang = $ppn['ppn_aktif'] ? $ppn['total_include_ppn'] : $ppn['dpp'];
+        $direktur = User::where('jabatan', 'Direktur')->first();
 
         $pdf = Pdf::loadView('pdf.invoice', [
             'pesanan'     => $pesanan,
@@ -84,6 +85,9 @@ class KeuanganController extends Controller
             'tanggal'     => now()->translatedFormat('d F Y'),
             'logo'        => $logoBase64,
             'terbilang'   => ucwords(strtolower($this->terbilang($totalUntukTerbilang))) . ' Rupiah',
+            'approved_by' => $direktur->name ?? 'Direktur',
+            'approved_by_jabatan' => $direktur->jabatan ?? 'Direktur',
+
             // PPN
             'ppn_aktif'         => $ppn['ppn_aktif'],
             'ppn_persen'        => $ppn['ppn_persen'],
@@ -118,48 +122,45 @@ class KeuanganController extends Controller
 
  public function previewInvoice(Pesanan $pesanan)
 {
-    if (!$pesanan->no_invoice) {
-        abort(404);
-    }
-
-    $bank = BankPerusahaan::where('is_active', true)->first();
-    $company = CompanyProfile::first();
-
-
-    // Ambil TTD dari direktur yang approve
-    $ttdBase64 = null;
-    if ($pesanan->invoice_approved_by) {
-        $direktur = User::find($pesanan->invoice_approved_by);
-        if ($direktur && $direktur->ttd_path) {
-            $ttdPath = storage_path('app/public/' . $direktur->ttd_path);
-            if (file_exists($ttdPath)) {
-                $imageData = file_get_contents($ttdPath);
-                $mime = mime_content_type($ttdPath);
-                $ttdBase64 = 'data:' . $mime . ';base64,' . base64_encode($imageData);
-            }
-        }
-    }
-
-        $logoPath = public_path('storage/' . $company->logo);
-
-        $logoBase64 = null;
-        if (file_exists($logoPath)) {
-            $logoBase64 = 'data:image/png;base64,' . base64_encode(file_get_contents($logoPath));
+        if (!$pesanan->no_invoice) {
+            $tahunBulan = now()->format('Y-m');
+            $nomor      = DocumentCounter::getNextNumber($tahunBulan);
+            $noInvoice  = sprintf("%04d", $nomor) . '/INV/RP/' . now()->format('m') . '/' . now()->format('Y');
+            $pesanan->update(['no_invoice' => $noInvoice]);
         }
 
-    $pdf = Pdf::loadView('pdf.invoice-approved', [
-        'pesanan' => $pesanan,
-        'company' => $company,
-        'bank' => $bank,
-        'no_invoice' => $pesanan->no_invoice,
-        'jatuh_tempo' => $pesanan->created_at->addDays(30),
-        'tanggal' => now()->format('d F Y'),
-        'approved_by' => $pesanan->approvedBy->name ?? 'Direktur',
-        'approved_at' => $pesanan->invoice_approved_at ? $pesanan->invoice_approved_at->format('d F Y') : '-',
-        'ttd_base64' => $ttdBase64,
-        'logo' => $logoBase64,
-        'terbilang'  => ucwords(strtolower($this->terbilang($pesanan->total_keseluruhan))) . ' Rupiah',
-    ]);
+        $bank       = BankPerusahaan::where('is_active', true)->first();
+        $company    = CompanyProfile::first();
+        $logoPath   = public_path('storage/' . $company->logo);
+        $logoBase64 = file_exists($logoPath)
+            ? 'data:image/png;base64,' . base64_encode(file_get_contents($logoPath))
+            : null;
+
+        $ppn = $this->getPpnData((float) $pesanan->total_keseluruhan);
+
+        // Terbilang pakai total include PPN jika PPN aktif
+        $totalUntukTerbilang = $ppn['ppn_aktif'] ? $ppn['total_include_ppn'] : $ppn['dpp'];
+        $direktur = User::where('jabatan', 'Direktur')->first();
+
+        $pdf = Pdf::loadView('pdf.invoice', [
+            'pesanan'     => $pesanan,
+            'company'     => $company,
+            'bank'        => $bank,
+            'no_invoice'  => $pesanan->no_invoice,
+            'jatuh_tempo' => $pesanan->created_at->addDays(30),
+            'tanggal'     => now()->translatedFormat('d F Y'),
+            'logo'        => $logoBase64,
+            'terbilang'   => ucwords(strtolower($this->terbilang($totalUntukTerbilang))) . ' Rupiah',
+            'approved_by' => $direktur->name ?? 'Direktur',
+            'approved_by_jabatan' => $direktur->jabatan ?? 'Direktur',
+
+            // PPN
+            'ppn_aktif'         => $ppn['ppn_aktif'],
+            'ppn_persen'        => $ppn['ppn_persen'],
+            'ppn'               => $ppn['ppn'],
+            'dpp'               => $ppn['dpp'],
+            'total_include_ppn' => $ppn['total_include_ppn'],
+        ]);
 
     return $pdf->stream('invoice-' . $pesanan->no_pesanan . '.pdf');
 }

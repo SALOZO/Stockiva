@@ -8,13 +8,13 @@
             margin: 2cm 2.5cm;
         }
         body {
-            font-family: 'Helvetica', 'Arial', sans-serif;
+            font-family:  'Times New Roman', Times, serif;
             font-size: 11pt;
             line-height: 1.6;
         }
         .title {
             text-align: center;
-            font-size: 14pt;
+            font-size: 20pt;
             font-weight: bold;
             margin: 30px 0 5px 0;
             text-decoration: underline;
@@ -22,7 +22,7 @@
         }
         .no-sj {
             text-align: center;
-            font-size: 11pt;
+            font-size: 15pt;
             margin-bottom: 30px;
         }
         .info-section {
@@ -81,14 +81,17 @@
             margin: 20px 0;
         }
         .signature {
-            margin-top: 40px;
+            margin-top: 55px;
             text-align: right;
         }
         .signature-name {
             text-decoration: underline;
+            margin-right: 60px
         }
         .signature-company {
             font-weight: bold;
+            /* margin-right: 10px; */
+            margin-right: 20px;
         }
     </style>
 </head>
@@ -119,7 +122,6 @@
                         $pengiriman->pesanan->client->provinsi ?? '',
                     ])));
                 @endphp
-
                 <span class="field-value-multiline">{{ $alamat ? substr($alamat, 0, 60) : '' }}</span>
                 <span class="field-value-multiline">{{ $alamat && strlen($alamat) > 60 ? substr($alamat, 60, 60) : '' }}</span>
                 <span class="field-value-multiline">{{ $alamat && strlen($alamat) > 120 ? substr($alamat, 120) : '' }}</span>
