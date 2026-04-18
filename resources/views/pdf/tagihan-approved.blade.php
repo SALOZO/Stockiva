@@ -8,16 +8,56 @@
         body { font-family: 'Times New Roman', serif; font-size: 11pt; color: #000; line-height: 1.5; }
         .page { padding: 15mm 20mm 15mm 25mm; }
 
+        .header-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 4px;
+        }
+        .header-logo-cell {
+            width: 110px;
+            vertical-align: middle;
+            padding-right: 18px;
+        }
+        .header-info-cell {
+            vertical-align: middle;
+            text-align: center;
+        }
+        .logo {
+            height: 90px;
+            width: auto;
+            display: block;
+        }
+        .company-name {
+            font-size: 20pt;
+            font-weight: 900;
+            color: #1a3a6b;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            line-height: 1.1;
+            margin-bottom: 4px;
+        }
+        .company-address {
+            font-size: 9pt;
+            color: #1a3a6b;
+            font-weight: 600;
+            line-height: 1.6;
+        }
+        .company-contact {
+            font-size: 9pt;
+            color: #1a3a6b;
+            line-height: 1.6;
+        }
+
         .header { border-bottom: 3px double #000; padding-bottom: 8px; margin-bottom: 15px; }
         .header table { width: 100%; }
-        .company-name { font-size: 14pt; font-weight: bold; }
-        .company-sub { font-size: 8pt; color: #333; margin-top: 2px; }
+        .company-name { font-size: 20pt; font-weight: bold; }
+        .company-sub { font-size: 12pt; color: #333; margin-top: 2px; }
 
         .info-surat { margin-bottom: 15px; }
         .info-surat table td { padding: 1px 0; vertical-align: top; }
         .info-surat td.label { width: 80px; }
         .info-surat td.colon { width: 10px; }
-        .tgl-surat { float: right; margin-top: -52px; }
+        .tgl-surat { float: right; margin-top: -3px; }
 
         .tabel { width: 100%; border-collapse: collapse; margin-bottom: 5px; font-size: 10.5pt; }
         .tabel th, .tabel td { border: 1px solid #000; padding: 5px 7px; }
@@ -38,29 +78,38 @@
         .mb-15 { margin-bottom: 15px; }
         .mb-20 { margin-bottom: 20px; }
         .justify { text-align: justify; line-height: 1.6; }
+        .divider { border: none; border-top: 3px solid #1a3a6b; margin: 10px 0 4px 0; }
     </style>
 </head>
 <body>
 <div class="page">
 
     {{-- HEADER --}}
-    <div class="header">
-        <table>
-            <tr>
-                <td style="width:70px; vertical-align:middle;">
-                    @if($logoPath)
-                        <img src="{{ $logoPath }}" style="max-width:60px; max-height:60px;">
+    <table class="header-table">
+        <tr>
+            @if(isset($logo) && $logo)
+            <td class="header-logo-cell">
+                <img src="{{ $logo }}" class="logo" alt="Logo">
+            </td>
+            @endif
+            <td class="header-info-cell">
+                <div class="company-name">{{ $company->nama_perusahaan }}</div>
+                <div class="company-address">
+                    {{ $company->alamat }}
+                    {{ $company->kota }}, {{ $company->provinsi }}
+                </div>
+                <div class="company-contact">
+                    Telp. : {{ $company->telepon }}
+                    @if(isset($company->website) && $company->website)
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        web : {{ $company->website }}
                     @endif
-                </td>
-                <td style="vertical-align:middle; padding-left:10px;">
-                    <div class="company-name">{{ strtoupper($company?->nama_perusahaan) }}</div>
-                    <div class="company-sub">{{ $company?->kontak_lengkap }}</div>
-                    <div class="company-sub">{{ $company?->alamat_lengkap }}</div>
-                </td>
-            </tr>
-        </table>
-    </div>
-
+                </div>
+            </td>
+        </tr>
+    </table>
+    <hr class="divider">
+    {{-- TITLE --}}
     {{-- NOMOR SURAT --}}
     <div class="info-surat mb-15">
         <div class="tgl-surat">{{ $company?->kota }}, {{ $tglSurat }}</div>
@@ -130,17 +179,23 @@
         <tfoot>
             {{-- Total DPP --}}
             <tr class="total">
-                <td colspan="5" class="center">Jumlah</td>
+                <td> </td>
+                <td> </td>
+                <td colspan="3" class="center">Jumlah</td>
                 <td class="right">Rp. {{ number_format($dpp, 0, ',', '.') }}</td>
             </tr>
             {{-- PPN — hanya muncul jika aktif --}}
             @if($ppn_aktif)
             <tr>
-                <td colspan="5" class="center">PPN {{ $ppn_persen }}%</td>
+                <td> </td>
+                <td> </td>
+                <td colspan="3" class="center">PPN {{ $ppn_persen }}%</td>
                 <td class="right">Rp. {{ number_format($ppn, 0, ',', '.') }}</td>
             </tr>
             <tr class="total">
-                <td colspan="5" class="center">Total termasuk PPN</td>
+                <td> </td>
+                <td> </td>
+                <td colspan="3" class="center">Total termasuk PPN</td>
                 <td class="right">Rp. {{ number_format($total_include_ppn, 0, ',', '.') }}</td>
             </tr>
             @endif
@@ -148,14 +203,14 @@
     </table>
 
     {{-- TERBILANG --}}
-    <div class="mb-15" style="font-family: Arial, Helvetica, sans-serif; font-size:10.5pt;">
+    <div class="mb-15" style="font-family: Arial, Helvetica, sans-serif; font-size:10.5pt; text-indent: 50px; ">
         Terbilang : {{ $terbilang }}
     </div>
 
     {{-- REKENING --}}
     @if($bank)
-    <div class="rekening mb-15">
-        <p>Pembayaran dapat dilakukan dengan bank transfer ke :</p>
+    <p>Pembayaran dapat dilakukan dengan bank transfer ke :</p>
+    <div class="rekening mb-15" style="margin-left: 30px">
         <br>
         <table>
             <tr>

@@ -8,9 +8,49 @@
         body { font-family: Arial, sans-serif; font-size: 11pt; color: #000; }
         .page { padding: 15mm 20mm; }
 
+        .header-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 4px;
+        }
+        .header-logo-cell {
+            width: 110px;
+            vertical-align: middle;
+            padding-right: 18px;
+        }
+        .header-info-cell {
+            vertical-align: middle;
+            text-align: center;
+        }
+        .logo {
+            height: 90px;
+            width: auto;
+            display: block;
+        }
+        .company-name {
+            font-size: 20pt;
+            font-weight: 900;
+            color: #1a3a6b;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            line-height: 1.1;
+            margin-bottom: 4px;
+        }
+        .company-address {
+            font-size: 9pt;
+            color: #1a3a6b;
+            font-weight: 600;
+            line-height: 1.6;
+        }
+        .company-contact {
+            font-size: 9pt;
+            color: #1a3a6b;
+            line-height: 1.6;
+        }
+
         .header { border-bottom: 3px double #000; padding-bottom: 10px; margin-bottom: 20px; }
         .header table { width: 100%; }
-        .company-name { font-size: 18pt; font-weight: bold; color: #1a3a6b; }
+        /* .company-name { font-size: 18pt; font-weight: bold; color: #1a3a6b; } */
         .company-sub { font-size: 9pt; color: #333; margin-top: 3px; }
 
         .judul {
@@ -33,14 +73,18 @@
         .body-table td.colon { width: 15px; }
 
         /* Total box */
-        .total-section { margin-bottom: 20px; }
-        .total-row { display: flex; justify-content: flex-end; align-items: center; gap: 20px; margin-bottom: 4px; }
+        .total-section { margin-bottom: 20px; width: 100%; }
+        .total-row { display: flex; justify-content: flex-end; align-items: center; gap: 20px; margin-bottom: 4px; width: 100%; }
         .total-row .lbl { font-size: 11pt; }
         .total-row .val { font-size: 13pt; font-weight: bold; min-width: 150px; text-align: right; }
         .total-row.ppn-row .lbl { font-size: 10.5pt; }
         .total-row.ppn-row .val { font-size: 11pt; font-weight: normal; }
         .total-row.grand .val { font-size: 15pt; }
         .divider-total { border-top: 1px solid #000; margin: 4px 0; width: 300px; float: right; clear: both; }
+
+        .total-table { width: 100%; margin-bottom: 20px; }
+        .total-table td.lbl { font-size: 13pt; text-align: right; padding-right: 10px; width: 1%; white-space: nowrap; font-weight: bold; }
+        .total-table td.val { font-size: 13pt; font-weight: bold; text-align: right; width: 160px; }
 
         .rekening { font-size: 10pt; margin-bottom: 30px; }
         .rekening p { margin-bottom: 3px; }
@@ -49,28 +93,37 @@
         .ttd .space { height: 70px; }
         .ttd .nama { font-weight: bold; text-decoration: underline; font-size: 11pt; }
         .ttd .jabatan { font-size: 10pt; }
+        .divider { border: none; border-top: 3px solid #1a3a6b; margin: 10px 0 4px 0; }
     </style>
 </head>
 <body>
 <div class="page">
 
     {{-- HEADER --}}
-    <div class="header">
-        <table>
-            <tr>
-                <td style="width:80px; vertical-align:middle;">
-                    @if($logo)
-                        <img src="{{ $logo }}" style="max-width:70px; max-height:70px;">
+    <table class="header-table">
+        <tr>
+            @if(isset($logo) && $logo)
+            <td class="header-logo-cell">
+                <img src="{{ $logo }}" class="logo" alt="Logo">
+            </td>
+            @endif
+            <td class="header-info-cell">
+                <div class="company-name">{{ $company->nama_perusahaan }}</div>
+                <div class="company-address">
+                    {{ $company->alamat }}
+                    {{ $company->kota }}, {{ $company->provinsi }}
+                </div>
+                <div class="company-contact">
+                    Telp. : {{ $company->telepon }}
+                    @if(isset($company->website) && $company->website)
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        web : {{ $company->website }}
                     @endif
-                </td>
-                <td style="vertical-align:middle; padding-left:12px;">
-                    <div class="company-name">{{ strtoupper($company?->nama_perusahaan) }}</div>
-                    <div class="company-sub">{{ $company?->alamat_lengkap }}</div>
-                    <div class="company-sub">{{ $company?->kontak_lengkap }}</div>
-                </td>
-            </tr>
-        </table>
-    </div>
+                </div>
+            </td>
+        </tr>
+    </table>
+    <hr class="divider">
 
     {{-- JUDUL --}}
     <div class="judul">KWITANSI</div>
@@ -139,27 +192,22 @@
     </table>
 
     {{-- TOTAL --}}
-    <div class="total-section">
-        {{-- DPP --}}
-        <div class="total-row">
-            <span class="lbl">Rp.</span>
-            <span class="val">{{ number_format($dpp, 0, ',', '.') }}</span>
-        </div>
-
-        {{-- PPN — hanya muncul jika aktif --}}
+    <table class="total-table">
+        <tr>
+            <td class="lbl">Rp.</td>
+            <td class="val">{{ number_format($dpp, 0, ',', '.') }}</td>
+        </tr>
         @if($ppn_aktif)
-        {{-- <div class="divider-total"></div> --}}
-        <div class="total-row ppn-row">
-            <span class="lbl">PPN {{ $ppn_persen }}%</span>
-            <span class="val">{{ number_format($ppn, 0, ',', '.') }}</span>
-        </div>
-        {{-- <div class="divider-total"></div> --}}
-        <div class="total-row grand">
-            <span class="lbl"><strong>Total termasuk PPN</strong></span>
-            <span class="val">{{ number_format($total_include_ppn, 0, ',', '.') }}</span>
-        </div>
+        <tr>
+            <td class="lbl" style="font-size:10.5pt;">PPN {{ $ppn_persen }}%</td>
+            <td class="val" style="font-size:11pt; font-weight:normal;">{{ number_format($ppn, 0, ',', '.') }}</td>
+        </tr>
+        <tr>
+            <td class="lbl"><strong>Total termasuk PPN</strong></td>
+            <td class="val" style="font-size:15pt;">{{ number_format($total_include_ppn, 0, ',', '.') }}</td>
+        </tr>
         @endif
-    </div>
+    </table>
 
     {{-- REKENING --}}
     @if($bank)

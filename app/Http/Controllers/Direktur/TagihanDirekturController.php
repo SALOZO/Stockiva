@@ -70,7 +70,7 @@ class TagihanDirekturController extends Controller
                 'bank'              => $bank,
                 'noTagihan'         => $pesanan->no_tagihan,
                 'tglSurat'          => $pesanan->tagihan_approved_at ? $pesanan->tagihan_approved_at->translatedFormat('d F Y'): now()->translatedFormat('d F Y'),
-                'logoPath'          => $logoBase64,
+                'logo'          => $logoBase64,
                 'ttd_base64'        => $ttdBase64,
                 'approved_by'       => $direktur->name,
                 'approved_jabatan'  => $direktur->jabatan,
